@@ -135,29 +135,17 @@ public:
             const auto ae_host_commitment = ParseByteArray(input.value("ae_host_commitment"));
             const auto ae_host_entropy = ParseByteArray(input.value("ae_host_entropy"));
 
-            if (is_witness && m_signing_inputs.size() == 1) {
-                inputs.append(QVariantMap({
-                    { "is_witness", is_witness },
-                    { "input_tx", QVariant() },
-                    { "script", script },
-                    { "satoshi", ParseSatoshi(input.value("satoshi")) },
-                    { "path", ParsePath(input.value("user_path")) },
-                    { "ae_host_commitment", ae_host_commitment },
-                    { "ae_host_entropy", ae_host_entropy },
-                }));
-            } else {
-                const auto input_tx = ParseByteArray(m_signing_transactions.value(input.value("txhash").toString()));
-                Q_ASSERT(!input_tx.isEmpty());
-                inputs.append(QVariantMap({
-                    { "is_witness", is_witness },
-                    { "input_tx", input_tx },
-                    { "script", script },
-                    { "satoshi", ParseSatoshi(input.value("satoshi")) },
-                    { "path", ParsePath(input.value("user_path")) },
-                    { "ae_host_commitment", ae_host_commitment },
-                    { "ae_host_entropy", ae_host_entropy },
-                }));
-            }
+            const auto input_tx = ParseByteArray(m_signing_transactions.value(input.value("txhash").toString()));
+            Q_ASSERT(!input_tx.isEmpty());
+            inputs.append(QVariantMap({
+                { "is_witness", is_witness },
+                { "input_tx", input_tx },
+                { "script", script },
+                { "satoshi", ParseSatoshi(input.value("satoshi")) },
+                { "path", ParsePath(input.value("user_path")) },
+                { "ae_host_commitment", ae_host_commitment },
+                { "ae_host_entropy", ae_host_entropy },
+            }));
         }
 
         for (const auto& value : m_transaction_outputs) {
