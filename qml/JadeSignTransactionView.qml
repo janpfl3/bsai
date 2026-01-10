@@ -5,7 +5,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import "analytics.js" as AnalyticsJS
-import "jade.js" as JadeJS
+import "util.js" as UtilJS
 
 StackViewPage {
     required property SignTransactionResolver resolver
@@ -35,7 +35,7 @@ StackViewPage {
             y: Math.max(0, (flickable.height - layout.height) / 2)
             MultiImage {
                 Layout.alignment: Qt.AlignCenter
-                foreground: JadeJS.image(self.resolver.session.context.device, 7)
+                foreground: UtilJS.jadeImage(self.resolver.session.context.device, 7)
                 width: 352
                 height: 240
             }

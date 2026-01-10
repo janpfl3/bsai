@@ -68,7 +68,7 @@ ItemDelegate {
                 account: self.account
                 asset: self.asset
                 input: ({ satoshi: String(self.satoshi) })
-                unit: UtilJS.unit(self.account)
+                unit: UtilJS.unit(self.account.context)
             }
             Label {
                 Layout.alignment: Qt.AlignRight

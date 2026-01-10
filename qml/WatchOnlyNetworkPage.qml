@@ -58,7 +58,7 @@ StackViewPage {
 
         id: option
         padding: 20
-        icon.source: UtilJS.iconFor(option.network)
+        icon.source: UtilJS.networkIcon(option.network)
         text: option.network.displayName
         background: Rectangle {
             color: Qt.lighter('#262626', option.hovered ? 1.2 : 1)

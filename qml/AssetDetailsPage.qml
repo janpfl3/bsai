@@ -242,7 +242,7 @@ StackViewPage {
             account: button.account
             asset: self.asset
             input: ({ satoshi: button.satoshi })
-            unit: UtilJS.unit(button.account)
+            unit: UtilJS.unit(button.account.context)
         }
         Layout.fillWidth: true
         onClicked: self.accountClicked(button.account)

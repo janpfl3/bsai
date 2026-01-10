@@ -6,7 +6,7 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import QtQuick.Window
 
-import "jade.js" as JadeJS
+import "util.js" as UtilJS
 
 Dialog {
     signal setupClicked(JadeDevice device)
@@ -66,7 +66,7 @@ Dialog {
             Layout.alignment: Qt.AlignCenter
             Layout.preferredHeight: 260
             Layout.preferredWidth: 320
-            foreground: JadeJS.image(self.device, 0)
+            foreground: UtilJS.jadeImage(self.device, 0)
             margins: 30
         }
         PrimaryButton {

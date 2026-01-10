@@ -149,7 +149,7 @@ StackViewPage {
             spacing: 10
             Image {
                 property real size: 32
-                source: UtilJS.iconFor(delegate.asset)
+                source: UtilJS.assetIcon(delegate.asset)
                 Layout.preferredHeight: size
                 Layout.preferredWidth: size
                 height: size

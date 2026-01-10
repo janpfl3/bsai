@@ -45,7 +45,7 @@ WalletDrawer {
                         Layout.alignment: Qt.AlignCenter
                         Layout.preferredHeight: 24
                         Layout.preferredWidth: 24
-                        source: UtilJS.iconFor(self.session.network)
+                        source: UtilJS.networkIcon(self.session.network)
                     }
                     Label {
                         Layout.fillWidth: true

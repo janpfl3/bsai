@@ -138,7 +138,7 @@ AbstractDrawer {
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredHeight: 24
                 Layout.preferredWidth: 24
-                source: UtilJS.iconFor(button.session.network)
+                source: UtilJS.networkIcon(button.session.network)
             }
             ColumnLayout {
                 Label {

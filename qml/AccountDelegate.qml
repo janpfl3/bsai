@@ -150,7 +150,7 @@ ItemDelegate {
                         Convert {
                             id: convert
                             account: delegate.account
-                            unit: UtilJS.unit(delegate.account)
+                            unit: UtilJS.unit(delegate.account.context)
                             input: {
                                 const account = delegate.account
                                 const satoshi = account.json.satoshi

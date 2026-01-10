@@ -1,3 +1,7 @@
+.pragma library
+
+.import "util.js" as UtilJS
+
 function segmentationNetwork(context) {
     const segmentation = {
         segment: 'Desktop',
@@ -11,9 +15,7 @@ function segmentationNetwork(context) {
     let singlesig = false
     let multisig = false
 
-    for (let i = 0; i < context.accounts.length; ++i) {
-        const account = context.accounts[i]
-        if (account.hidden) continue
+    for (const account of UtilJS.accounts(context)) {
         const network = account.network
         mainnet = mainnet || (network.mainnet && !network.liquid)
         liquid = liquid || (network.mainnet && network.liquid)
@@ -70,9 +72,9 @@ function segmentationSession(Settings, context) {
     if (Settings.enableTestnet) app_settings.push('testnet')
     if (Settings.usePersonalNode) app_settings.push('electrum_server')
     segmentation.app_settings = app_settings.join(',')
-    if (context) {
+    if (context?.device) {
         const device = context.device
-        if (device instanceof JadeDevice) {
+        if (device.type === 1) {
             segmentation.brand = 'Blockstream'
             if (device.versionInfo) {
                 segmentation.model = device.versionInfo.BOARD_TYPE
@@ -80,14 +82,15 @@ function segmentationSession(Settings, context) {
             segmentation.firmware = device.version
             segmentation.connection = 'USB'
         }
-        if (device instanceof LedgerDevice) {
+        if (device.type === 2) {
             segmentation.brand = 'Ledger'
-            if (device) {
-                segmentation.model
-                    = device.type === Device.LedgerNanoS ? 'Ledger Nano S'
-                    : device.type === Device.LedgerNanoX ? 'Ledger Nano X'
-                    : 'Unknown'
-            }
+            segmentation.model = 'Ledger Nano S'
+            segmentation.firmware = device.appVersion
+            segmentation.connection = 'USB'
+        }
+        if (device.type === 3) {
+            segmentation.brand = 'Ledger'
+            segmentation.model = 'Ledger Nano X'
             segmentation.firmware = device.appVersion
             segmentation.connection = 'USB'
         }
@@ -116,7 +119,7 @@ function segmentationFirmwareUpdate(Settings, device, firmware) {
     if (Settings.enableTestnet) app_settings.push('testnet')
     if (Settings.usePersonalNode) app_settings.push('electrum_server')
     segmentation.app_settings = app_settings.join(',')
-    if (device instanceof JadeDevice) {
+    if (device.type === 1) {
         segmentation.brand = 'Blockstream'
         if (device.versionInfo) {
             segmentation.model = device.versionInfo.BOARD_TYPE
@@ -163,9 +166,9 @@ function segmentationTransaction(Settings, account, { address_input, transaction
 function segmentationWalletActive(Settings, context) {
     const segmentation = segmentationSession(Settings, context)
     let accounts_funded = 0
+    const visible_accounts = UtilJS.accounts(context)
     const accounts_types = new Set
-    for (let i = 0; i < context.accounts.length; ++i) {
-        const account = context.accounts[i]
+    for (const account of visible_accounts) {
         const key = account.network.liquid ? account.network.policyAsset : 'btc'
         accounts_types.add(account.type)
         if (Object.values(account.json.satoshi).filter(satoshi => satoshi > 0).length > 0) {
@@ -174,7 +177,7 @@ function segmentationWalletActive(Settings, context) {
     }
     segmentation.wallet_funded = accounts_funded > 0
     segmentation.accounts_funded = accounts_funded
-    segmentation.accounts = context.accounts.length
+    segmentation.accounts = visible_accounts.length
     segmentation.accounts_types = Array.from(accounts_types).join(',')
     return segmentation
 }

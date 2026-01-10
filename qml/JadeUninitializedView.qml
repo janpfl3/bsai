@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import "jade.js" as JadeJS
+import "util.js" as UtilJS
 
 VFlickable {
     signal updateClicked()
@@ -63,7 +63,7 @@ VFlickable {
         }
         StepPane {
             title: qsTrId('id_create_a_pin')
-            image: JadeJS.image(self.device, 6)
+            image: UtilJS.jadeImage(self.device, 6)
             PrimaryButton {
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredWidth: 325

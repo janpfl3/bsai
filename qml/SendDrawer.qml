@@ -32,7 +32,7 @@ WalletDrawer {
     }
 
     function selectAccounts(asset) {
-        return self.context.accounts.filter(account => !account.hidden && (account.json.satoshi[asset.key] ?? 0) !== 0)
+        return UtilJS.accounts(self.context).filter(account => (account.json.satoshi[asset.key] ?? 0) !== 0)
     }
 
     component RecipientPage: StackViewPage {

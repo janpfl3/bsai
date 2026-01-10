@@ -35,9 +35,7 @@ StackViewPage {
                 const deployment = self.context.deployment
                 const assets = new Set()
                 const search = search_field.text.trim().toLowerCase()
-                for (let i = 0; i < self.context.accounts.length; i++) {
-                    const account = self.context.accounts[i]
-                    if (account.hidden) continue
+                for (const account of UtilJS.accounts(self.context)) {
                     if (self.networks && self.networks.indexOf(account.network) < 0) continue
                     for (const [id, satoshi] of Object.entries(account.json.satoshi)) {
                         if (satoshi === 0) continue
@@ -93,7 +91,7 @@ StackViewPage {
                                 Layout.alignment: Qt.AlignCenter
                                 Layout.maximumWidth: 32
                                 Layout.maximumHeight: 32
-                                source: UtilJS.iconFor(delegate.asset)
+                                source: UtilJS.assetIcon(delegate.asset)
                             }
                             Label {
                                 Layout.fillWidth: true
@@ -149,9 +147,7 @@ StackViewPage {
                                 id: accounts_repeater
                                 model: {
                                     const accounts = []
-                                    for (let i = 0; i < self.context.accounts.length; i++) {
-                                        const account = self.context.accounts[i]
-                                        if (account.hidden) continue
+                                    for (const account of UtilJS.accounts(self.context)) {
                                         const satoshi = String(account.json.satoshi[delegate.asset.id])
                                         if (satoshi > 0) accounts.push({ account, satoshi })
                                     }

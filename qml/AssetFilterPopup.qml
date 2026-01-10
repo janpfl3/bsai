@@ -15,8 +15,7 @@ FilterPopup {
         const context = self.context
         if (!context) return []
         const assets = new Map
-        for (let i = 0; i < context.accounts.length; i++) {
-            const account = context.accounts[i]
+        for (const account of UtilJS.accounts(context)) {
             for (let asset_id in account.json.satoshi) {
                 const satoshi = account.json.satoshi[asset_id]
                 if (satoshi === 0) continue

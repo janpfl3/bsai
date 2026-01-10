@@ -61,7 +61,7 @@ ItemDelegate {
             Layout.fillWidth: true
             Layout.maximumWidth: 130
             color: '#929292'
-            text: UtilJS.formatTransactionTimestamp(self.transaction)
+            text: UtilJS.formatTransactionTimestamp(self.transaction, locale)
             font.pixelSize: 14
             font.weight: 400
             font.capitalization: Font.AllUppercase

@@ -117,7 +117,7 @@ StackViewPage {
                 error_badge.clear()
                 const custom_fields = []
                 if (self.context) {
-                    const supportId = self.context.accounts
+                    const supportId = UtilJS.accounts(self.context)
                         .filter(account => account.pointer === 0 && !account.network.electrum)
                         .map(account => `${account.network.data.bip21_prefix}:${account.json.receiving_id}`)
                         .join(',')

@@ -84,7 +84,7 @@ StackViewPage {
                         Layout.alignment: Qt.AlignCenter
                         Layout.maximumWidth: 32
                         Layout.maximumHeight: 32
-                        source: UtilJS.iconFor(self.account)
+                        source: UtilJS.accountIcon(self.account)
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignCenter

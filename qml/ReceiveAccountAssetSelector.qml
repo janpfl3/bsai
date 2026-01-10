@@ -93,7 +93,7 @@ StackViewPage {
         required property Asset asset
         property bool amp: delegate.asset.amp
         id: delegate
-        icon.source: UtilJS.iconFor(delegate.asset)
+        icon.source: UtilJS.assetIcon(delegate.asset)
         text: delegate.asset.name || delegate.asset.id
         padding: 0
         topPadding: 0
@@ -186,9 +186,7 @@ StackViewPage {
                         id: accounts_repeater
                         model: {
                             const accounts = []
-                            for (let i = 0; i < self.context.accounts.length; i++) {
-                                const account = self.context.accounts[i]
-                                if (account.hidden) continue
+                            for (const account of UtilJS.accounts(self.context)) {
                                 if (delegate.asset) {
                                     if (delegate.asset.networkKey !== account.network.key) continue
                                     if (delegate.asset.amp && account.type !== '2of2_no_recovery') continue

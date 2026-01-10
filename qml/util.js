@@ -1,3 +1,5 @@
+.pragma library
+
 function flatten(...args) {
     const result = []
     for (const arg of args) {
@@ -17,15 +19,21 @@ function link(url, text) {
     return `<style>a:link { color: "#00BCFF"; text-decoration: none; }</style><a href="${url}">${text || url}</a>`
 }
 
+function accountIcon(account) {
+    return networkIcon(account.network)
+}
+
+function assetIcon(asset) {
+    if (asset.icon) return asset.icon
+    if (asset.policy) return iconFor(asset.networkKey)
+    return iconFor(asset.id)
+}
+
+function networkIcon(network) {
+    return iconFor(network.key)
+}
+
 function iconFor(target) {
-    if (target instanceof Account) return iconFor(target.network)
-    if (target instanceof Asset) {
-        if (target.icon) return target.icon
-        if (target.policy) return iconFor(target.networkKey)
-        return iconFor(target.id)
-    }
-    if (target instanceof Wallet) return iconFor(target.network)
-    if (target instanceof Network) return iconFor(target.key)
     switch (target) {
         case 'liquid':
             return 'qrc:/svg/liquid.svg'
@@ -43,8 +51,8 @@ function iconFor(target) {
     return 'qrc:/svg/generic_icon_30p.svg'
 }
 
-function formatTransactionTimestamp(transaction) {
-    return new Date(transaction.data.created_at_ts / 1000).toLocaleString(locale.dateTimeFormat(Locale.LongFormat))
+function formatTransactionTimestamp(transaction, locale) {
+    return new Date(transaction.data.created_at_ts / 1000).toLocaleString(locale.dateTimeFormat(0)) //Locale.LongFormat))
 }
 
 function accountName(account) {
@@ -146,9 +154,7 @@ function incognito(enabled, value, size = 5) {
 }
 
 function unit(target) {
-    if (target instanceof Account) return target.context.primarySession.unit
-    if (target instanceof Context) return target.primarySession.unit
-    if (target instanceof Session) return target.unit
+    return target.primarySession.unit
 }
 
 function normalizeUnit(unit) {
@@ -312,7 +318,7 @@ function filterPromo(wallets, promo) {
     let jade_plus = 0
     for (let i = 0; i < wallets.length; i++) {
         const wallet = wallets[i]
-        if (wallet.login instanceof DeviceData) {
+        if (wallet.login?.device) {
             hww ++
             const device = wallet.login.device
             if (device.type === 'jade') {
@@ -336,3 +342,10 @@ function filterPromo(wallets, promo) {
     }
     return true
 }
+
+function jadeImage(device, index) {
+    const type = device.versionInfo?.BOARD_TYPE
+    const version = type === 'JADE_V2' ? 'jade2' : 'jade'
+    return `qrc:/png/${version}_${index}.png`
+}
+

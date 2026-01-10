@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import "jade.js" as JadeJS
+import "util.js" as UtilJS
 
 ColumnLayout {
     signal unlockFinished(Context context)
@@ -34,7 +34,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignCenter
         width: 352
         height: 240
-        foreground: JadeJS.image(self.device, 7)
+        foreground: UtilJS.jadeImage(self.device, 7)
     }
     Label {
         Layout.fillWidth: true

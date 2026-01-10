@@ -11,7 +11,7 @@ Image {
     property real border: 0
     property color borderColor: '#FFF'
     id: self
-    source: UtilJS.iconFor(asset)
+    source: UtilJS.assetIcon(asset)
     Layout.preferredHeight: size
     Layout.preferredWidth: size
     height: size

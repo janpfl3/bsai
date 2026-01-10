@@ -38,7 +38,7 @@ AbstractButton {
             source: {
                 if (self.anyLiquid) return 'qrc:/svg2/liquid_icon.svg'
                 if (self.anyAMP) return 'qrc:/svg2/amp_icon.svg'
-                return UtilJS.iconFor(self.asset)
+                return UtilJS.assetIcon(self.asset)
             }
         }
         Label {

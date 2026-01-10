@@ -239,7 +239,7 @@ Page {
                 anchors.right: parent.right
                 height: parent.height
                 width: Math.max(parent.width, 250) - 32
-                model: self.context.accounts.filter(account => !account.hidden)
+                model: UtilJS.accounts(self.context)
                 currentIndex: 0
                 spacing: 5
                 footer: Item {

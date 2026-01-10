@@ -8,7 +8,6 @@ qt_add_resources(${APP_TARGET} "qtquickcontrols2"
 
 SET(QML_FILES
     qml/analytics.js
-    qml/jade.js
     qml/util.js
     qml/GCard.qml
     qml/TwoFactorEnableDrawer.qml
@@ -261,7 +260,6 @@ SET(QML_FILES
     qml/AccountFilterPopup.qml
     qml/AssetFilterPopup.qml
     qml/AddressFilterPopup.qml
-    qml/SelectAccountPage.qml
     qml/SendDetailsPage.qml
     qml/AccountSelectorPage.qml
     qml/AssetSelectorPage.qml

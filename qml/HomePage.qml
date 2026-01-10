@@ -295,7 +295,7 @@ Page {
                 }
                 Label {
                     color: '#929292'
-                    text: UtilJS.formatTransactionTimestamp(delegate.transaction)
+                    text: UtilJS.formatTransactionTimestamp(delegate.transaction, locale)
                     font.pixelSize: 12
                     font.weight: 400
                     font.capitalization: Font.AllUppercase

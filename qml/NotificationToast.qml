@@ -505,7 +505,7 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
-                source: UtilJS.iconFor(toast.notification.network)
+                source: UtilJS.networkIcon(toast.notification.network)
             }
             
             ColumnLayout {

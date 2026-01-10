@@ -157,7 +157,7 @@ Pane {
 
                 Repeater {
                     id: singlesig_xpubs_repeater
-                    model: self.context.accounts.filter(account => !account.hidden && account.json.slip132_extended_pubkey)
+                    model: UtilJS.accounts(self.context).filter(account => account.json.slip132_extended_pubkey)
                     delegate: SinglesigAccountPane {
                         required property var modelData
                         account: modelData
@@ -211,7 +211,7 @@ Pane {
 
                 Repeater {
                     id: singlesig_descriptors_repeater
-                    model: self.context.accounts.filter(account => !account.hidden && account.json.core_descriptors)
+                    model: UtilJS.accounts(self.context).filter(account => account.json.core_descriptors)
                     delegate: SinglesigAccountPane {
                         required property var modelData
                         account: modelData
@@ -255,7 +255,7 @@ Pane {
                         Layout.alignment: Qt.AlignCenter
                         Layout.preferredHeight: 20
                         Layout.preferredWidth: 20
-                        source: UtilJS.iconFor(pane.account.network)
+                        source: UtilJS.accountIcon(pane.account)
                     }
                     Label {
                         Layout.fillWidth: true

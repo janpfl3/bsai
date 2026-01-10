@@ -389,7 +389,7 @@ AbstractDrawer {
                 Image {
                     Layout.preferredHeight: 24
                     Layout.preferredWidth: 24
-                    source: UtilJS.iconFor(notification.network)
+                    source: UtilJS.networkIcon(notification.network)
                 }
                 Label {
                     color: '#FFF'

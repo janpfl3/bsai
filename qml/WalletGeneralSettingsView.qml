@@ -4,6 +4,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "util.js" as UtilJS
+
 Pane {
     required property Context context
 
@@ -357,7 +359,7 @@ Pane {
             visible: supportId !== ''
 
             readonly property string supportId: {
-                return self.context.accounts
+                return UtilJS.accounts(self.context)
                     .filter(account => account.pointer === 0 && !account.network.electrum)
                     .map(account => `${account.network.data.bip21_prefix}:${account.json.receiving_id}`)
                     .join(',')

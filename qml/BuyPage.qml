@@ -45,9 +45,7 @@ StackViewPage {
     readonly property list<Account> accounts: {
         const asset = self.context.getOrCreateAsset('btc')
         const accounts = []
-        for (let i = 0; i < self.context.accounts.length; i++) {
-            const account = self.context.accounts[i]
-            if (account.hidden) continue
+        for (const account of UtilJS.accounts(self.context)) {
             if (account.network.liquid && asset.key === 'btc') continue
             if (!account.network.liquid && asset.key !== 'btc') continue
             const satoshi = account.json.satoshi[asset.id] ?? '0'
