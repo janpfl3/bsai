@@ -74,16 +74,20 @@ function segmentationSession(Settings, context) {
         const device = context.device
         if (device instanceof JadeDevice) {
             segmentation.brand = 'Blockstream'
-            segmentation.model = device.versionInfo.BOARD_TYPE
+            if (device.versionInfo) {
+                segmentation.model = device.versionInfo.BOARD_TYPE
+            }
             segmentation.firmware = device.version
             segmentation.connection = 'USB'
         }
         if (device instanceof LedgerDevice) {
             segmentation.brand = 'Ledger'
-            segmentation.model
-                = device.type === Device.LedgerNanoS ? 'Ledger Nano S'
-                : device.type === Device.LedgerNanoX ? 'Ledger Nano X'
-                : 'Unknown'
+            if (device) {
+                segmentation.model
+                    = device.type === Device.LedgerNanoS ? 'Ledger Nano S'
+                    : device.type === Device.LedgerNanoX ? 'Ledger Nano X'
+                    : 'Unknown'
+            }
             segmentation.firmware = device.appVersion
             segmentation.connection = 'USB'
         }
@@ -114,7 +118,9 @@ function segmentationFirmwareUpdate(Settings, device, firmware) {
     segmentation.app_settings = app_settings.join(',')
     if (device instanceof JadeDevice) {
         segmentation.brand = 'Blockstream'
-        segmentation.model = device.versionInfo.BOARD_TYPE
+        if (device.versionInfo) {
+            segmentation.model = device.versionInfo.BOARD_TYPE
+        }
         segmentation.firmware = device.version
         segmentation.connection = 'USB'
     }
