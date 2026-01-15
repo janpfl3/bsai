@@ -24,12 +24,12 @@ void SessionController::requestTwoFactorReset(const QString& email)
     auto group = new TaskGroup(this);
     auto request = new TwoFactorResetTask(email, m_session);
     auto load = new LoadTwoFactorConfigTask(m_session);
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         emit finished();
         auto notification = new TwoFactorResetNotification(m_session->network(), m_context);
         m_context->addNotification(notification);
     });
-    connect(request, &Task::failed, this, [=](const QString& error) {
+    connect(request, &Task::failed, this, [=, this](const QString& error) {
         emit failed(error);
     });
     request->then(load);
@@ -44,10 +44,10 @@ void SessionController::cancelTwoFactorReset()
     auto group = new TaskGroup(this);
     auto cancel = new TwoFactorCancelResetTask(m_session);
     auto load = new LoadTwoFactorConfigTask(m_session);
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         emit finished();
     });
-    connect(cancel, &Task::failed, this, [=](const QString& error) {
+    connect(cancel, &Task::failed, this, [=, this](const QString& error) {
         emit failed(error);
     });
     cancel->then(load);
@@ -74,7 +74,7 @@ void SessionController::setUnspentOutputsStatus(Account* account, const QVariant
     dispatcher()->add(group);
     m_monitor->add(group);
 
-    connect(get_unspent_outputs, &Task::finished, this, [=] {
+    connect(get_unspent_outputs, &Task::finished, this, [=, this] {
         for (const QJsonValue& assets_values : get_unspent_outputs->unspentOutputs()) {
             for (const QJsonValue& asset_value : assets_values.toArray()) {
                 auto output = account->getOrCreateOutput(asset_value.toObject());
@@ -90,10 +90,10 @@ void SessionController::sendRecoveryTransactions()
     if (!m_session) return;
     auto group = new TaskGroup(this);
     auto send_nlocktimes = new SendNLocktimesTask(m_session);
-    connect(send_nlocktimes, &Task::failed, this, [=](const QString& error) {
+    connect(send_nlocktimes, &Task::failed, this, [=, this](const QString& error) {
         emit failed(error);
     });
-    connect(send_nlocktimes, &Task::finished, this, [=]() {
+    connect(send_nlocktimes, &Task::finished, this, [=, this]() {
         emit finished();
     });
     group->add(send_nlocktimes);

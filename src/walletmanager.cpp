@@ -60,7 +60,7 @@ void WalletManager::loadWallets()
             QJsonObject data;
             if (!ReadWalletRecord(it.next(), id, data)) continue;
 
-            auto add = [=](const QString& type, const QJsonObject& login) {
+            auto add = [=, this](const QString& type, const QJsonObject& login) {
                 auto deployment = data.value("deployment").toString("mainnet");
                 const auto new_id = QUuid::createUuid().toString(QUuid::WithoutBraces);
                 QJsonArray hashes;
@@ -164,7 +164,7 @@ void WalletManager::addWallet(Wallet* wallet)
     emit walletAdded(wallet);
 
     // Not persisted wallets should be removed when context is lost
-    connect(wallet, &Wallet::contextChanged, this, [=] {
+    connect(wallet, &Wallet::contextChanged, this, [=, this] {
         if (!wallet->context() && !wallet->isPersisted()) {
             removeWallet(wallet);
         }

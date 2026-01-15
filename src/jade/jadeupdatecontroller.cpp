@@ -58,7 +58,7 @@ void JadeUnlockActivity::exec()
         } else {
             fail();
         }
-    }, [=](JadeAPI& jade, int id, const QJsonObject& req) {
+    }, [=, this](JadeAPI& jade, int id, const QJsonObject& req) {
         const auto params = Json::fromObject(req.value("params").toObject());
         GA_json* output;
         GA_http_request(session()->m_session, params.get(), &output);
@@ -95,7 +95,7 @@ void JadeUpdateActivity::exec()
         progress()->setIndeterminate(uploaded <= 12288);
         progress()->setValue(double(uploaded) / double(m_data.size()));
     };
-    auto done_cb = [=](const QVariantMap& result) {
+    auto done_cb = [=, this](const QVariantMap& result) {
         if (result["result"] == true) {
             finish();
         } else {
@@ -301,7 +301,7 @@ void JadeFirmwareController::check(JadeDevice* device)
     m_fetching ++;
     emit fetchingChanged();
 
-    connect(req, &HttpRequestActivity::finished, this, [=] {
+    connect(req, &HttpRequestActivity::finished, this, [=, this] {
         g_jade_firmware_results[type] = req->body().toJsonObject();
         m_index[type] = req->body().toJsonObject();
 
@@ -309,7 +309,7 @@ void JadeFirmwareController::check(JadeDevice* device)
         m_fetching --;
         emit fetchingChanged();
     });
-    connect(req, &HttpRequestActivity::failed, this, [=] {
+    connect(req, &HttpRequestActivity::failed, this, [=, this] {
         m_fetching --;
         emit fetchingChanged();
     });
@@ -324,10 +324,10 @@ HttpRequestActivity* JadeFirmwareController::fetch(const QString& type)
     req->setMethod("GET");
     req->addUrl(QString("%1/bin/%2/index.json").arg(JADE_FW_SERVER_HTTPS, type));
     req->addUrl(QString("%1/bin/%2/index.json").arg(JADE_FW_SERVER_ONION, type));
-    connect(req, &HttpRequestActivity::finished, this, [=] {
+    connect(req, &HttpRequestActivity::finished, this, [=, this] {
         g_jade_firmware_requests.remove(type);
     });
-    connect(req, &HttpRequestActivity::failed, this, [=] {
+    connect(req, &HttpRequestActivity::failed, this, [=, this] {
         g_jade_firmware_requests.remove(type);
     });
     HttpManager::instance()->exec(req);
@@ -376,14 +376,14 @@ void JadeFirmwareUpdateController::update()
     emit fetchingChanged();
 
     auto activity = new JadeBinaryRequestActivity("/bin/" + type + "/" + path, this);
-    connect(activity, &Activity::failed, this, [=] {
+    connect(activity, &Activity::failed, this, [=, this] {
         activity->deleteLater();
         m_fetching = false;
         emit fetchingChanged();
         m_updating = false;
         emit updatingChanged();
     });
-    connect(activity, &Activity::finished, this, [=] {
+    connect(activity, &Activity::finished, this, [=, this] {
         activity->deleteLater();
         m_fetching = false;
         emit fetchingChanged();
@@ -406,7 +406,7 @@ void JadeFirmwareUpdateController::install(const QByteArray& data)
     m_started = false;
     auto activity = new JadeUpdateActivity(m_firmware, data, m_device);
 
-    connect(activity->progress(), &Progress::valueChanged, this, [=] {
+    connect(activity->progress(), &Progress::valueChanged, this, [=, this] {
         m_progress = float(activity->progress()->value() - activity->progress()->from()) /
                      float(activity->progress()->to() - activity->progress()->from());
         emit progressChanged();
@@ -415,28 +415,28 @@ void JadeFirmwareUpdateController::install(const QByteArray& data)
             emit updateStarted();
         }
     });
-    connect(activity, &JadeUpdateActivity::cancelled, this, [=] {
+    connect(activity, &JadeUpdateActivity::cancelled, this, [=, this] {
         activity->deleteLater();
         m_updating = false;
         m_device->api()->m_locked = false;
         emit updatingChanged();
         emit updateCancelled();
     });
-    connect(activity, &JadeUpdateActivity::locked, this, [=] {
+    connect(activity, &JadeUpdateActivity::locked, this, [=, this] {
         activity->deleteLater();
         m_updating = false;
         m_device->api()->m_locked = false;
         emit updatingChanged();
         emit unlockRequired();
     });
-    connect(activity, &Activity::failed, this, [=] {
+    connect(activity, &Activity::failed, this, [=, this] {
         activity->deleteLater();
         m_updating = false;
         m_device->api()->m_locked = false;
         emit updatingChanged();
         emit updateFailed();
     });
-    connect(activity, &Activity::finished, this, [=] {
+    connect(activity, &Activity::finished, this, [=, this] {
         auto version_info = m_device->versionInfo();
         version_info["JADE_VERSION"] = m_firmware["version"];
         version_info["JADE_CONFIG"] = m_firmware["config"];
@@ -444,7 +444,7 @@ void JadeFirmwareUpdateController::install(const QByteArray& data)
             version_info["JADE_STATE"] = "LOCKED";
         }
         m_device->setVersionInfo(version_info);
-        QTimer::singleShot(5000, this, [=] {
+        QTimer::singleShot(5000, this, [=, this] {
             m_device->api()->m_locked = false;
             m_device->api()->disconnectDevice();
             m_device->api()->connectDevice();

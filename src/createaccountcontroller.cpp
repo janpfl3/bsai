@@ -92,7 +92,7 @@ void CreateAccountController::ensureSession()
     auto session_connect = new ConnectTask(session);
     auto session_register = session->registerUser();
     auto session_login = session->login();
-    connect(session_login, &Task::failed, this, [=](const QString& error) {
+    connect(session_login, &Task::failed, this, [=, this](const QString& error) {
         m_error = error;
     });
     auto load_accounts = new LoadAccountsTask(false, session);
@@ -110,10 +110,10 @@ void CreateAccountController::ensureSession()
     monitor()->add(group);
     dispatcher()->add(group);
 
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         emit failed(m_error);
     });
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         ensureAccount();
     });
 }
@@ -206,10 +206,10 @@ void CreateAccountController::ensureAccount()
         create_account->then(load_accounts);
         last = load_accounts;
 
-        connect(create_account, &Task::failed, this, [=](const QString& error) {
+        connect(create_account, &Task::failed, this, [=, this](const QString& error) {
             m_error = error;
         });
-        connect(create_account, &Task::finished, this, [=] {
+        connect(create_account, &Task::finished, this, [=, this] {
             m_account = m_context->getAccountByPointer(m_network, create_account->pointer());
         });
     }
@@ -228,11 +228,11 @@ void CreateAccountController::ensureAccount()
     monitor()->add(group);
     dispatcher()->add(group);
 
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         Q_ASSERT(m_account);
         emit created(m_account);
     });
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         emit failed(m_error);
     });
 }

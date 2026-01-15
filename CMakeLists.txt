@@ -9,7 +9,7 @@ option(ENABLE_SENTRY "Enable crash reports with sentry" OFF)
 
 set(APP_TARGET blockstream)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")

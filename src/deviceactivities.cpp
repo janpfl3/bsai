@@ -32,11 +32,11 @@ public:
         if (m_activity) return;
         if (m_queue.isEmpty()) return;
         m_activity = m_queue.dequeue();
-        QObject::connect(m_activity, &Activity::finished, [=]{
+        QObject::connect(m_activity, &Activity::finished, [=, this]{
             m_activity = nullptr;
             next();
         });
-        QObject::connect(m_activity, &Activity::failed, [=]{
+        QObject::connect(m_activity, &Activity::failed, [=, this]{
             m_activity = nullptr;
             next();
         });

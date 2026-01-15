@@ -19,7 +19,7 @@ ActivityManager* ActivityManager::instance()
 void ActivityManager::exec(Activity *activity)
 {
     insertActivity(activity);
-    connect(activity, &Activity::destroyed, [=] {
+    connect(activity, &Activity::destroyed, [=, this] {
        removeActivity(activity);
     });
     activity->exec();

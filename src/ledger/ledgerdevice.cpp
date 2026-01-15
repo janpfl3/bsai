@@ -18,9 +18,9 @@ LedgerDevice::LedgerDevice(DevicePrivate* d, QObject* parent)
     setConnected(true);
     d->q = this;
 
-    QTimer::singleShot(1000, this, [=] {
+    QTimer::singleShot(1000, this, [=, this] {
         auto activity = getApp();
-        QObject::connect(activity, &Activity::finished, this, [=] {
+        QObject::connect(activity, &Activity::finished, this, [=, this] {
             activity->deleteLater();
 
             const auto app_name = activity->name();

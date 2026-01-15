@@ -278,8 +278,8 @@ void TaskGroupMonitor::add(TaskGroup* group)
     m_groups.append(group);
     emit groupsChanged();
     connect(group, &TaskGroup::statusChanged, this, &TaskGroupMonitor::idleChanged);
-    connect(group, &TaskGroup::finished, this, [=] { remove(group); });
-    connect(group, &TaskGroup::failed, this, [=] { remove(group); });
+    connect(group, &TaskGroup::finished, this, [=, this] { remove(group); });
+    connect(group, &TaskGroup::failed, this, [=, this] { remove(group); });
 }
 
 void TaskGroupMonitor::remove(TaskGroup* group)
@@ -378,13 +378,13 @@ void AuthHandlerTask::update()
 
     using Watcher = QFutureWatcher<QPair<bool, QJsonObject>>;
     const auto watcher = new Watcher(this);
-    watcher->setFuture(QtConcurrent::run([=] {
+    watcher->setFuture(QtConcurrent::run([=, this] {
         const auto ok = call(m_session->m_session, &m_auth_handler);
         const auto error = gdk::get_thread_error_details();
         return qMakePair(ok, error);
     }));
 
-    connect(watcher, &Watcher::finished, this, [=] {
+    connect(watcher, &Watcher::finished, this, [=, this] {
         if (watcher->result().first) {
             next();
         } else {
@@ -401,10 +401,10 @@ void AuthHandlerTask::update()
 
 void AuthHandlerTask::requestCode(const QString &method)
 {
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         const auto rc = GA_auth_handler_request_code(m_auth_handler, method.toUtf8().constData());
         return rc == GA_OK;
-    }).then(this, [=](bool ok) {
+    }).then(this, [=, this](bool ok) {
         if (ok) {
             next();
         } else {
@@ -415,10 +415,10 @@ void AuthHandlerTask::requestCode(const QString &method)
 
 void AuthHandlerTask::resolveCode(const QByteArray& code)
 {
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         const auto rc = GA_auth_handler_resolve_code(m_auth_handler, code.constData());
         return rc == GA_OK;
-    }).then(this, [=](bool ok) {
+    }).then(this, [=, this](bool ok) {
         if (ok) {
             next();
         } else {
@@ -539,10 +539,10 @@ void AuthHandlerTask::handleResolveCode(const QJsonObject& result)
 
 void AuthHandlerTask::handleCall(const QJsonObject& result)
 {
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         const auto rc = GA_auth_handler_call(m_auth_handler);
         return rc == GA_OK;
-    }).then(this, [=](bool ok) {
+    }).then(this, [=, this](bool ok) {
         if (ok) {
             next();
         } else {
@@ -722,9 +722,9 @@ void LoadTwoFactorConfigTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         return gdk::get_twofactor_config(m_session->m_session);
-    }).then(this, [=](const QJsonObject& config) {
+    }).then(this, [=, this](const QJsonObject& config) {
         m_session->setConfig(config);
         setStatus(Status::Finished);
     });
@@ -743,9 +743,9 @@ void LoadCurrenciesTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         return gdk::get_available_currencies(m_session->m_session);
-    }).then(this, [=](const QJsonObject& currencies) {
+    }).then(this, [=, this](const QJsonObject& currencies) {
         m_session->setCurrencies(currencies);
         setStatus(Status::Finished);
     });
@@ -890,14 +890,14 @@ void GetWatchOnlyDetailsTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         char* data;
         const auto rc = GA_get_watch_only_username(m_session->m_session, &data);
         if (rc != GA_OK) return QString();
         const auto username = QString::fromUtf8(data);
         GA_destroy_string(data);
         return username;
-    }).then(this, [=](const QString& username) {
+    }).then(this, [=, this](const QString& username) {
         if (username.isNull()) {
             setStatus(Status::Failed);
         } else {
@@ -924,7 +924,7 @@ void LoadAssetsTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         if (m_refresh) {
             const auto params = Json::fromObject({{ "assets", true }, { "icons", true }});
             const auto rc = GA_refresh_assets(m_session->m_session, params.get());
@@ -948,7 +948,7 @@ void LoadAssetsTask::update()
             const auto asset_id = i.key();
             const auto data = i.value().toObject();
             const auto icon = icons.value(asset_id);
-            QMetaObject::invokeMethod(m_session, [=] {
+            QMetaObject::invokeMethod(m_session, [=, this] {
                 auto context = m_session->context();
                 if (!context) return;
                 auto asset = context->getOrCreateAsset(asset_id);
@@ -962,7 +962,7 @@ void LoadAssetsTask::update()
         GA_destroy_json((GA_json*) output);
 
         return true;
-    }).then(this, [=](bool ok) {
+    }).then(this, [=, this](bool ok) {
         setStatus(ok ? Status::Finished : Status::Failed);
     });
 }
@@ -1218,14 +1218,14 @@ void SendNLocktimesTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         const auto rc = GA_send_nlocktimes(m_session->m_session);
         if (rc == GA_OK) {
             return qMakePair(true, gdk::get_settings(m_session->m_session));
         } else {
             return qMakePair(false, gdk::get_thread_error_details());
         }
-    }).then(this, [=](QPair<bool, QJsonObject> result) {
+    }).then(this, [=, this](QPair<bool, QJsonObject> result) {
         if (result.first) {
             m_session->setSettings(result.second);
             setStatus(Status::Finished);
@@ -1571,7 +1571,7 @@ void ConnectTask::update()
         }
 
         if (m_timeout > 0) {
-            QTimer::singleShot(m_timeout, this, [=] {
+            QTimer::singleShot(m_timeout, this, [=, this] {
                 if (m_status == Status::Active && !m_session->isConnected()) {
                     qDebug() << Q_FUNC_INFO << m_session->network()->id() << "timeout after" << m_timeout;
                     setError("timeout error");
@@ -1582,7 +1582,7 @@ void ConnectTask::update()
 
         using Watcher = QFutureWatcher<QString>;
         const auto watcher = new Watcher(this);
-        watcher->setFuture(QtConcurrent::run([=] {
+        watcher->setFuture(QtConcurrent::run([=, this] {
             const auto params = get_params(m_session);
             const auto rc = GA_connect(m_session->m_session, Json::fromObject(params).get());
             if (rc == GA_OK) return QString();
@@ -1590,7 +1590,7 @@ void ConnectTask::update()
             return error.value("details").toString();
         }));
 
-        connect(watcher, &Watcher::finished, this, [=] {
+        connect(watcher, &Watcher::finished, this, [=, this] {
             if (m_status != Status::Active) return;
             const auto error = watcher->result();
             if (error.contains("session already connected")) {
@@ -1705,7 +1705,7 @@ void GetSystemMessageTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         char* message_text;
         const auto rc = GA_get_system_message(m_session->m_session, &message_text);
         if (rc != GA_OK) {
@@ -1717,7 +1717,7 @@ void GetSystemMessageTask::update()
         GA_destroy_string(message_text);
 
         return qMakePair(true, message);
-    }).then(this, [=](QPair<bool, QString> result) {
+    }).then(this, [=, this](QPair<bool, QString> result) {
         if (result.first) {
             m_message = result.second;
             setStatus(Status::Finished);
@@ -1753,7 +1753,7 @@ void HttpRequestTask::update()
 
     setStatus(Status::Active);
 
-    QtConcurrent::run([=] {
+    QtConcurrent::run([=, this] {
         GA_json* output;
         const auto params = Json::fromObject(m_params);
         const auto rc = GA_http_request(m_session->m_session, params.get(), &output);
@@ -1764,7 +1764,7 @@ void HttpRequestTask::update()
         } else {
             return qMakePair(false, QJsonObject{});
         }
-    }).then(this, [=](QPair<bool, QJsonObject> result) {
+    }).then(this, [=, this](QPair<bool, QJsonObject> result) {
         if (result.first) {
             m_response = result.second;
             setStatus(Status::Finished);
@@ -1850,7 +1850,7 @@ void LoadPaymentsTask::fetch(const QString &key) {
 
     QNetworkRequest req(url);
     auto reply = m_net->get(req);
-    connect(reply, &QNetworkReply::finished, this, [=] {
+    connect(reply, &QNetworkReply::finished, this, [=, this] {
         reply->deleteLater();
 
         if (reply->error() == QNetworkReply::NoError) {

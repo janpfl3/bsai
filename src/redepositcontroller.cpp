@@ -56,7 +56,7 @@ void RedepositController::update()
 
         if (m_utxos.isNull()) {
             auto task = new GetUnspentOutputsTask(0, false, m_account);
-            connect(task, &Task::finished, this, [=] {
+            connect(task, &Task::finished, this, [=, this] {
                 m_utxos = task->unspentOutputs();
                 emit utxosChanged();
                 task->deleteLater();
@@ -81,11 +81,11 @@ void RedepositController::update()
             }
         }
         auto task = new CreateRedepositTransactionTask(details, session);
-        connect(task, &CreateRedepositTransactionTask::finished, this, [=] {
+        connect(task, &CreateRedepositTransactionTask::finished, this, [=, this] {
             setTransaction(task->transaction());
             task->deleteLater();
         });
-        connect(task, &CreateRedepositTransactionTask::failed, this, [=](const QString& error) {
+        connect(task, &CreateRedepositTransactionTask::failed, this, [=, this](const QString& error) {
             setTransaction({{ "error", task->error() }});
             task->deleteLater();
         });

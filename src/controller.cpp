@@ -117,7 +117,7 @@ void Controller::deleteWallet()
     auto session = m_context->primarySession();
 
     auto delete_wallet = new DeleteWalletTask(session);
-    connect(delete_wallet, &Task::finished, this, [=] {
+    connect(delete_wallet, &Task::finished, this, [=, this] {
         WalletManager::instance()->removeWallet(m_context->wallet());
         QTimer::singleShot(500, m_context->wallet(), &Wallet::disconnect);
     });
@@ -132,7 +132,7 @@ void Controller::disableAllPins()
         group->add(task);
     }
     dispatcher()->add(group);
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         m_context->wallet()->setLogin(nullptr);
         emit finished();
     });
@@ -148,7 +148,7 @@ void Controller::changePin(const QString& pin)
     group->add(encrypt_with_pin);
     dispatcher()->add(group);
 
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         auto wallet = m_context->wallet();
         auto pin = new PinData(wallet);
         pin->setNetwork(session->network());
@@ -177,7 +177,7 @@ bool Controller::setAccountName(Account* account, QString name)
         { "name", name }
     }, session);
 
-    connect(task, &Task::finished, this, [=] {
+    connect(task, &Task::finished, this, [=, this] {
         account->setName(name);
     });
 
@@ -196,7 +196,7 @@ void Controller::setAccountHidden(Account* account, bool hidden)
         { "subaccount", static_cast<qint64>(account->pointer()) },
         { "hidden", hidden }
     }, session);
-    connect(task, &UpdateAccountTask::finished, this, [=] {
+    connect(task, &UpdateAccountTask::finished, this, [=, this] {
         account->setHidden(hidden);
     });
     dispatcher()->add(task);
@@ -231,7 +231,7 @@ void AddressValidationController::setInput(const QString& input)
             }
             auto details = QJsonObject{{ "addressees", QJsonArray{addressee}}, { "network", network->id() }};
             const auto task = new ValidateTask(details, session);
-            connect(task, &ValidateTask::finished, this, [=] {
+            connect(task, &ValidateTask::finished, this, [=, this] {
                 task->deleteLater();
                 m_results.append(task->result());
             });

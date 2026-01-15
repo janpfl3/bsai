@@ -68,7 +68,7 @@ void OutputListModel::fetch()
 
     auto get_unspent_outputs = new GetUnspentOutputsTask(0, true, m_account);
 
-    connect(get_unspent_outputs, &Task::finished, this, [=] {
+    connect(get_unspent_outputs, &Task::finished, this, [=, this] {
         beginResetModel();
         m_outputs.clear();
         for (const QJsonValue& assets_values : get_unspent_outputs->unspentOutputs()) {

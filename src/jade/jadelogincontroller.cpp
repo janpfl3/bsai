@@ -124,7 +124,7 @@ JadeHttpRequest *JadeController::handleHttpRequest(const QJsonObject& params)
         request->accept(false);
     } else {
         emit httpRequest(request);
-        connect(request, &JadeHttpRequest::accepted, [=](bool remember) {
+        connect(request, &JadeHttpRequest::accepted, [=, this](bool remember) {
             if (remember) {
                 AllowHost(request->hosts());
             }
@@ -161,7 +161,7 @@ void JadeSetupController::setup(const QString& deployment)
     group->add(connect_session);
     group->add(setup);
 
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         emit setupFinished(m_context);
     });
 
@@ -193,7 +193,7 @@ void JadeSetupTask::update()
     setStatus(Status::Active);
     device->setUnlocking(true);
 
-    device->api()->authUser(network->canonicalId(), [=](const QVariantMap& msg) {
+    device->api()->authUser(network->canonicalId(), [=, this](const QVariantMap& msg) {
         device->setUnlocking(false);
         if (msg.contains("result") && msg["result"] == true) {
             qDebug() << Q_FUNC_INFO;
@@ -206,10 +206,10 @@ void JadeSetupTask::update()
             // emit invalidPin();
             // update();
         }
-    }, [=](JadeAPI& /*jade*/, int id, const QJsonObject& req) {
-        QMetaObject::invokeMethod(m_controller, [=] {
+    }, [=, this](JadeAPI& /*jade*/, int id, const QJsonObject& req) {
+        QMetaObject::invokeMethod(m_controller, [=, this] {
             auto request = m_controller->handleHttpRequest(req.value("params").toObject());
-            QObject::connect(request, &JadeHttpRequest::finished, [=](const QJsonObject& res) {
+            QObject::connect(request, &JadeHttpRequest::finished, [=, this](const QJsonObject& res) {
                 m_controller->device()->api()->handleHttpResponse(id, req, res.value("body"));
             });
         }, Qt::QueuedConnection);
@@ -263,21 +263,21 @@ void JadeUnlockController::unlock()
     dispatcher()->add(group);
     monitor()->add(group);
 
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
 //        auto activity = m_device->getMasterBlindingKey();
 //        connect(activity, &Activity::finished, [this, activity] {
 //            activity->deleteLater();
 //            qDebug() << "master_blinding_key" << QString::fromLocal8Bit(activity->masterBlindingKey().toHex());
 //            Q_UNREACHABLE();
 //        });
-//        connect(activity, &Activity::failed, [=] {
+//        connect(activity, &Activity::failed, [=, this] {
 //            Q_UNREACHABLE();
 //        });
 //        ActivityManager::instance()->exec(activity);
         emit unlocked(m_context);
     });
 
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         emit invalidPin();
     });
 }
@@ -327,7 +327,7 @@ void JadeUnlockTask::update()
         return;
     }
 
-    device->api()->authUser(network->canonicalId(), [=](const QVariantMap& msg) {
+    device->api()->authUser(network->canonicalId(), [=, this](const QVariantMap& msg) {
         device->setUnlocking(false);
         if (msg.contains("result") && msg["result"] == true) {
             setStatus(Status::Finished);
@@ -335,10 +335,10 @@ void JadeUnlockTask::update()
             qDebug() << "INVALID PIN";
             setStatus(Status::Failed);
         }
-    }, [=](JadeAPI& jade, int id, const QJsonObject& req) {
-        QMetaObject::invokeMethod(m_controller, [=] {
+    }, [=, this](JadeAPI& jade, int id, const QJsonObject& req) {
+        QMetaObject::invokeMethod(m_controller, [=, this] {
             auto request = m_controller->handleHttpRequest(req.value("params").toObject());
-            QObject::connect(request, &JadeHttpRequest::finished, [=](const QJsonObject& res) {
+            QObject::connect(request, &JadeHttpRequest::finished, [=, this](const QJsonObject& res) {
                 m_controller->device()->api()->handleHttpResponse(id, req, res.value("body"));
             });
         }, Qt::QueuedConnection);
@@ -365,10 +365,10 @@ void JadeIdentifyTask::update()
 
     if (device->state() == JadeDevice::StateLocked) return;
     if (device->state() == JadeDevice::StateTemporary) {
-        device->api()->authUser(network->canonicalId(), [=](const QVariantMap& msg) {
+        device->api()->authUser(network->canonicalId(), [=, this](const QVariantMap& msg) {
             qDebug() << Q_FUNC_INFO;
             device->updateVersionInfo();
-        }, [=](JadeAPI& jade, int id, const QJsonObject& req) {
+        }, [=, this](JadeAPI& jade, int id, const QJsonObject& req) {
         });
         return;
     };
@@ -378,7 +378,7 @@ void JadeIdentifyTask::update()
     setStatus(Status::Active);
 
     auto activity = device->getWalletPublicKey(network, {});
-    QObject::connect(activity, &Activity::finished, this, [=] {
+    QObject::connect(activity, &Activity::finished, this, [=, this] {
         activity->deleteLater();
 
         const auto master_xpub = activity->publicKey();
@@ -398,7 +398,7 @@ void JadeIdentifyTask::update()
 
         setStatus(Status::Finished);
     });
-    QObject::connect(activity, &Activity::failed, this, [=] {
+    QObject::connect(activity, &Activity::failed, this, [=, this] {
         activity->deleteLater();
 
         setStatus(Status::Failed);
@@ -439,7 +439,7 @@ void JadeHttpRequest::accept(bool remember)
     auto req = new HttpRequestTask(m_params, m_session);
     context->dispatcher()->add(req);
 
-    connect(req, &HttpRequestTask::finished, this, [=] {
+    connect(req, &HttpRequestTask::finished, this, [=, this] {
         req->deleteLater();
         emit finished(req->response());
     });
@@ -485,7 +485,7 @@ void JadeQRController::processJadePin(const QJsonObject& result)
 
     m_network = m_context->primaryNetwork();
     auto request = handleHttpRequest(params);
-    QObject::connect(request, &JadeHttpRequest::finished, this, [=](const QJsonObject& res) {
+    QObject::connect(request, &JadeHttpRequest::finished, this, [=, this](const QJsonObject& res) {
         const auto params = res.value("body").toObject();
         QJsonObject data{
             { "id", "0" },
@@ -500,7 +500,7 @@ void JadeQRController::processJadePin(const QJsonObject& result)
         };
 
         auto task = new EncodeBCURTask(details, m_context->primarySession());
-        connect(task, &Task::finished, this, [=] {
+        connect(task, &Task::finished, this, [=, this] {
             emit resultEncoded(task->result().value("result").toObject());
         });
         dispatcher()->add(task);
@@ -533,7 +533,7 @@ void JadeGenuineCheckController::genuineCheck()
         m_session = m_context->getOrCreateSession(network);
     }
 
-    m_device->api()->signAttestation(challenge, [=](const QVariantMap& msg) {
+    m_device->api()->signAttestation(challenge, [=, this](const QVariantMap& msg) {
         if (msg.contains("result")) {
             const auto result = msg.value("result").toMap();
 

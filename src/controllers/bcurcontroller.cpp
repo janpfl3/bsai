@@ -39,26 +39,26 @@ void BCURController::process(const QString& data)
         dispatcher()->add(new ConnectTask(session));
 
         m_task = new DecodeBCURTask(data, session);
-        connect(m_task, &DecodeBCURTask::promptChanged, this, [=] {
+        connect(m_task, &DecodeBCURTask::promptChanged, this, [=, this] {
             auto prompt = qobject_cast<CodePrompt*>(m_task->prompt());
             if (!prompt) return;
 
-            connect(prompt, &CodePrompt::resultChanged, this, [=] {
+            connect(prompt, &CodePrompt::resultChanged, this, [=, this] {
                 setProgress(prompt->result().value("auth_data").toObject().value("estimated_progress").toInt());
                 next();
             });
             next();
         });
-        connect(m_task, &DecodeBCURTask::resultChanged, this, [=] {
+        connect(m_task, &DecodeBCURTask::resultChanged, this, [=, this] {
             next();
         });
-        connect(m_task, &DecodeBCURTask::finished, this, [=] {
+        connect(m_task, &DecodeBCURTask::finished, this, [=, this] {
             m_result = m_task->decodedResult();
             emit resultDecoded(m_result);
             m_task->deleteLater();
             m_task = nullptr;
         });
-        connect(m_task, &DecodeBCURTask::failed, this, [=] {
+        connect(m_task, &DecodeBCURTask::failed, this, [=, this] {
             emit dataDiscarded(data);
             m_task->deleteLater();
             m_task = nullptr;

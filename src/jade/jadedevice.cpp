@@ -400,7 +400,7 @@ JadeGetMasterBlindingKeyActivity::JadeGetMasterBlindingKeyActivity(JadeDevice* d
 }
 void JadeGetMasterBlindingKeyActivity::exec()
 {
-    m_device->api()->getMasterBlindingKey(m_only_if_silent, [=](const QVariantMap& msg) {
+    m_device->api()->getMasterBlindingKey(m_only_if_silent, [=, this](const QVariantMap& msg) {
         if (msg.contains("result")) {
             m_master_blinding_key = msg["result"].toByteArray();
             finish();
@@ -480,12 +480,12 @@ public:
             return;
         }
 
-        m_device->api()->getBlindingFactor(m_hash_prevouts, index, "ASSET", [=](const QVariantMap& msg) {
+        m_device->api()->getBlindingFactor(m_hash_prevouts, index, "ASSET", [=, this](const QVariantMap& msg) {
             m_asset_blinders.append(msg.value("result").toByteArray());
-            QMetaObject::invokeMethod(this, [=] {
-                m_device->api()->getBlindingFactor(m_hash_prevouts, index, "VALUE", [=](const QVariantMap& msg) {
+            QMetaObject::invokeMethod(this, [=, this] {
+                m_device->api()->getBlindingFactor(m_hash_prevouts, index, "VALUE", [=, this](const QVariantMap& msg) {
                     m_amount_blinders.append(msg.value("result").toByteArray());
-                    QMetaObject::invokeMethod(this, [=] {
+                    QMetaObject::invokeMethod(this, [=, this] {
                         processOutput(index + 1);
                     }, Qt::QueuedConnection);
                 });

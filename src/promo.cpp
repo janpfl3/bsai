@@ -185,7 +185,7 @@ void PromoResource::downloadNow()
         return;
     }
     m_reply = net->get(req);
-    connect(m_reply, &QNetworkReply::finished, this, [=] {
+    connect(m_reply, &QNetworkReply::finished, this, [=, this] {
         QFile file(path);
         if (file.open(QIODevice::WriteOnly)) {
             file.write(m_reply->readAll());

@@ -35,7 +35,7 @@ void TwoFactorController::change(const QJsonObject& details)
     auto change_twofactor = new ChangeTwoFactorTask(m_method, details, m_session);
     auto update_config = new LoadTwoFactorConfigTask(m_session);
 
-    connect(change_twofactor, &Task::failed, this, [=](const QString& error) {
+    connect(change_twofactor, &Task::failed, this, [=, this](const QString& error) {
         if (error.contains("invalid phone number", Qt::CaseInsensitive)) {
             emit failed("id_invalid_phone_number_format");
         } else {
@@ -54,7 +54,7 @@ void TwoFactorController::change(const QJsonObject& details)
     dispatcher()->add(group);
     m_monitor->add(group);
 
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         emit finished();
     });
 }
@@ -82,10 +82,10 @@ void TwoFactorController::changeLimits(const QString& satoshi)
     dispatcher()->add(group);
     m_monitor->add(group);
 
-    connect(change_twofactor_limits, &Task::failed, this, [=](const QString& error) {
+    connect(change_twofactor_limits, &Task::failed, this, [=, this](const QString& error) {
         emit failed(error);
     });
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         emit finished();
     });
 }
@@ -104,10 +104,10 @@ void TwoFactorController::setCsvTime(int value)
     dispatcher()->add(group);
     m_monitor->add(group);
 
-    connect(set_csv_time, &Task::failed, this, [=](const QString& error) {
+    connect(set_csv_time, &Task::failed, this, [=, this](const QString& error) {
         emit failed(error);
     });
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         emit finished();
     });
 }

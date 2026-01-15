@@ -146,12 +146,12 @@ Session* Context::getOrCreateSession(Network* network)
         session = SessionManager::instance()->create(network);
         session->setContext(this);
         session->setActive(true);
-        connect(session, &Session::autoLogoutTriggered, this, [=] {
+        connect(session, &Session::autoLogoutTriggered, this, [=, this] {
             if (m_wallet && !qobject_cast<DeviceData*>(m_wallet->login())) {
                 emit autoLogout();
             }
         });
-        connect(session, &Session::blockEvent, this, [=](const QJsonObject& event) {
+        connect(session, &Session::blockEvent, this, [=, this](const QJsonObject& event) {
             auto group = new TaskGroup(this);
             for (auto account : m_accounts) {
                 if (account->session() == session) {
@@ -172,7 +172,7 @@ Session* Context::getOrCreateSession(Network* network)
             }
             dispatcher()->add(group);
         });
-        connect(session, &Session::subaccountEvent, this, [=](const QJsonObject& event) {
+        connect(session, &Session::subaccountEvent, this, [=, this](const QJsonObject& event) {
             uint32_t pointer = event.value("pointer").toInteger();
             auto event_type = event.value("event_type").toString();
             if (event_type == "new") {
@@ -185,13 +185,13 @@ Session* Context::getOrCreateSession(Network* network)
                 }
             }
         });
-        connect(session, &Session::twoFactorResetEvent, this, [=](const QJsonObject& event) {
+        connect(session, &Session::twoFactorResetEvent, this, [=, this](const QJsonObject& event) {
             if (event.value("is_active").toBool()) {
                 auto notification = new TwoFactorResetNotification(session->network(), this);
                 addNotification(notification);
             }
         });
-        connect(session, &Session::transactionEvent, this, [=](const QJsonObject& event) {
+        connect(session, &Session::transactionEvent, this, [=, this](const QJsonObject& event) {
             auto group = new TaskGroup(this);
             for (auto pointer : event.value("subaccounts").toArray()) {
                 auto account = getOrCreateAccount(network, quint32(pointer.toInteger()));
@@ -241,7 +241,7 @@ void Context::setDevice(Device* device)
     if (m_device == device) return;
     m_device = device;
     if (m_device) {
-        QObject::connect(m_device, &QObject::destroyed, this, [=] {
+        QObject::connect(m_device, &QObject::destroyed, this, [=, this] {
             setDevice(nullptr);
         });
         if (m_wallet) {
@@ -344,7 +344,7 @@ Payment* Context::getOrCreatePayment(const QString &id)
         item->setData(QVariant::fromValue(payment), Qt::UserRole);
         item->setData(payment->updatedAt(), Qt::UserRole + 1);
 
-        connect(payment, &Payment::updatedAtChanged, this, [=] {
+        connect(payment, &Payment::updatedAtChanged, this, [=, this] {
             item->setData(payment->updatedAt(), Qt::UserRole + 1);
         });
 
@@ -375,7 +375,7 @@ void Context::addNotification(Notification* notification)
     m_notifications.append(notification);
     emit notificationsChanged();
     emit notificationAdded(notification);
-    connect(notification, &Notification::triggered, this, [=] {
+    connect(notification, &Notification::triggered, this, [=, this] {
         emit notificationTriggered(notification);
     });
 }
@@ -557,7 +557,7 @@ void Context::loadNetwork(TaskGroup *group, Network *network)
     group->add(sync_accounts);
     group->add(load_accounts2);
 
-    connect(load_accounts2, &Task::finished, this, [=] {
+    connect(load_accounts2, &Task::finished, this, [=, this] {
         if (network->isElectrum()) {
             bool has_native_segwit = false;
 
@@ -575,7 +575,7 @@ void Context::loadNetwork(TaskGroup *group, Network *network)
 
         loadNetwork2(group, network);
     });
-    connect(load_accounts2, &Task::failed, this, [=](auto error) {
+    connect(load_accounts2, &Task::failed, this, [=, this](auto error) {
         // TODO: deal with these errors
         qDebug() << Q_FUNC_INFO << error;
     });
@@ -599,7 +599,7 @@ void Context::createStandardAccount(TaskGroup *group, Network *network)
 
     auto create_account = new CreateAccountTask(details, session);
 
-    connect(create_account, &Task::finished, this, [=] {
+    connect(create_account, &Task::finished, this, [=, this] {
         auto account = getAccountByPointer(network, create_account->pointer());
         auto load_account_task = new LoadAccountTask(create_account->pointer(), session);
         auto load_balance_task = new LoadBalanceTask(account);
@@ -622,7 +622,7 @@ void Context::loadNetwork2(TaskGroup *group, Network *network)
     }
 
     auto load_accounts = new LoadAccountsTask(false, session);
-    connect(load_accounts, &Task::finished, this, [=] {
+    connect(load_accounts, &Task::finished, this, [=, this] {
         for (auto account : load_accounts->accounts()) {
             group->add(new LoadBalanceTask(account));
             fetchCoins(group, account);
@@ -654,7 +654,7 @@ void Context::loginNetwork(TaskGroup *group, Network *network)
         group->add(load_assets);
     }
 
-    connect(connect_session, &Task::failed, this, [=](const QString& error) {
+    connect(connect_session, &Task::failed, this, [=, this](const QString& error) {
         if (error == "timeout error") {
             // TODO
             // setError("session", "id_connection_failed");
@@ -667,7 +667,7 @@ void Context::loginNetwork(TaskGroup *group, Network *network)
         }
     });
 
-    connect(login, &Task::finished, this, [=] {
+    connect(login, &Task::finished, this, [=, this] {
         if (m_outage_notification) {
             m_outage_notification->remove(network);
             if (m_outage_notification->isEmpty()) {
@@ -679,7 +679,7 @@ void Context::loginNetwork(TaskGroup *group, Network *network)
         loadNetwork(group, network);
     });
 
-    connect(login, &Task::failed, this, [=](const QString& error) {
+    connect(login, &Task::failed, this, [=, this](const QString& error) {
         qDebug() << "ignoring login failed for network" << network->id() << "errr:" << error;
         releaseSession(session);
     });
@@ -694,7 +694,7 @@ void Context::refreshAccounts()
     group->setName("id_loading_accounts");
     for (auto session : m_sessions_list) {
         auto load_accounts = new LoadAccountsTask(!isWatchonly(), session);
-        connect(load_accounts, &Task::finished, this, [=] {
+        connect(load_accounts, &Task::finished, this, [=, this] {
             for (auto account : load_accounts->accounts()) {
                 group->add(new LoadBalanceTask(account));
             }
@@ -928,7 +928,7 @@ void TransactionModel::exportToFile()
     dialog->setAcceptMode(QFileDialog::AcceptSave);
     dialog->setFileMode(QFileDialog::AnyFile);
     dialog->selectFile(suggestion);
-    connect(dialog, &QFileDialog::fileSelected, this, [=](const QString& filename) {
+    connect(dialog, &QFileDialog::fileSelected, this, [=, this](const QString& filename) {
         if (filename.isEmpty()) return;
 
         const auto wallet = context()->wallet();
@@ -1087,7 +1087,7 @@ bool TransactionModel::filterTextAcceptsTransaction(Transaction* transaction) co
 void TransactionModel::update(Context* context)
 {
     setSourceModel(context->transactionModel());
-    connect(context, &Context::transactionUpdated, this, [=] {
+    connect(context, &Context::transactionUpdated, this, [=, this] {
         sort(0, Qt::DescendingOrder);
     });
 }
@@ -1111,7 +1111,7 @@ void AddressModel::exportToFile()
     dialog->setAcceptMode(QFileDialog::AcceptSave);
     dialog->setFileMode(QFileDialog::AnyFile);
     dialog->selectFile(suggestion);
-    connect(dialog, &QFileDialog::fileSelected, this, [=](const QString& filename) {
+    connect(dialog, &QFileDialog::fileSelected, this, [=, this](const QString& filename) {
         if (filename.isEmpty()) return;
 
         QStringList fields = QStringList{"network", "account", "address", "tx_count"};
@@ -1203,7 +1203,7 @@ bool AddressModel::filterHasTransactionAcceptsAddress(Address* address) const
 void AddressModel::update(Context* context)
 {
     setSourceModel(context->addressModel());
-    connect(context, &Context::addressUpdated, this, [=] {
+    connect(context, &Context::addressUpdated, this, [=, this] {
         sort(0, Qt::DescendingOrder);
     });
 }
@@ -1230,7 +1230,7 @@ bool CoinModel::filterAcceptsRow(int source_row, const QModelIndex& source_paren
 void CoinModel::update(Context* context)
 {
     setSourceModel(context->coinModel());
-    connect(context, &Context::coinUpdated, this, [=] {
+    connect(context, &Context::coinUpdated, this, [=, this] {
         sort(0, Qt::DescendingOrder);
     });
 }

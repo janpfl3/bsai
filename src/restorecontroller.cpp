@@ -44,7 +44,7 @@ void RestoreController::restore(const QString& deployment)
     setContext(ContextManager::instance()->create(deployment, false));
 
     auto monitor = new TaskGroupMonitor(this);
-    connect(monitor, &TaskGroupMonitor::allFinishedOrFailed, this, [=] {
+    connect(monitor, &TaskGroupMonitor::allFinishedOrFailed, this, [=, this] {
         if (m_wallet) {
             if (m_wallet->xpubHashId() == m_context->xpubHashId()) {
                 m_context->setWallet(m_wallet);
@@ -134,7 +134,7 @@ TaskGroup* RestoreController::check(Network* network)
 
     dispatcher()->add(group);
 
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         m_context->releaseSession(session);
     });
 

@@ -55,12 +55,12 @@ void SignMessageController::sign()
 
     auto task = new SignMessageTask(m_message, m_address);
 
-    connect(task, &Task::finished, this, [=] {
+    connect(task, &Task::finished, this, [=, this] {
         setSignature(task->signature());
         emit accepted(task->signature());
     });
 
-    connect(task, &Task::failed, this, [=] {
+    connect(task, &Task::failed, this, [=, this] {
         emit rejected();
     });
 

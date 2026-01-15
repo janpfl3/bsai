@@ -52,7 +52,7 @@ void ExportAddressesController::nextPage()
 {
     qDebug() << Q_FUNC_INFO << m_last_pointer;
     auto task = new GetAddressesTask(m_last_pointer, m_account);
-    connect(task, &Task::finished, this, [=] {
+    connect(task, &Task::finished, this, [=, this] {
         m_last_pointer = task->lastPointer();
 
         for (QJsonValue data : task->addresses()) {

@@ -87,7 +87,7 @@ void ApplicationController::reportCrashes()
 
             auto reply = net->post(req, envelope);
 
-            connect(reply, &QNetworkReply::finished, this, [=] {
+            connect(reply, &QNetworkReply::finished, this, [=, this] {
                 qDebug() << Q_FUNC_INFO << reply->readAll();
                 reply->deleteLater();
             });

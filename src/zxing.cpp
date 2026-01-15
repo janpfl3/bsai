@@ -31,7 +31,7 @@ void ZXingDetector::videoFrameChanged(const QVideoFrame& frame)
 
     auto current = m_results;
     m_watcher = new QFutureWatcher<QVariantList>(this);
-    m_watcher->setFuture(QtConcurrent::run([=] {
+    m_watcher->setFuture(QtConcurrent::run([=, this] {
         auto results = current;
         auto image = frame.toImage().convertedTo(QImage::Format_Grayscale8);
         ZXing::ReaderOptions options;
@@ -78,7 +78,7 @@ void ZXingDetector::videoFrameChanged(const QVideoFrame& frame)
         return results;
     }));
 
-    connect(m_watcher, &QFutureWatcher<QVariantList>::finished, this, [=] {
+    connect(m_watcher, &QFutureWatcher<QVariantList>::finished, this, [=, this] {
         m_results = m_watcher->result();
         emit resultsChanged();
         delete m_watcher;

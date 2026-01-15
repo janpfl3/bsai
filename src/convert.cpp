@@ -85,11 +85,11 @@ void Convert::clearInput()
 
 void Convert::setSession(Session* session)
 {
-    connect(session, &Session::settingsChanged, this, [=] {
+    connect(session, &Session::settingsChanged, this, [=, this] {
         emit fiatChanged();
         invalidate();
     });
-    connect(session, &Session::tickerEvent, this, [=] {
+    connect(session, &Session::tickerEvent, this, [=, this] {
         emit fiatChanged();
         invalidate();
     });
@@ -301,7 +301,7 @@ void Convert::update()
     using Watcher = QFutureWatcher<QJsonObject>;
     const auto watcher = new Watcher(this);
     const auto session = m_context->primarySession();
-    watcher->setFuture(QtConcurrent::run([=] {
+    watcher->setFuture(QtConcurrent::run([=, this] {
         GA_json* output;
         const int rc = GA_convert_amount(session->m_session, Json::fromObject(details).get(), &output);
         if (rc == GA_OK) {
@@ -315,7 +315,7 @@ void Convert::update()
         }
     }));
 
-    connect(watcher, &Watcher::finished, this, [=] {
+    connect(watcher, &Watcher::finished, this, [=, this] {
         watcher->deleteLater();
         QJsonObject result = watcher->result();
         auto satoshi = result.value("satoshi");

@@ -18,12 +18,12 @@ void WatchOnlyController::update(const QString& username, const QString& passwor
 
     auto task = new RegisterUserTask({{ "username", username }, { "password", password }}, {}, m_session);
 
-    connect(task, &Task::finished, this, [=] {
+    connect(task, &Task::finished, this, [=, this] {
         m_session->setUsername(username);
         emit finished();
     });
 
-    connect(task, &Task::failed, this, [=] {
+    connect(task, &Task::failed, this, [=, this] {
         emit failed(task->error());
     });
 

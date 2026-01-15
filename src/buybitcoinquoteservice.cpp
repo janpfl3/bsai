@@ -703,7 +703,7 @@ void PaymentSyncController::sync()
 {
     qDebug() << Q_FUNC_INFO;
     auto task = new LoadPaymentsTask(qmlEngine(this)->networkAccessManager(), context());
-    connect(task, &Task::finished, this, [=] {
+    connect(task, &Task::finished, this, [=, this] {
         for (const auto payment : context()->m_payments.values()) {
             payment->refresh();
         }

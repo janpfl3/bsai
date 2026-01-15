@@ -43,7 +43,7 @@ AppUpdateController::AppUpdateController(QObject *parent)
 void AppUpdateController::checkNow()
 {
     auto activity = new CheckForUpdatesActivity(this);
-    connect(activity, &CheckForUpdatesActivity::finished, this, [=] {
+    connect(activity, &CheckForUpdatesActivity::finished, this, [=, this] {
         activity->deleteLater();
         const auto version = activity->body().toJsonObject().value("version");
         if (version.isString()) {
@@ -62,7 +62,7 @@ void AppUpdateController::checkNow()
             qInfo() << "failed to check new version";
         }
     });
-    connect(activity, &CheckForUpdatesActivity::failed, this, [=] {
+    connect(activity, &CheckForUpdatesActivity::failed, this, [=, this] {
         activity->deleteLater();
         qInfo() << "failed to fetch new version";
     });

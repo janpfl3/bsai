@@ -31,7 +31,7 @@ void ExportTransactionsController::setAccount(Account* account)
     emit accountChanged();
 
     auto wallet = account->context()->wallet();
-    connect(wallet, &Wallet::contextChanged, this, [=] {
+    connect(wallet, &Wallet::contextChanged, this, [=, this] {
         if (!wallet->context()) {
             emit finished();
         }
@@ -87,7 +87,7 @@ void ExportTransactionsController::saveToFile(const QString& file)
         m_lines.append(m_fields.join(m_separator));
     }
 
-    QTimer::singleShot(100, this, [=] { nextPage(); });
+    QTimer::singleShot(100, this, [=, this] { nextPage(); });
 }
 
 void ExportTransactionsController::nextPage()
@@ -100,7 +100,7 @@ void ExportTransactionsController::nextPage()
     const auto unit = session->unit().toLower().replace("µbtc", "ubtc");
     const auto display_unit = session->displayUnit();
     auto get_transactions = new GetTransactionsTask(m_offset, m_count, m_account);
-    connect(get_transactions, &Task::finished, this, [=] {
+    connect(get_transactions, &Task::finished, this, [=, this] {
         const auto transactions = get_transactions->transactions();
         for (auto value : transactions) {
             auto data = value.toObject();
@@ -170,7 +170,7 @@ void ExportTransactionsController::nextPage()
             emit saved(info.baseName(), QUrl::fromLocalFile(info.absoluteFilePath()));
         } else {
             m_offset += m_count;
-            QTimer::singleShot(10, this, [=] { nextPage(); });
+            QTimer::singleShot(10, this, [=, this] { nextPage(); });
         }
     });
 

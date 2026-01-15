@@ -103,7 +103,7 @@ void CreateTransactionController::update()
 
         if (!m_previous_transaction && m_utxos.isNull()) {
             auto task = new GetUnspentOutputsTask(0, false, m_account);
-            connect(task, &Task::finished, this, [=] {
+            connect(task, &Task::finished, this, [=, this] {
                 m_utxos = task->unspentOutputs();
                 emit utxosChanged();
                 task->deleteLater();
@@ -165,13 +165,13 @@ void CreateTransactionController::update()
             }
             auto task = new CreateTransactionTask(details, session);
             const auto seq = ++m_seq;
-            connect(task, &CreateTransactionTask::finished, this, [=] {
+            connect(task, &CreateTransactionTask::finished, this, [=, this] {
                 if (m_seq == seq) {
                     setTransaction(task->transaction());
                     task->deleteLater();
                 }
             });
-            connect(task, &CreateTransactionTask::failed, this, [=](const QString& error) {
+            connect(task, &CreateTransactionTask::failed, this, [=, this](const QString& error) {
                 if (m_seq == seq) {
                     qDebug() << error;
                     task->deleteLater();

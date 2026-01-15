@@ -272,7 +272,7 @@ void JadeAPI::send(const QCborMap &msg)
     int id = msg["id"].toString().toInt();
     int timeout = m_msg_timeout.value(id, 0);
     m_msg_inflight.insert(id);
-    if (timeout > 0) QTimer::singleShot(timeout, this, [=] {
+    if (timeout > 0) QTimer::singleShot(timeout, this, [=, this] {
         // Get (ie. remove) the response handler for that id from the map of registered handlers
         const ResponseHandler handler = m_responseHandlers.take(id);
         if (!handler) return;
@@ -321,7 +321,7 @@ int JadeAPI::setMnemonic(const QString& mnemonic, const ResponseHandler &cb)
 int JadeAPI::ping(const ResponseHandler &cb)
 {
     if (m_locked) {
-        QMetaObject::invokeMethod(this, [=] {
+        QMetaObject::invokeMethod(this, [=, this] {
             cb({{ "result", 1 }});
         }, Qt::QueuedConnection);
         return 0;
@@ -337,7 +337,7 @@ int JadeAPI::ping(const ResponseHandler &cb)
 int JadeAPI::getVersionInfo(bool nonblocking, const ResponseHandler &cb)
 {
     if (m_locked) {
-        QMetaObject::invokeMethod(this, [=] {
+        QMetaObject::invokeMethod(this, [=, this] {
             cb({});
         }, Qt::QueuedConnection);
         return 0;

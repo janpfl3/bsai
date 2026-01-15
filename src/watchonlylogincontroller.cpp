@@ -16,7 +16,7 @@ WatchOnlyLoginController::WatchOnlyLoginController(QObject* parent)
 {
 //    new WatchOnlyCreateWalletTask(this);
 
-//    connect(m_dispatcher, &TaskDispatcher::finished, this, [=] {
+//    connect(m_dispatcher, &TaskDispatcher::finished, this, [=, this] {
 //        if (m_wallet) {
 //            m_wallet->setContext(m_context);
 //            WalletManager::instance()->addWallet(m_wallet);
@@ -24,7 +24,7 @@ WatchOnlyLoginController::WatchOnlyLoginController(QObject* parent)
 //        }
 //    });
 
-//    connect(this, &LoginController::walletChanged, this, [=] {
+//    connect(this, &LoginController::walletChanged, this, [=, this] {
 //        if (m_wallet && m_wallet->isWatchOnly()) {
 //            setUsername(m_wallet->username());
 //            setNetwork(m_wallet->network());
@@ -129,7 +129,7 @@ void WatchOnlyLoginController::login(LoginTask* login_task)
     auto connect_session = new ConnectTask(session);
     auto create_wallet = new WatchOnlyCreateWalletTask(this);
 
-    connect(connect_session, &Task::failed, this, [=](const QString& error) {
+    connect(connect_session, &Task::failed, this, [=, this](const QString& error) {
         if (!m_error.isEmpty()) return;
         if (error == "timeout error") {
             m_error = "id_connection_failed";
@@ -137,7 +137,7 @@ void WatchOnlyLoginController::login(LoginTask* login_task)
             m_error = error;
         }
     });
-    connect(login_task, &Task::failed, this, [=](const QString& error) {
+    connect(login_task, &Task::failed, this, [=, this](const QString& error) {
         if (!m_error.isEmpty()) return;
         m_error = error;
     });
@@ -157,7 +157,7 @@ void WatchOnlyLoginController::login(LoginTask* login_task)
     m_monitor->add(group);
 
     connect(group, &TaskGroup::finished, this, &WatchOnlyLoginController::loginFinished);
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         emit loginFailed(m_error);
     });
 }

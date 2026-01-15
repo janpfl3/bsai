@@ -359,7 +359,7 @@ LedgerGetBlindingFactorsActivity::LedgerGetBlindingFactorsActivity(const QJsonAr
     , m_outputs(outputs)
     , m_batch(new CommandBatch)
 {
-    connect(m_batch, &Command::finished, this, [=] {
+    connect(m_batch, &Command::finished, this, [=, this] {
         finish();
     });
 }
@@ -409,12 +409,12 @@ void LedgerGetBlindingFactorsActivity::exec()
         const auto output = m_outputs.at(i).toObject();
         if (output.contains("blinding_key")) {
             auto cbfa = getBlindingFactor(i, BTCHIP_BLINDING_FACTOR_ASSET);
-            connect(cbfa, &Command::finished, this, [=] {
+            connect(cbfa, &Command::finished, this, [=, this] {
                 m_abfs[i] = ReverseByteArray(cbfa->m_response);
             });
 
             auto cbfv = getBlindingFactor(i, BTCHIP_BLINDING_FACTOR_AMOUNT);
-            connect(cbfv, &Command::finished, this, [=] {
+            connect(cbfv, &Command::finished, this, [=, this] {
                 m_vbfs[i] = ReverseByteArray(cbfv->m_response);
             });
         }

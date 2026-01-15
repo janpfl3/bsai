@@ -95,7 +95,7 @@ void ReceiveAddressController::generate()
 
     setGenerating(true);
     const auto get_receive_address = new GetReceiveAddressTask(m_account);
-    connect(get_receive_address, &Task::finished, this, [=] {
+    connect(get_receive_address, &Task::finished, this, [=, this] {
         const auto data = get_receive_address->result().value("result").toObject();
         m_address = m_account->getOrCreateAddress(data);
 

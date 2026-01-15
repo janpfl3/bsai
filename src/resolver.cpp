@@ -195,17 +195,17 @@ void BlindingNoncesResolver::resolve()
     const auto script = QByteArray::fromHex(m_scripts.at(index).toString().toLocal8Bit());
 
     auto activity = device()->getBlindingNonce(pubkey, script);
-    connect(activity, &Activity::finished, this, [=] {
+    connect(activity, &Activity::finished, this, [=, this] {
         activity->deleteLater();
         m_nonces.append(QString::fromLocal8Bit(activity->nonce().toHex()));
         if (m_blinding_keys_required) {
             auto activity = device()->getBlindingKey(m_scripts.at(index).toString());
-            connect(activity, &Activity::finished, this, [=] {
+            connect(activity, &Activity::finished, this, [=, this] {
                 activity->deleteLater();
                 m_blinding_keys.append(QString::fromLocal8Bit(activity->publicKey().toHex()));
                 resolve();
             });
-            connect(activity, &Activity::failed, this, [=] {
+            connect(activity, &Activity::failed, this, [=, this] {
                 activity->deleteLater();
                 emit failed();
             });
@@ -306,7 +306,7 @@ void GetBlindingFactorsResolver::resolve()
     const auto outputs = m_required_data.value("transaction_outputs").toArray();
 
     auto activity = device()->getBlindingFactors(inputs, outputs);
-    connect(activity, &Activity::finished, this, [=] {
+    connect(activity, &Activity::finished, this, [=, this] {
         activity->deleteLater();
 
         QJsonArray assetblinders;

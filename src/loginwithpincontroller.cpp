@@ -53,7 +53,7 @@ void LoginController::loginWithPin(const QString& pin)
     auto session = m_context->getOrCreateSession(network);
     auto login_task = new LoginTask(pin, pin_data->data(), session);
 
-    connect(login_task, &Task::failed, this, [=](const QString& error) {
+    connect(login_task, &Task::failed, this, [=, this](const QString& error) {
         if (error == "id_invalid_pin") {
             pin_data->decrementAttempts();
             emit invalidPin();
@@ -62,7 +62,7 @@ void LoginController::loginWithPin(const QString& pin)
         }
     });
 
-    connect(login_task, &Task::finished, this, [=] {
+    connect(login_task, &Task::finished, this, [=, this] {
         pin_data->resetAttempts();
     });
 
@@ -145,7 +145,7 @@ void LoginController::loginWithDevice(Device* device)
     auto session = m_context->primarySession();
     auto login_task = new LoginTask(hw_device, session);
 
-    connect(login_task, &Task::finished, this, [=] {
+    connect(login_task, &Task::finished, this, [=, this] {
         m_context->m_hw_device = hw_device;
 
         device->createSession(m_context->xpubHashId());
@@ -217,14 +217,14 @@ void LoginController::login(LoginTask* login_task, const QString& passphrase)
 
     dispatcher()->add(group);
 
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         emit loginFailed(m_error);
         if (m_error == "id_connection_failed") {
             m_context->deleteLater();
             setContext(nullptr);
         }
     });
-    connect(group, &TaskGroup::finished, this, [=] {
+    connect(group, &TaskGroup::finished, this, [=, this] {
         if (passphrase.isEmpty()) {
             m_context->setWallet(m_wallet);
             emit loginFinished(m_context);
@@ -251,7 +251,7 @@ void LoginController::login(TaskGroup* group, LoginTask* login_task)
     connect_session->then(login_task);
     login_task->then(get_credentials);
 
-    connect(connect_session, &Task::failed, this, [=](const QString& error) {
+    connect(connect_session, &Task::failed, this, [=, this](const QString& error) {
         if (error == "timeout error") {
             m_error = "id_connection_failed";
         }
@@ -285,10 +285,10 @@ LoadController::LoadController(QObject* parent)
 {
     setMonitor(new TaskGroupMonitor(this));
 
-    connect(m_monitor, &TaskGroupMonitor::allFinishedOrFailed, this, [=] {
+    connect(m_monitor, &TaskGroupMonitor::allFinishedOrFailed, this, [=, this] {
         auto group = m_context->cleanAccounts();
         dispatcher()->add(group);
-        connect(group, &TaskGroup::finished, this, [=] {
+        connect(group, &TaskGroup::finished, this, [=, this] {
             auto wallet = m_context->wallet();
             Q_ASSERT(wallet);
             WalletManager::instance()->addWallet(wallet);
@@ -389,7 +389,7 @@ void PinDataController::update(const QString& pin)
     Q_ASSERT(session);
 
     auto task = new EncryptWithPinTask(m_context->credentials(), pin, session);
-    connect(task, &Task::finished, this, [=] {
+    connect(task, &Task::finished, this, [=, this] {
         auto wallet = m_context->wallet();
         auto pin = new PinData(wallet);
         pin->setNetwork(session->network());
@@ -398,7 +398,7 @@ void PinDataController::update(const QString& pin)
         wallet->save();
         emit finished();
     });
-    connect(task, &Task::failed, this, [=] {
+    connect(task, &Task::failed, this, [=, this] {
         emit updateFailed(task->error());
     });
     dispatcher()->add(task);

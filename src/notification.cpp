@@ -68,13 +68,13 @@ void NotificationsController::reset()
     }
     if (!m_context) return;
 
-    connect(m_context, &Context::notificationAdded, this, [=](Notification* notification) {
+    connect(m_context, &Context::notificationAdded, this, [=, this](Notification* notification) {
         auto item = new QStandardItem();
         item->setData(QVariant::fromValue(notification));
         m_items.insert(notification, item);
         m_model->insertRow(0, item);
     });
-    connect(m_context, &Context::notificationRemoved, this, [=](Notification* notification) {
+    connect(m_context, &Context::notificationRemoved, this, [=, this](Notification* notification) {
         auto item = m_items.take(notification);
         if (!item) return;
         m_model->takeRow(item->row());
@@ -89,14 +89,14 @@ void NotificationsController::reset()
 
     for (auto session : m_context->getSessions()) {
         auto task = new GetSystemMessageTask(session);
-        connect(task, &Task::finished, [=] {
+        connect(task, &Task::finished, [=, this] {
             task->deleteLater();
             if (!task->message().isEmpty()) {
                 auto notification = new SystemNotification(task->message(), session->network(), m_context);
                 m_context->addNotification(notification);
             }
         });
-        connect(task, &Task::failed, [=] {
+        connect(task, &Task::failed, [=, this] {
             task->deleteLater();
         });
         dispatcher()->add(task);
@@ -150,16 +150,16 @@ void SystemNotification::accept(TaskGroupMonitor* monitor)
     setBusy(true);
     auto session = m_context->getOrCreateSession(m_network);
     auto ack = new AckSystemMessageTask(m_message, session);
-    connect(ack, &Task::finished, this, [=] {
+    connect(ack, &Task::finished, this, [=, this] {
         ack->deleteLater();
         setAccepted(true);
         auto get = new GetSystemMessageTask(session);
-        connect(get, &Task::failed, this, [=] {
+        connect(get, &Task::failed, this, [=, this] {
             get->deleteLater();
             setBusy(false);
             setDismissable(true);
         });
-        connect(get, &Task::finished, this, [=] {
+        connect(get, &Task::finished, this, [=, this] {
             get->deleteLater();
             const auto message = get->message();
             if (!message.isEmpty()) {
@@ -174,7 +174,7 @@ void SystemNotification::accept(TaskGroupMonitor* monitor)
         context()->dispatcher()->add(group);
         monitor->add(group);
     });
-    connect(ack, &Task::failed, this, [=] {
+    connect(ack, &Task::failed, this, [=, this] {
         ack->deleteLater();
         setBusy(false);
     });
@@ -187,17 +187,17 @@ void SystemNotification::accept(TaskGroupMonitor* monitor)
 TwoFactorResetNotification::TwoFactorResetNotification(Network* network, Context* context)
     : NetworkNotification(network, context)
 {
-    auto remove = [=](bool is_active) {
+    auto remove = [=, this](bool is_active) {
         if (is_active) return;
         m_context->removeNotification(this);
         deleteLater();
     };
     auto session = context->getOrCreateSession(network);
-    connect(session, &Session::configChanged, this, [=] {
+    connect(session, &Session::configChanged, this, [=, this] {
         bool is_active = session->config().value("twofactor_reset").toObject().value("is_active").toBool();
         remove(is_active);
     });
-    connect(session, &Session::twoFactorResetEvent, this, [=](const QJsonObject& event) {
+    connect(session, &Session::twoFactorResetEvent, this, [=, this](const QJsonObject& event) {
         bool is_active = event.value("is_active").toBool();
         remove(is_active);
     });

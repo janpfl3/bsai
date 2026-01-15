@@ -124,25 +124,25 @@ void Analytics::start()
         return hash.result().toStdString();
     });
 
-    countly.setRemoteConfigCallback([=](bool success) {
-        QMetaObject::invokeMethod(this, [=] {
+    countly.setRemoteConfigCallback([=, this](bool success) {
+        QMetaObject::invokeMethod(this, [=, this] {
             if (success) {
                 emit remoteConfigChanged();
             }
             const bool is_production = QStringLiteral("Production") == GREEN_ENV;
             // update remote config after 60s
             // unless last updated failed or it is not a production build
-            QTimer::singleShot(is_production && success ? 60000 : 5000, this, [=] {
+            QTimer::singleShot(is_production && success ? 60000 : 5000, this, [=, this] {
                 cly::Countly::getInstance().updateRemoteConfig();
             });
         });
     });
 
-    countly.setHTTPClient([=](bool use_post, const std::string& path, const std::string& data) {
+    countly.setHTTPClient([=, this](bool use_post, const std::string& path, const std::string& data) {
         cly::HTTPResponse res{false, {}};
 
         if (!d->session) {
-            QMetaObject::invokeMethod(this, [=] {
+            QMetaObject::invokeMethod(this, [=, this] {
                 qDebug() << "analytics: create session";
                 const auto network = NetworkManager::instance()->network("electrum-mainnet");
                 d->session = SessionManager::instance()->create(network);
@@ -252,7 +252,7 @@ void AnalyticsPrivate::updateCustomUserDetails()
 
 void AnalyticsPrivate::start()
 {
-    QMetaObject::invokeMethod(this, [=] {
+    QMetaObject::invokeMethod(this, [=, this] {
         const bool is_production = QStringLiteral("Production") == GREEN_ENV;
         auto& countly = cly::Countly::getInstance();
         countly.setDeviceID(device_id.toStdString(), false);
@@ -263,7 +263,7 @@ void AnalyticsPrivate::start()
             started = true;
         }
 
-        QMetaObject::invokeMethod(q, [=] {
+        QMetaObject::invokeMethod(q, [=, this] {
             active = true;
             updateCustomUserDetails();
         });
@@ -274,7 +274,7 @@ void AnalyticsPrivate::stop(Qt::ConnectionType type)
 {
     if (!active) return;
     active = false;
-    QMetaObject::invokeMethod(this, [=] {
+    QMetaObject::invokeMethod(this, [=, this] {
         auto& countly = cly::Countly::getInstance();
         countly.stop();
         if (session) {

@@ -43,7 +43,7 @@ void DeviceManager::addDevice(Device* device)
     emit deviceAdded(device);
     emit countChanged();
 
-    connect(device, &Device::connectedChanged, this, [=] {
+    connect(device, &Device::connectedChanged, this, [=, this] {
         if (device->isConnected()) {
             emit deviceConnected(device);
         }

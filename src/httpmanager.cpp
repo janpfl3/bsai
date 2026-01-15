@@ -32,7 +32,7 @@ HttpManager::HttpManager(QObject* parent)
 
     m_idle_timer->setSingleShot(true);
     m_idle_timer->setInterval(60000);
-    connect(m_idle_timer, &QTimer::timeout, this, [=] {
+    connect(m_idle_timer, &QTimer::timeout, this, [=, this] {
         if (m_running || !m_queue.isEmpty()) {
             qDebug() << "http: idle timeout, session busy";
         } else if (!m_session) {
@@ -52,18 +52,18 @@ void HttpManager::exec(SessionActivity* activity)
         QMutexLocker locker(&m_mutex);
         activity->moveToThread(thread());
         m_queue.enqueue(activity);
-        connect(activity, &Activity::destroyed, this, [=] {
+        connect(activity, &Activity::destroyed, this, [=, this] {
             {
                 QMutexLocker locker(&m_mutex);
                 m_queue.removeAll(activity);
             }
             if (m_running == activity) {
                 m_running = nullptr;
-                QMetaObject::invokeMethod(this, [=] { dispatch(); }, Qt::QueuedConnection);
+                QMetaObject::invokeMethod(this, [=, this] { dispatch(); }, Qt::QueuedConnection);
             }
         });
     }
-    QMetaObject::invokeMethod(this, [=] { dispatch(); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, [=, this] { dispatch(); }, Qt::QueuedConnection);
 }
 
 void HttpManager::stop()
@@ -108,7 +108,7 @@ void HttpManager::dispatch()
     if (!m_session->isActive()) {
         m_session->setActive(true);
         auto task = new ConnectTask(m_session);
-        connect(task, &Task::failed, this, [=] {
+        connect(task, &Task::failed, this, [=, this] {
             m_session->setActive(false);
             drain();
         });
@@ -123,14 +123,14 @@ void HttpManager::dispatch()
     m_running = m_queue.dequeue();
     m_running->setSession(m_session);
 
-    connect(m_running, &Activity::finished, this, [=] {
+    connect(m_running, &Activity::finished, this, [=, this] {
         m_running = nullptr;
-        QMetaObject::invokeMethod(this, [=] { dispatch(); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [=, this] { dispatch(); }, Qt::QueuedConnection);
     });
 
-    connect(m_running, &Activity::failed, this, [=] {
+    connect(m_running, &Activity::failed, this, [=, this] {
         m_running = nullptr;
-        QMetaObject::invokeMethod(this, [=] { dispatch(); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [=, this] { dispatch(); }, Qt::QueuedConnection);
     });
 
     ActivityManager::instance()->exec(m_running);

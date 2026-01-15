@@ -41,7 +41,7 @@ Session::Session(Network* network, QObject* parent)
     if (m_network->isElectrum()) {
         // emit ticker event each minute on singlesig session
         auto timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, [=] {
+        connect(timer, &QTimer::timeout, this, [=, this] {
             emit tickerEvent();
         });
         timer->start(60 * 1000);

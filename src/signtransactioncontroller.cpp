@@ -48,7 +48,7 @@ void SignTransactionController::sign()
         auto blind = new BlindTransactionTask(transaction, session);
         blind->then(sign);
 
-        connect(blind, &Task::finished, this, [=] {
+        connect(blind, &Task::finished, this, [=, this] {
             auto details = blind->result().value("result").toObject();
             sign->setDetails(details);
         });
@@ -67,20 +67,20 @@ void SignTransactionController::sign()
 
     m_error.clear();
 
-    connect(sign, &Task::failed, this, [=](const QString& error) {
+    connect(sign, &Task::failed, this, [=, this](const QString& error) {
         m_error.append(error);
     });
-    connect(send, &Task::failed, this, [=](const QString& error) {
+    connect(send, &Task::failed, this, [=, this](const QString& error) {
         m_error.append(error);
     });
-    connect(group, &TaskGroup::failed, this, [=] {
+    connect(group, &TaskGroup::failed, this, [=, this] {
         emit failed(m_error);
     });
-    connect(sign, &Task::finished, this, [=] {
+    connect(sign, &Task::finished, this, [=, this] {
         auto details = sign->result().value("result").toObject();
         send->setDetails(details);
     });
-    connect(send, &Task::finished, this, [=] {
+    connect(send, &Task::finished, this, [=, this] {
         auto transaction = m_account->getOrCreateTransaction(send->transaction());
         emit transactionCompleted(transaction);
     });
