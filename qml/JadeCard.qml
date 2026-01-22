@@ -1,4 +1,5 @@
 import Blockstream.Green
+import Blockstream.Green.Core
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -82,11 +83,27 @@ WalletHeaderCard {
         ColumnLayout {
             Layout.rightMargin: image.width
             id: details_column
-            Label {
-                font.capitalization: Font.AllUppercase
-                font.pixelSize: 20
-                font.weight: 600
-                text: self.context.wallet.login?.device?.name ?? ''
+            RowLayout {
+                Label {
+                    font.capitalization: Font.AllUppercase
+                    font.pixelSize: 20
+                    font.weight: 600
+                    text: self.context.wallet.login?.device?.name ?? ''
+                }
+                Image {
+                    id: seal_check
+                    width: 24
+                    height: 24
+                    source: 'qrc:/svg2/seal-check.svg'
+                    visible: {
+                        if (!self.device) return false
+                        const board_type = self.device.versionInfo?.BOARD_TYPE
+                        if (board_type !== 'JADE_V2') return false
+                        const efusemac = self.device.versionInfo?.EFUSEMAC
+                        if (!efusemac) return false
+                        return Settings.isEventRegistered({ efusemac, result: 'genuine', type: 'jade_genuine_check' })
+                    }
+                }
             }
             RowLayout {
                 Layout.fillHeight: false
