@@ -475,11 +475,11 @@ Page {
                             rightAction: Action {
                                 onTriggered: {
                                     if (self.jadeDevice) {
-                                        const dialog = genuine_check_dialog.createObject(self, {
+                                        const drawer = genuine_check_drawer.createObject(self, {
                                             device: self.jadeDevice,
                                             autoCheck: true
                                         })
-                                        dialog.open()
+                                        drawer.open()
                                     }
                                 }
                             }
@@ -601,32 +601,32 @@ Page {
     }
 
     Component {
-        id: genuine_check_dialog
-        JadeGenuineCheckDialog {
-            id: dialog
+        id: genuine_check_drawer
+        JadeGenuineCheckDrawer {
+            id: drawer
             onGenuine: {
-                if (Settings.rememberDevices && dialog.device) {
-                    const efusemac = dialog.device.versionInfo.EFUSEMAC
+                if (Settings.rememberDevices && drawer.device) {
+                    const efusemac = drawer.device.versionInfo.EFUSEMAC
                     Settings.registerEvent({ efusemac, result: 'genuine', type: 'jade_genuine_check' })
                 }
-                dialog.close()
+                drawer.close()
             }
             onDiy: {
-                if (Settings.rememberDevices && dialog.device) {
-                    const efusemac = dialog.device.versionInfo.EFUSEMAC
+                if (Settings.rememberDevices && drawer.device) {
+                    const efusemac = drawer.device.versionInfo.EFUSEMAC
                     Settings.registerEvent({ efusemac, result: 'diy', type: 'jade_genuine_check' })
                 }
-                dialog.close()
+                drawer.close()
             }
             onSkip: {
-                if (Settings.rememberDevices && dialog.device) {
-                    const efusemac = dialog.device.versionInfo.EFUSEMAC
+                if (Settings.rememberDevices && drawer.device) {
+                    const efusemac = drawer.device.versionInfo.EFUSEMAC
                     Settings.registerEvent({ efusemac, result: 'skip', type: 'jade_genuine_check' })
                 }
-                dialog.close()
+                drawer.close()
             }
             onAbort: {
-                dialog.close()
+                drawer.close()
             }
         }
     }

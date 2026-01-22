@@ -242,7 +242,7 @@ SET(QML_FILES
     qml/VFlickable.qml
     qml/JadeFirmwareUpdatedPage.qml
     qml/AddressLabel.qml
-    qml/JadeGenuineCheckDialog.qml
+    qml/JadeGenuineCheckDrawer.qml
     qml/PromoDrawer.qml
     qml/JadeGenuineCheckPage.qml
     qml/JadeGenuineCheckingPage.qml

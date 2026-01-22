@@ -153,11 +153,11 @@ StackViewPage {
     }
 
 
-    property JadeGenuineCheckDialog genuineCheckDialog
+    property JadeGenuineCheckDrawer genuineCheckDialog
 
     function openGenuineCheckDialog() {
         if (self.genuineCheckDialog) return
-        self.genuineCheckDialog = genuine_check_dialog.createObject(self, { device: self.device })
+        self.genuineCheckDialog = genuine_check_drawer.createObject(self, { device: self.device })
         self.genuineCheckDialog.open()
     }
 
@@ -206,21 +206,21 @@ StackViewPage {
     }
 
     Component {
-        id: genuine_check_dialog
-        JadeGenuineCheckDialog {
-            id: dialog
+        id: genuine_check_drawer
+        JadeGenuineCheckDrawer {
+            id: drawer
             autoCheck: false
             onGenuine: {
                 self.registerEvent('genuine')
-                dialog.close()
+                drawer.close()
             }
             onDiy: {
                 self.registerEvent('diy')
-                dialog.close()
+                drawer.close()
             }
             onSkip: {
                 self.registerEvent('skip')
-                dialog.close()
+                drawer.close()
             }
             onAbort: {
                 self.closeClicked()

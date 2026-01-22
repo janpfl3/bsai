@@ -264,33 +264,33 @@ Page {
     }
 
     Component {
-        id: genuine_check_dialog
-        JadeGenuineCheckDialog {
-            id: dialog
+        id: genuine_check_drawer
+        JadeGenuineCheckDrawer {
+            id: drawer
             autoCheck: true
             onGenuine: {
                 if (Settings.rememberDevices) {
                     const efusemac = self.context.device.versionInfo.EFUSEMAC
                     Settings.registerEvent({ efusemac, result: 'genuine', type: 'jade_genuine_check' })
                 }
-                dialog.close()
+                drawer.close()
             }
             onDiy: {
                 if (Settings.rememberDevices) {
                     const efusemac = self.context.device.versionInfo.EFUSEMAC
                     Settings.registerEvent({ efusemac, result: 'diy', type: 'jade_genuine_check' })
                 }
-                dialog.close()
+                drawer.close()
             }
             onSkip: {
                 if (Settings.rememberDevices) {
                     const efusemac = self.context.device.versionInfo.EFUSEMAC
                     Settings.registerEvent({ efusemac, result: 'skip', type: 'jade_genuine_check' })
                 }
-                dialog.close()
+                drawer.close()
             }
             onAbort: {
-                dialog.close()
+                drawer.close()
             }
         }
     }
@@ -348,7 +348,7 @@ Page {
     //                 bottomPadding: 7
     //                 text: 'Genuine Check'
     //                 onClicked: {
-    //                     const dialog = genuine_check_dialog.createObject(self, { device: self.context.device })
+    //                     const drawer = genuine_check_drawer.createObject(self, { device: self.context.device })
     //                     dialog.open()
     //                 }
     //             }
