@@ -10,13 +10,8 @@ StackViewPage {
     required property JadeDevice device
     id: self
     footer: null
-    header: null
     contentItem: ColumnLayout {
         spacing: 10
-        CloseButton {
-            Layout.alignment: Qt.AlignRight
-            onClicked: self.close()
-        }
         VSpacer {
         }
         Label {

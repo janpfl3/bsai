@@ -5,8 +5,9 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 StackViewPage {
+    required property JadeDevice device
+    id: self
     footer: null
-    header: null
     contentItem: ColumnLayout {
         spacing: 10
         VSpacer {
@@ -16,6 +17,14 @@ StackViewPage {
             foreground: 'qrc:/png/jade_genuine_2.png'
             width: 352
             height: 240
+        }
+        Label {
+            Layout.alignment: Qt.AlignCenter
+            Layout.topMargin: -10
+            font.capitalization: Font.AllUppercase
+            font.pixelSize: 16
+            font.weight: 600
+            text: self.device?.name ?? ''
         }
         Label {
             Layout.alignment: Qt.AlignCenter

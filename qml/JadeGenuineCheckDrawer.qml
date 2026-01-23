@@ -38,6 +38,7 @@ AbstractDrawer {
         id: initial_view
         JadeGenuineCheckPage {
             device: self.device
+            leftItem: Item {}
             rightItem: CloseButton {
                 onClicked: self.skip()
             }
@@ -49,6 +50,11 @@ AbstractDrawer {
     Component {
         id: check_view
         JadeGenuineCheckingPage {
+            device: self.device
+            leftItem: Item {}
+            rightItem: CloseButton {
+                onClicked: self.skip()
+            }
             StackView.onActivated: {
                 controller.genuineCheck()
             }
@@ -58,6 +64,7 @@ AbstractDrawer {
     Component {
         id: cancelled_view
         StackViewPage {
+            leftItem: Item {}
             rightItem: CloseButton {
                 onClicked: self.skip()
             }
@@ -77,6 +84,14 @@ AbstractDrawer {
                         anchors.margins: 40
                         source: 'qrc:/svg2/fail-light.svg'
                     }
+                }
+                Label {
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: -10
+                    font.capitalization: Font.AllUppercase
+                    font.pixelSize: 16
+                    font.weight: 600
+                    text: self.device?.name ?? ''
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
@@ -121,6 +136,7 @@ AbstractDrawer {
     Component {
         id: diy_view
         StackViewPage {
+            leftItem: Item {}
             rightItem: CloseButton {
                 onClicked: self.abort()
             }
@@ -128,18 +144,19 @@ AbstractDrawer {
                 spacing: 20
                 VSpacer {
                 }
-                MultiImage {
+                Image {
                     Layout.alignment: Qt.AlignCenter
                     Layout.preferredHeight: 260
                     Layout.preferredWidth: 320
-                    foreground: 'qrc:/png/jade_genuine_1.png'
-                    margins: 30
-                    Image {
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        anchors.margins: 40
-                        source: 'qrc:/svg2/warning-light.svg'
-                    }
+                    source: 'qrc:/png/jade_genuine_1.png'
+                }
+                Label {
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: -10
+                    font.capitalization: Font.AllUppercase
+                    font.pixelSize: 16
+                    font.weight: 600
+                    text: self.device?.name ?? ''
                 }
                 Label {
                     Layout.alignment: Qt.AlignCenter
@@ -184,21 +201,34 @@ AbstractDrawer {
     Component {
         id: success_view
         StackViewPage {
+            leftItem: Item {}
+            rightItem: CloseButton {
+                onClicked: self.genuine()
+            }
             contentItem: ColumnLayout {
                 spacing: 20
                 VSpacer {
                 }
-                MultiImage {
+                Image {
                     Layout.alignment: Qt.AlignCenter
                     Layout.preferredHeight: 260
                     Layout.preferredWidth: 320
-                    foreground: 'qrc:/png/jade_genuine_1.png'
-                    margins: 30
+                    source: 'qrc:/png/jade_genuine_1.png'
+                }
+                RowLayout {
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: -10
+                    Label {
+                        font.capitalization: Font.AllUppercase
+                        font.pixelSize: 16
+                        font.weight: 600
+                        text: self.device?.name ?? ''
+                    }
                     Image {
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        anchors.margins: 40
-                        source: 'qrc:/svg2/check-light.svg'
+                        id: seal_check
+                        width: 24
+                        height: 24
+                        source: 'qrc:/svg2/seal-check.svg'
                     }
                 }
                 Label {
