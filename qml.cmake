@@ -154,6 +154,7 @@ SET(QML_FILES
     qml/LoadingPage.qml
     qml/SetupPinPage.qml
     qml/RegisterPage.qml
+    qml/WalletCreatedPage.qml
     qml/RestorePage.qml
     qml/RestoreCheckPage.qml
     qml/WatchOnlyWalletPage.qml
@@ -220,7 +221,6 @@ SET(QML_FILES
     qml/TwoFactorEnableGenericView.qml
     qml/TwoFactorEnablePhoneView.qml
     qml/TwoFactorEnableGAuthPage.qml
-    qml/SecureFundsPage.qml
     qml/JadeHttpRequestDialog.qml
     qml/LinkLabel.qml
     qml/PassphraseDialog.qml

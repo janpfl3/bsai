@@ -127,6 +127,8 @@ qt_add_resources(${APP_TARGET} "images"
 
         assets/png/jade_genuine.png
 
+        assets/png/logo_bubbles.png
+        
         assets/svg2/alert.svg
         assets/svg2/arrow_square_down.svg
         assets/svg2/arrow_right.svg
@@ -240,7 +242,6 @@ qt_add_resources(${APP_TARGET} "images"
         assets/svg3/Cancel.svg
         assets/svg3/Check.svg
         assets/svg3/Chip.svg
-        assets/svg3/Desktop-Keys.svg
         assets/svg3/Globe.svg
         assets/svg3/Ledger.svg
         assets/svg3/Notifications.svg
@@ -255,6 +256,7 @@ qt_add_resources(${APP_TARGET} "images"
         assets/svg3/Graphic-card.svg
         assets/svg3/Stamp.svg
         assets/svg3/arrow-line-up-right.svg
+        assets/svg3/Btc-portal.svg
 
         assets/svg/blockstream.svg
         assets/svg/menu-home.svg

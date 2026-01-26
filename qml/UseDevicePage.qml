@@ -148,14 +148,16 @@ StackViewPage {
     RegularButton {
         Layout.alignment: Qt.AlignCenter
         Layout.minimumWidth: 400
-        Layout.topMargin: 10
+        Layout.topMargin: 20
+        cyan: true
         text: qsTrId('id_connect_a_different_hardware')
         onClicked: self.connectLedgerClicked()
     }
     LinkButton {
         Layout.alignment: Qt.AlignCenter
         Layout.topMargin: 20
-        text: 'Don’t have a Jade? Check our store'
+        font.underline: true
+        text: qsTrId('id_dont_have_a_jade_check_our_store')
         onClicked: Qt.openUrlExternally('https://store.blockstream.com/')
     }
 }

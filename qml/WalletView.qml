@@ -88,6 +88,7 @@ MainPage {
         id: jade_page
         JadePage {
             onLoginFinished: (context) => {
+                wallet_created_page
                 self.wallet = context.wallet
                 stack_view.replace(null, loading_page, { context }, StackView.PushTransition)
             }
@@ -117,17 +118,9 @@ MainPage {
     Component {
         id: terms_of_service_page
         TermOfServicePage {
-            onStart: stack_view.push(secure_funds_page)
+            onStart: stack_view.push(add_wallet_page)
+            onStartDevice: stack_view.push(use_device_page)
             onCloseClicked: self.closeWallet(self.wallet)
-        }
-    }
-
-    Component {
-        id: secure_funds_page
-        SecureFundsPage {
-            onAddWallet: stack_view.push(add_wallet_page)
-            onUseDevice: stack_view.push(use_device_page)
-            onWatchOnlyWallet: stack_view.push(watch_only_wallet_page)
         }
     }
 
@@ -139,6 +132,7 @@ MainPage {
                 stack_view.push(register_page, { mnemonic })
             }
             onRestoreWallet: stack_view.push(restore_wallet_page)
+            onWatchOnlyWallet: stack_view.push(watch_only_wallet_page)
         }
     }
 
@@ -178,11 +172,18 @@ MainPage {
     Component {
         id: setup_pin_page
         SetupPinPage {
-            onFinished: (context) => stack_view.replace(null, loading_page, { context }, StackView.PushTransition)
+            onFinished: (context) => stack_view.push(wallet_created_page, { context })
             onCloseClicked: {
                 self.closeWallet(self.wallet)
                 WalletManager.removeWallet(self.wallet)
             }
+        }
+    }
+
+    Component {
+        id: wallet_created_page
+        WalletCreatedPage {
+            onContinueClicked: stack_view.replace(null, loading_page, { context }, StackView.PushTransition)
         }
     }
 

@@ -7,6 +7,7 @@ import "util.js" as UtilJS
 
 StackViewPage {
     signal start()
+    signal startDevice()
 
     objectName: "TermOfServicePage"
     id: self
@@ -21,10 +22,10 @@ StackViewPage {
     }
     Label {
         Layout.alignment: Qt.AlignCenter
-        Layout.maximumWidth: 300
-        Layout.topMargin: 50
+        Layout.maximumWidth: 450
+        Layout.topMargin: 40
         color: '#FFF'
-        font.pixelSize: 30
+        font.pixelSize: 26
         font.weight: 656
         horizontalAlignment: Label.AlignHCenter
         text: qsTrId('id_simple__secure_selfcustody')
@@ -33,12 +34,11 @@ StackViewPage {
     Label {
         Layout.alignment: Qt.AlignCenter
         Layout.fillWidth: true
-        Layout.maximumWidth: 300
-        Layout.topMargin: 10
+        Layout.maximumWidth: 400
+        Layout.topMargin: 20
         font.pixelSize: 14
         font.weight: 400
         horizontalAlignment: Label.AlignHCenter
-        opacity: 0.6
         text: qsTrId('id_everything_you_need_to_take')
         wrapMode: Label.WordWrap
     }
@@ -46,37 +46,38 @@ StackViewPage {
         Layout.alignment: Qt.AlignCenter
         Layout.fillWidth: true
         Layout.maximumWidth: 325
-        Layout.topMargin: 10
-        enabled: tos_check_box.checked
-        text: 'Get Started'
-        onClicked: self.start()
-    }
-    RowLayout {
-        Layout.alignment: Qt.AlignCenter
-        Layout.fillWidth: false
-        Layout.fillHeight: false
-        Layout.topMargin: 20
-        spacing: 0
-        CheckBox {
-            id: tos_check_box
-            Layout.alignment: Qt.AlignCenter
-            bottomInset: 0
-            topInset: 0
-            leftInset: 0
-            rightInset: 0
-            checked: Settings.acceptedTermsOfService
+        Layout.topMargin: 60
+        text: qsTrId('id_get_started')
+        onClicked: {
+            Settings.acceptTermsOfService()
+            self.start()
         }
-        LinkLabel {
-            Layout.alignment: Qt.AlignCenter
-            font.pixelSize: 14
-            font.weight: 600
-            text: {
-                const terms = new RegExp('(' + qsTrId('id_terms_of_service') + ')', 'gi')
-                const privacy = new RegExp('(' + qsTrId('id_privacy_policy') + ')', 'gi')
-                return qsTrId('id_i_agree_to_the_terms_of_service')
-                    .replace(terms, UtilJS.link('https://blockstream.com/green/terms/', '$1'))
-                    .replace(privacy, UtilJS.link('https://blockstream.com/green/privacy/', '$1'))
-            }
+    }
+    RegularButton {
+        Layout.alignment: Qt.AlignCenter
+        Layout.fillWidth: true
+        Layout.maximumWidth: 325
+        Layout.topMargin: 10
+        cyan: true
+        text: qsTrId('id_connect_jade')
+        onClicked: {
+            Settings.acceptTermsOfService()
+            self.startDevice()
+        }
+    }
+    LinkLabel {
+        Layout.alignment: Qt.AlignCenter
+        Layout.maximumWidth: 325
+        Layout.topMargin: 20
+        font.pixelSize: 14
+        horizontalAlignment: Label.AlignHCenter
+        wrapMode: Label.WordWrap
+        text: {
+            const terms = new RegExp('(Terms & Conditions)', 'gi')
+            const privacy = new RegExp('(Privacy Policy)', 'gi')
+            return 'By using the Blockstream app, you agree to the Terms & Conditions and Privacy Policy.'
+                .replace(terms, UtilJS.link('https://blockstream.com/green/terms/', '$1'))
+                .replace(privacy, UtilJS.link('https://blockstream.com/green/privacy/', '$1'))
         }
     }
 }

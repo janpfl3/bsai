@@ -9,11 +9,26 @@ import "util.js" as UtilJS
 StackViewPage {
     signal newWallet()
     signal restoreWallet()
+    signal watchOnlyWallet()
     StackView.onActivated: Analytics.recordEvent('wallet_add')
     objectName: "AddWalletPage"
     id: self
-    footer: null
     padding: 60
+    footer: Pane {
+        background: null
+        bottomPadding: 20
+        contentItem: RowLayout {
+            HSpacer {
+            }
+            LinkButton {
+                font.underline: true
+                text: qsTrId('id_set_up_watchonly')
+                onClicked: self.watchOnlyWallet()
+            }
+            HSpacer {
+            }
+        }
+    }
     Image {
         Layout.alignment: Qt.AlignCenter
         Layout.preferredHeight: 240
@@ -21,40 +36,31 @@ StackViewPage {
         fillMode: Image.PreserveAspectFit
         mipmap: true
         smooth: true
-        source: 'qrc:/svg3/Desktop-Keys.svg'
+        source: 'qrc:/svg3/Btc-portal.svg'
     }
     Label {
         Layout.alignment: Qt.AlignCenter
-        color: '#FFF'
-        font.pixelSize: 35
-        font.weight: 656
-        horizontalAlignment: Label.AlignHCenter
-        text: qsTrId('id_take_control_your_keys_your').replace(':', ':\n')
-    }
-    Label {
-        Layout.alignment: Qt.AlignCenter
-        Layout.maximumWidth: 230
-        Layout.topMargin: 10
+        Layout.maximumWidth: 400
+        Layout.topMargin: 20
         color: '#FFF'
         font.pixelSize: 14
         font.weight: 400
         horizontalAlignment: Label.AlignHCenter
-        opacity: 0.6
-        text: qsTrId('id_your_keys_secure_your_coins_on')
+        text: 'Create a new wallet to begin your Bitcoin journey.'
         wrapMode: Label.WordWrap
     }
     PrimaryButton {
         Layout.alignment: Qt.AlignCenter
         Layout.minimumWidth: 325
-        Layout.topMargin: 20
-        text: qsTrId('id_new_wallet')
+        Layout.topMargin: 40
+        text: qsTrId('id_setup_a_new_wallet')
         onClicked: self.newWallet()
     }
-    RegularButton {
+    LinkButton {
         Layout.alignment: Qt.AlignCenter
-        Layout.minimumWidth: 325
-        Layout.topMargin: 10
-        text: qsTrId('id_restore_wallet')
+        Layout.topMargin: 20
+        font.underline: true
+        text: 'Restore an Existing Wallet'
         onClicked: self.restoreWallet()
     }
 }
