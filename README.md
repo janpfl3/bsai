@@ -8,7 +8,11 @@ You can read more about Blockstream application [here](https://blockstream.com/a
 
 ## Build
 
-For instructions on how to build application please refer to [BUILD.md](BUILD.md)
+For build instructions, see:
+
+- [macOS](doc/build-macos.md)
+- [Linux](doc/build-linux.md)
+- [Windows](doc/build-windows.md)
 
 ## Application data directory
 

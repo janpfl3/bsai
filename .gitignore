@@ -81,6 +81,8 @@ qrc_*.cpp
 ui_*.h
 Makefile*
 *build-*
+!build-win-dependencies.sh
+!doc/*
 config.h
 
 # Qt unit tests
@@ -162,3 +164,5 @@ qt-everywhere-src-*
 # VS Code settings and extensions
 .vscode
 .qmlls.ini
+# Build script state files (resume tracking)
+.build_state_*

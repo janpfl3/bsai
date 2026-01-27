@@ -185,7 +185,7 @@ elseif (APPLE)
     set_target_properties(${APP_TARGET} PROPERTIES OUTPUT_NAME "Blockstream")
 elseif (UNIX)
     find_library(LIBLWK lwk REQUIRED)
-    target_link_libraries(${APP_TARGET} PRIVATE dl Xrender ${LIBLWK} Qt6::WaylandClient)
+    target_link_libraries(${APP_TARGET} PRIVATE dl Xrender cap ${LIBLWK} Qt6::WaylandClient)
     qt_import_plugins(${APP_TARGET} INCLUDE Qt6::QXcbIntegrationPlugin Qt6::QWaylandIntegrationPlugin Qt6::QFFmpegMediaPlugin)
 endif()
 
