@@ -81,6 +81,7 @@ Context::~Context()
     for (auto session : m_sessions_list) {
         SessionManager::instance()->release(session);
         session->setContext(nullptr);
+        session->setActive(false);
     }
 }
 
