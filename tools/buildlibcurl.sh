@@ -5,7 +5,7 @@ mkdir -p build && cd build
 
 git clone https://github.com/curl/curl.git curl-src
 
-(cd curl-src && git rev-parse HEAD)
+(cd curl-src && git checkout curl-8_17_0 && git rev-parse HEAD)
 
 cmake -S curl-src -B curl-bld \
   -DCMAKE_BUILD_TYPE=Release \
