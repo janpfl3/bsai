@@ -11,6 +11,8 @@ rm -rf breakpad && mkdir -p breakpad && cd breakpad
 
 fetch breakpad
 
+(cd src && git apply /tools/breakpad.patch)
+
 mkdir build && cd build
 
 export MACOSX_DEPLOYMENT_TARGET=12.0

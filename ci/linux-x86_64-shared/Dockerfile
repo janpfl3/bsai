@@ -50,6 +50,7 @@ RUN tools/buildcrashpad.sh
 
 FROM base AS breakpad
 COPY tools/buildbreakpad.sh tools/
+COPY tools/breakpad.patch tools/
 RUN tools/buildbreakpad.sh
 
 FROM base AS gpgme
