@@ -23,7 +23,7 @@ StackViewPage {
     Label {
         Layout.alignment: Qt.AlignCenter
         Layout.maximumWidth: 450
-        Layout.topMargin: 40
+        Layout.topMargin: 48
         color: '#FFF'
         font.pixelSize: 26
         font.weight: 656
@@ -35,7 +35,7 @@ StackViewPage {
         Layout.alignment: Qt.AlignCenter
         Layout.fillWidth: true
         Layout.maximumWidth: 400
-        Layout.topMargin: 20
+        Layout.topMargin: 10
         font.pixelSize: 14
         font.weight: 400
         horizontalAlignment: Label.AlignHCenter
@@ -46,7 +46,8 @@ StackViewPage {
         Layout.alignment: Qt.AlignCenter
         Layout.fillWidth: true
         Layout.maximumWidth: 325
-        Layout.topMargin: 60
+        Layout.topMargin: 96
+        font.weight: 500
         text: qsTrId('id_get_started')
         onClicked: {
             Settings.acceptTermsOfService()
@@ -57,8 +58,9 @@ StackViewPage {
         Layout.alignment: Qt.AlignCenter
         Layout.fillWidth: true
         Layout.maximumWidth: 325
-        Layout.topMargin: 10
+        Layout.topMargin: 18
         cyan: true
+        font.weight: 500
         text: qsTrId('id_connect_jade')
         onClicked: {
             Settings.acceptTermsOfService()
@@ -68,7 +70,7 @@ StackViewPage {
     LinkLabel {
         Layout.alignment: Qt.AlignCenter
         Layout.maximumWidth: 325
-        Layout.topMargin: 20
+        Layout.topMargin: 18
         font.pixelSize: 14
         horizontalAlignment: Label.AlignHCenter
         wrapMode: Label.WordWrap

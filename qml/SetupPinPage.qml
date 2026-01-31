@@ -51,7 +51,7 @@ StackViewPage {
         font.pixelSize: 14
         font.weight: 400
         horizontalAlignment: Label.AlignHCenter
-        color: '#A0A0A0'
+        color: '#FFFFFF'
         text: qsTrId('id_youll_need_your_pin_to_log_in')
         wrapMode: Label.Wrap
     }
@@ -106,7 +106,8 @@ StackViewPage {
         enabled: pin_field.enabled
         target: pin_field
     }
-    footer: RowLayout {
+    RowLayout {
+        Layout.topMargin: 20
         spacing: 0
         Item {
             Layout.alignment: Qt.AlignCenter

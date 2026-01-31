@@ -16,7 +16,7 @@ StackViewPage {
     padding: 60
     footer: Pane {
         background: null
-        bottomPadding: 20
+        bottomPadding: 40
         contentItem: RowLayout {
             HSpacer {
             }
@@ -31,7 +31,7 @@ StackViewPage {
     }
     Image {
         Layout.alignment: Qt.AlignCenter
-        Layout.preferredHeight: 240
+        Layout.preferredHeight: 320
         antialiasing: true
         fillMode: Image.PreserveAspectFit
         mipmap: true
@@ -41,7 +41,7 @@ StackViewPage {
     Label {
         Layout.alignment: Qt.AlignCenter
         Layout.maximumWidth: 400
-        Layout.topMargin: 20
+        Layout.topMargin: 32
         color: '#FFF'
         font.pixelSize: 14
         font.weight: 400
@@ -52,13 +52,14 @@ StackViewPage {
     PrimaryButton {
         Layout.alignment: Qt.AlignCenter
         Layout.minimumWidth: 325
-        Layout.topMargin: 40
+        Layout.topMargin: 32
+        font.weight: 500
         text: qsTrId('id_setup_a_new_wallet')
         onClicked: self.newWallet()
     }
     LinkButton {
         Layout.alignment: Qt.AlignCenter
-        Layout.topMargin: 20
+        Layout.topMargin: 24
         font.underline: true
         text: 'Restore an Existing Wallet'
         onClicked: self.restoreWallet()

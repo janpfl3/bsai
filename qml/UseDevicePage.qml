@@ -23,7 +23,7 @@ StackViewPage {
     }
     SwipeView {
         Layout.alignment: Qt.AlignCenter
-        Layout.preferredWidth: 500
+        Layout.preferredWidth: 450
         Layout.preferredHeight: 350
         id: swipe_view
         clip: true
@@ -54,7 +54,7 @@ StackViewPage {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 0
                 Layout.topMargin: 10
-                color: '#9C9C9C'
+                color: '#FFF'
                 font.pixelSize: 14
                 font.weight: 400
                 horizontalAlignment: Label.AlignHCenter
@@ -88,7 +88,7 @@ StackViewPage {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 0
                 Layout.topMargin: 10
-                color: '#9C9C9C'
+                color: '#FFF'
                 font.pixelSize: 14
                 font.weight: 400
                 horizontalAlignment: Label.AlignHCenter
@@ -122,7 +122,7 @@ StackViewPage {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 0
                 Layout.topMargin: 10
-                color: '#9C9C9C'
+                color: '#FFF'
                 font.pixelSize: 14
                 font.weight: 400
                 horizontalAlignment: Label.AlignHCenter
@@ -140,15 +140,17 @@ StackViewPage {
     }
     PrimaryButton {
         Layout.alignment: Qt.AlignCenter
-        Layout.minimumWidth: 400
+        Layout.minimumWidth: 360
         Layout.topMargin: 20
+        font.weight: 500
         text: qsTrId('id_connect_jade')
         onClicked: self.connectJadeClicked()
     }
     RegularButton {
         Layout.alignment: Qt.AlignCenter
-        Layout.minimumWidth: 400
+        Layout.minimumWidth: 360
         Layout.topMargin: 20
+        font.weight: 500
         cyan: true
         text: qsTrId('id_connect_a_different_hardware')
         onClicked: self.connectLedgerClicked()

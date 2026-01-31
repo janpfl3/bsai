@@ -18,9 +18,9 @@ StackViewPage {
             }
             Label {
                 Layout.alignment: Qt.AlignCenter
-                Layout.maximumWidth: 600
+                Layout.maximumWidth: 450
                 horizontalAlignment: Label.AlignHCenter
-                font.pixelSize: 12
+                font.pixelSize: 14
                 opacity: 0.6
                 text: 'Warning: If you forget your PIN and have not enabled biometrics or a recovery method, you will lose access to funds.'
                 wrapMode: Label.Wrap
@@ -60,7 +60,8 @@ StackViewPage {
         PrimaryButton {
             Layout.alignment: Qt.AlignCenter
             Layout.minimumWidth: 325
-            Layout.topMargin: 30
+            Layout.topMargin: 32
+            font.weight: 500
             text: qsTrId('id_continue')
             onClicked: self.continueClicked()
         }
