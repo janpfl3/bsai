@@ -343,9 +343,14 @@ function filterPromo(wallets, promo) {
     return true
 }
 
+function isJadeV2(boardType) {
+    return boardType?.startsWith('JADE_V2') ?? false
+}
+
+
 function jadeImage(device, index) {
     const type = device.versionInfo?.BOARD_TYPE
-    const version = type === 'JADE_V2' ? 'jade2' : 'jade'
+    const version = isJadeV2(type) ? 'jade2' : 'jade'
     return `qrc:/png/${version}_${index}.png`
 }
 

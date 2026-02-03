@@ -93,7 +93,7 @@ StackViewPage {
         if (self.genuineCheckDialog) return
         if (firmware_controller.fetching) return
         console.log('can push view: stack view empty, device ready, no genuine check dialog, not fetching fws')
-        if (self.device.versionInfo.BOARD_TYPE === 'JADE_V2') {
+        if (['JADE_V2', 'JADE_V2C'].includes(self.device.versionInfo.BOARD_TYPE)) {
             if (!self.skipGenuineCheck) {
                 const efusemac = self.device.versionInfo.EFUSEMAC
                 const check_genuine = Settings.isEventRegistered({ efusemac, result: 'genuine', type: 'jade_genuine_check' })

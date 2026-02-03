@@ -121,7 +121,18 @@ StackViewPage {
                         .map(account => `${account.network.data.bip21_prefix}:${account.json.receiving_id}`)
                         .join(',')
                     custom_fields.push({ id: '23833728377881', value: supportId })
-                    const hww = self.context?.wallet?.login?.device?.type
+                    const device = self.context?.wallet?.login?.device
+                    let hww = device?.type
+                    if (device?.type === 'jade') {
+                        const board = device?.board
+                        if (board === 'JADE_V2') {
+                            hww = 'jade_plus'
+                        } else if (board === 'JADE_V2C') {
+                            hww = 'jade_core'
+                        } else {
+                            hww = 'jade_classic'
+                        }
+                    }
                     if (hww) {
                         custom_fields.push({ id: '900006375926', value: hww })
                     }

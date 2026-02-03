@@ -35,7 +35,7 @@ StackViewPage {
         Layout.alignment: Qt.AlignCenter
         Layout.topMargin: 20
         icon.source: 'qrc:/svg2/qrcode.svg'
-        text: 'QR PIN Unlock'
+        text: 'QR PIN Unlock (Plus & Classic only)'
         visible: Settings.enableExperimental
         onClicked: self.qrmodeSelected()
     }

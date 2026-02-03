@@ -38,7 +38,7 @@ Pane {
             StepPane {
                 step: 1
                 title: qsTrId('id_power_on_jade')
-                text: qsTrId('id_hold_the_green_button_on_the')
+                text: `Plug in the provided USB-C cable (Jade Core) or hold the power button (Jade Plus).`
             }
             StepPane {
                 step: 2

@@ -23,6 +23,7 @@ static const QString JADE_FW_SERVER_ONION = "http://vgza7wu4h7osixmrx6e4op5r72ok
 static const QString JADE_BOARD_TYPE_JADE = "JADE";
 static const QString JADE_BOARD_TYPE_JADE_V1_1 = "JADE_V1.1";
 static const QString JADE_BOARD_TYPE_JADE_V2 = "JADE_V2";
+static const QString JADE_BOARD_TYPE_JADE_V2C = "JADE_V2C";
 static const QString JADE_FEATURE_SECURE_BOOT = "SB";
 
 } // namespace
@@ -180,6 +181,9 @@ static QString TypeFromVersionInfo(const QVariantMap& version_info)
     }
     if (board_type == JADE_BOARD_TYPE_JADE_V2) {
         return secure_boot ? "jade2.0" : "jade2.0dev";
+    }
+    if (board_type == JADE_BOARD_TYPE_JADE_V2C) {
+        return secure_boot ? "jade2.0c" : "jade2.0cdev";
     }
     return {};
 }

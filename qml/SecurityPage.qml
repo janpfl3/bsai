@@ -456,7 +456,7 @@ Page {
                     ColumnLayout {
                         Layout.preferredWidth: 1
                         spacing: 8
-                        visible: self.context.wallet.login?.device?.board === 'JADE_V2'
+                        visible: ['JADE_V2', 'JADE_V2C'].includes(self.context.wallet.login?.device?.board)
                         Label {
                             text: "Jade’s Authenticity"
                             color: "#A0A0A0"

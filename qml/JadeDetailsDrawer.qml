@@ -40,32 +40,9 @@ AbstractDrawer {
                             horizontalAlignment: Label.AlignRight
                             text: {
                                 const board_type = self.device.versionInfo.BOARD_TYPE
-                                return board_type === 'JADE_V2' ? 'Jade Plus' : 'Jade Classic'
-                            }
-                        }
-                        KeyLabel {
-                            visible: {
-                                const board_type = self.device.versionInfo.BOARD_TYPE
-                                return board_type === 'JADE_V2'
-                            }
-                            text: 'Genuine check'
-                        }
-                        Label {
-                            Layout.fillWidth: true
-                            horizontalAlignment: Label.AlignRight
-                            visible: {
-                                const board_type = self.device.versionInfo.BOARD_TYPE
-                                return board_type === 'JADE_V2'
-                            }
-                            text: {
-                                const efusemac = self.device.versionInfo.EFUSEMAC
-                                if (Settings.isEventRegistered({ efusemac, result: 'genuine', type: 'jade_genuine_check' })) {
-                                    return 'Your Jade is genuine!'
-                                }
-                                if (Settings.isEventRegistered({ efusemac, result: 'diy', type: 'jade_genuine_check' })) {
-                                    return 'This Jade is not genuine'
-                                }
-                                return 'Not checked'
+                                if (board_type === 'JADE_V2C') return 'Jade Core'
+                                if (board_type === 'JADE_V2') return 'Jade Plus'
+                                return 'Jade Classic'
                             }
                         }
                         Separator {

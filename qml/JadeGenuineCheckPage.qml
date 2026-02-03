@@ -19,7 +19,15 @@ StackViewPage {
             font.pixelSize: 26
             font.weight: 600
             horizontalAlignment: Label.AlignHCenter
-            text: 'New Jade Plus Connected'
+            text: {
+                if (self.device.versionInfo.BOARD_TYPE === 'JADE_V2') {
+                    return 'New Jade Plus Connected'
+                }
+                if (self.device.versionInfo.BOARD_TYPE === 'JADE_V2C') {
+                    return 'New Jade Core Connected'
+                }
+                return 'New Jade Connected'
+            }
         }
         Label {
             Layout.alignment: Qt.AlignCenter
