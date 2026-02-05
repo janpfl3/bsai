@@ -141,7 +141,7 @@ Pane {
                 }
                 Label {
                     Layout.fillWidth: true
-                    text: qsTrId('id_export_your_extended_public')
+                    text: 'Copy or scan to export'
                     font.pixelSize: 13
                     color: '#6F6F6F'
                     wrapMode: Label.Wrap
@@ -195,7 +195,7 @@ Pane {
                 }
                 Label {
                     Layout.fillWidth: true
-                    text: qsTrId('id_export_your_output_descriptors')
+                    text: 'Copy or scan to export'
                     font.pixelSize: 13
                     color: '#6F6F6F'
                     wrapMode: Label.Wrap
