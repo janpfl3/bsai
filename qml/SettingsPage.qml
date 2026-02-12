@@ -78,6 +78,7 @@ Page {
                     text: qsTrId('id_twofactor_authentication')
                     icon.source: 'qrc:/svg2/lock-simple-thin.svg'
                     enabled: !self.context.watchonly
+                    visible: self.sessions.length > 0
                 }
                 VSpacer {
                 }
