@@ -11,7 +11,7 @@ import "util.js" as UtilJS
 
 Page {
     signal assetClicked(Asset asset)
-    signal transactionClicked(Transaction transaction)
+    signal transactionClicked(ContextTransaction transaction)
     signal transactionsClicked()
     required property Context context
     id: self
@@ -263,7 +263,7 @@ Page {
     }
 
     component TransactionDelegate2: ItemDelegate {
-        required property Transaction transaction
+        required property ContextTransaction transaction
         id: delegate
         leftPadding: 24
         rightPadding: 24
@@ -273,11 +273,18 @@ Page {
         background: Rectangle {
             border.color: '#262626'
             border.width: 1
-            color: Qt.lighter('#181818', delegate.enabled && delegate.hovered ? 1.2 : 1)
+            color: delegate.transaction instanceof Swap ? 'green' : Qt.lighter('#181818', delegate.enabled && delegate.hovered ? 1.2 : 1)
             radius: 8
         }
         contentItem: RowLayout {
             spacing: 12
+            // Label {
+            //     Layout.fillWidth: true
+            //     Layout.preferredWidth: 0
+            //     text: JSON.stringify(delegate.transaction.data, null, 4)
+            //     wrapMode: Label.Wrap
+            // }
+
             Image {
                 Layout.alignment: Qt.AlignCenter
                 source: UtilJS.transactionIcon(delegate.transaction.data.type, transactionConfirmations(delegate.transaction))

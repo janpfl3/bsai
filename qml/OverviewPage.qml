@@ -76,6 +76,11 @@ Page {
         drawer.open()
     }
 
+    function openSwapDrawer() {
+        const drawer = swap_drawer.createObject(self)
+        drawer.open()
+    }
+
     function transactionConfirmations(transaction) {
         return UtilJS.confirmations(transaction.account.session, transaction.data.block_height)
     }
@@ -160,7 +165,12 @@ Page {
             context: self.context
         }
     }
-
+    Component {
+        id: swap_drawer
+        SwapDrawer {
+            context: self.context
+        }
+    }
     Component {
         id: transaction_details_drawer
         TransactionDetailsDrawer {
@@ -208,7 +218,13 @@ Page {
         HomePage {
             context: self.context
             onAssetClicked: (asset) => asset_drawer.createObject(self, { context: self.context, asset }).open()
-            onTransactionClicked: (transaction) => transaction_details_drawer.createObject(self, { context: self.context, transaction }).open()
+            onTransactionClicked: (transaction) => {
+                if (transaction instanceof Transaction) {
+                    transaction_details_drawer.createObject(self, { context: self.context, transaction }).open()
+                } else if (transaction instanceof Swap) {
+                    console.log('its a swap')
+                }
+            }
             onTransactionsClicked: {
                 self.showView(OverviewPage.Transactions)
                 transactions_page.showTransactions()

@@ -46,8 +46,8 @@ AbstractButton {
             font.pixelSize: 16
             font.weight: 600
             text: {
-                if (self.anyLiquid) return 'Receive any Liquid Asset'
-                if (self.anyAMP) return 'Receive any AMP Asset'
+                if (self.anyLiquid) return qsTrId('id_receive_any_liquid_asset')
+                if (self.anyAMP) return qsTrId('id_receive_any_amp_asset')
                 return self.asset?.name ?? ''
             }
             wrapMode: Label.WrapAtWordBoundaryOrAnywhere

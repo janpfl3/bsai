@@ -19,7 +19,7 @@ StackViewPage {
     component SecurityPolicyButton2: SecurityPolicyButton {
         required property string serverType
         required property string type
-        property string networkKey: self.asset?.networkKey ?? (self.context.deployment === 'mainnet' ? 'liquid' : 'testnet-liquid')
+        property string networkKey: self.asset?.networkKey ?? (self.context.mainnet ? 'liquid' : 'testnet-liquid')
         id: btn
         network: NetworkManager.networkWithServerType(self.context.deployment, btn.networkKey, btn.serverType)
         action: Action {
@@ -47,7 +47,7 @@ StackViewPage {
         tagColor: '#D8A800'
         text: 'lightning'
         title: qsTrId('id_lightning')
-        visible: context.deployment === 'mainnet' && self.asset?.networkKey === 'bitcoin' && Settings.enableExperimental
+        visible: self.context.mainnet && self.asset?.networkKey === 'bitcoin' && Settings.enableExperimental
         action: Action {
             onTriggered: {
                 self.StackView.view.push(lightning_page);

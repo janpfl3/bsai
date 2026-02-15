@@ -36,12 +36,12 @@ StackViewPage {
                 OptionButton {
                     Layout.topMargin: 5
                     icon.source: 'qrc:/svg2/liquid_icon.svg'
-                    text: 'Receive any Liquid Asset'
+                    text: qsTrId('id_receive_any_liquid_asset')
                     onClicked: self.anyLiquidClicked()
                 }
                 OptionButton {
                     icon.source: 'qrc:/svg2/amp_icon.svg'
-                    text: 'Receive any AMP Asset'
+                    text: qsTrId('id_receive_any_amp_asset')
                     onClicked: self.anyAMPClicked()
                 }
             }

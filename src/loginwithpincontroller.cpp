@@ -324,6 +324,8 @@ static bool compatibleToNetworks(Network* network, const QList<Network*> network
     return true;
 }
 
+#include "lwktask.h"
+
 void LoadController::load()
 {
     const auto networks = m_context->getActiveNetworks();
@@ -336,7 +338,12 @@ void LoadController::load()
         loadNetwork(group, network);
     }
 
-    loadPayments(group);
+    if (m_context->isMainnet() && !m_context->isWatchonly() && !qobject_cast<DeviceData*>(m_context->wallet()->login())) {
+        group->add(new LwkCreateSessionTask(m_context));
+    }
+    if (m_context->isMainnet()) {
+        loadPayments(group);
+    }
 
     m_monitor->add(group);
     dispatcher()->add(group);

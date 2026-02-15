@@ -257,6 +257,7 @@ qt_add_resources(${APP_TARGET} "images"
         assets/svg3/Stamp.svg
         assets/svg3/arrow-line-up-right.svg
         assets/svg3/Btc-portal.svg
+        assets/svg3/lightning.svg
 
         assets/svg/blockstream.svg
         assets/svg/menu-home.svg
@@ -513,8 +514,10 @@ qt_add_resources(${APP_TARGET} "images"
         assets/svg/send-white.svg
         assets/svg/receive-white.svg
 
+        assets/000000/24/arrows-down-up.svg
         assets/000000/24/list-checks.svg
         assets/a0a0a0/24/faders-horizontal.svg
+        assets/fafafa/20/arrows-down-up.svg
         assets/fafafa/20/coin-vertical.svg
         assets/ffffff/16/note.svg
         assets/ffffff/24/note.svg

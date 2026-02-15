@@ -404,6 +404,7 @@ StackViewPage {
     Component {
         id: select_fee_page
         SelectFeePage {
+            onCloseClicked: self.closeClicked()
             onFeeRateSelected: (fee_rate) => {
                 controller.feeRate = fee_rate
                 self.StackView.view.pop()

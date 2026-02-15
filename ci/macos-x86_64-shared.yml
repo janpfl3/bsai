@@ -13,6 +13,23 @@
   tags:
     - macos-x86_64
 
+macos-x86_64-shared:depends-gdk:
+  stage: depends
+  extends:
+    - .macos-x86_64-shared
+  script:
+    - export LLVM_PATH="$BREW_PREFIX/opt/llvm@17"
+    - export PATH="$LLVM_PATH/bin:$PATH"
+    - export CC="$LLVM_PATH/bin/clang"
+    - export CXX="$LLVM_PATH/bin/clang++"
+    - export LDFLAGS="-L$LLVM_PATH/lib"
+    - export CPPFLAGS="-I$LLVM_PATH/include"
+    - export CMAKE_PREFIX_PATH="$LLVM_PATH"
+    - export CMAKE_C_COMPILER="$LLVM_PATH/bin/clang"
+    - export CMAKE_CXX_COMPILER="$LLVM_PATH/bin/clang++"
+    - tools/buildgdk.sh --static
+  when: manual
+
 macos-x86_64-shared:depends:
   stage: depends
   extends:
@@ -26,8 +43,9 @@ macos-x86_64-shared:depends:
     - tools/buildzxing.sh
     - tools/buildbreakpad.sh
     - tools/buildcrashpad.sh
-    - tools/buildgdk.sh --static
     - tools/buildgpgme.sh
+    - tools/buildleveldb.sh
+    - tools/buildlwk.sh
   when: manual
 
 macos-x86_64-shared:build:

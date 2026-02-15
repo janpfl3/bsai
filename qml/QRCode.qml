@@ -6,6 +6,7 @@ Item {
     property real radius: 16
     property real border: 8
     property bool corners: false
+    property color color: '#00BCFF'
     readonly property int size: Math.min(self.width, self.height)
 
     id: self
@@ -75,7 +76,7 @@ Item {
         width: 64
         height: 64
         border.width: 4
-        border.color: '#00BCFF'
+        border.color: self.color
         color: 'transparent'
         radius: self.radius + 12
     }

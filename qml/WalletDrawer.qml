@@ -11,6 +11,9 @@ AbstractDrawer {
         function onAutoLogout() {
             self.close()
         }
+        function onLogout() {
+            self.close()
+        }
     }
 
     id: self

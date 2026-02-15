@@ -4,11 +4,12 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-AbstractButton {
+TextField {
     signal pinEntered(string pin)
-    property string pin: ''
+    property alias pin: self.text
     property real digitSize: 64
     property real dotSize: self.digitSize * 10 / 64
+    property real spacing: self.digitSize * 10 / 64
     function enable() {
         self.enabled = true
     }
@@ -19,46 +20,40 @@ AbstractButton {
         self.pin = ''
     }
     function append(digit) {
-        if (self.pin?.length < 6) {
-            self.pin = self.pin + digit
-            if (self.pin.length === 6) {
-                self.pinEntered(self.pin)
-            }
-        }
+        self.pin += digit
     }
+
     function remove() {
         if (self.pin?.length > 0) {
             self.pin = self.pin.slice(0, -1)
         }
     }
-    id: self
-    opacity: self.enabled ? 1 : 0.4
-    activeFocusOnTab: true
-    onClicked: self.forceActiveFocus()
     Keys.onPressed: (event) => {
         switch (event.key) {
-            case Qt.Key_0:
-            case Qt.Key_1:
-            case Qt.Key_2:
-            case Qt.Key_3:
-            case Qt.Key_4:
-            case Qt.Key_5:
-            case Qt.Key_6:
-            case Qt.Key_7:
-            case Qt.Key_8:
-            case Qt.Key_9:
-                return self.append(event.key - Qt.Key_0)
-            case Qt.Key_Backspace:
-                return self.remove()
+            case Qt.Key_Escape:
+                return self.clear()
         }
     }
-    leftPadding: 0
-    topPadding: 0
+    onPinChanged: {
+        if (self.pin.length === 6) {
+            self.pinEntered(self.pin)
+        }
+    }
+    id: self
+    activeFocusOnTab: true
     bottomPadding: 0
+    echoMode: TextField.NoEcho
+    leftPadding: 0
+    opacity: self.enabled ? 1 : 0.4
     rightPadding: 0
-    background: null
-    contentItem: RowLayout {
-        spacing: 10
+    topPadding: 0
+    validator: RegularExpressionValidator {
+        regularExpression: /[0-9]{6}/
+    }
+    cursorDelegate: Item {
+    }
+    background: RowLayout {
+        spacing: self.spacing
         Digit { index: 0 }
         Digit { index: 1 }
         Digit { index: 2 }
@@ -66,18 +61,16 @@ AbstractButton {
         Digit { index: 4 }
         Digit { index: 5 }
     }
-
     component Digit: Item {
         required property int index
-        readonly property bool visualFocus: self.activeFocus && digit.index === self.pin.length
         id: digit
-        implicitWidth: self.digitSize
         implicitHeight: self.digitSize
+        implicitWidth: self.digitSize
         opacity: self.enabled ? 1 : 0.5
         Rectangle {
             anchors.fill: parent
             border.width: 2
-            border.color: digit.visualFocus ? '#00BCFF' : '#333'
+            border.color: self.activeFocus && digit.index === self.pin.length ? '#00BCFF' : '#333'
             color: Qt.alpha('#000000', 0.2)
             radius: 10
         }
@@ -87,7 +80,7 @@ AbstractButton {
             radius: self.dotSize / 2
             anchors.centerIn: parent
             visible: digit.index < self.pin.length
-            color: '#00BCFF'
+            color: self.activeFocus ? '#00BCFF' : '#333'
         }
     }
 }

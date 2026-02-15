@@ -274,6 +274,12 @@ SET(QML_FILES
     qml/AddressTypeLabel.qml
     qml/SetupWatchonlyDrawer.qml
     qml/TransactionAmounts.qml
+    qml/RecipientField.qml
+    qml/RecipientPage.qml
+    qml/SubmarineSwapPage.qml
+    qml/SwapDrawer.qml
+    qml/ChainSwapCreatePage.qml
+    qml/ChainSwapReviewPage.qml
 )
 
 if (GREEN_NO_RESOURCES)

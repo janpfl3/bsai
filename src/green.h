@@ -14,6 +14,7 @@ class Payment;
 class Resolver;
 class Session;
 class Settings;
+class Swap;
 class Task;
 class TaskGroup;
 class TaskGroupMonitor;

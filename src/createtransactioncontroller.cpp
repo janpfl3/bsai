@@ -98,91 +98,106 @@ void CreateTransactionController::invalidate()
 
 void CreateTransactionController::update()
 {
-    if (m_context && m_account) {
-        auto group = new TaskGroup(this);
-
-        if (!m_previous_transaction && m_utxos.isNull()) {
-            auto task = new GetUnspentOutputsTask(0, false, m_account);
-            connect(task, &Task::finished, this, [=, this] {
-                m_utxos = task->unspentOutputs();
-                emit utxosChanged();
-                task->deleteLater();
-                update();
-            });
-            group->add(task);
-        } else {
-            if (!m_previous_transaction && m_recipient->address().trimmed().isEmpty()) {
-                delete group;
-                setTransaction({});
-                return;
-            }
-
-            auto session = m_account->session();
-
-            QJsonObject details;
-            if (!m_previous_transaction && m_coins.isEmpty()) {
-                details["utxos"] = m_utxos;
-            } else {
-                qDebug() << "use coins";
-                QJsonArray utxos;
-                for (auto coin : m_coins) {
-                    auto output = coin.value<Output*>();
-                    utxos.append(output->data());
-                }
-                qDebug() << utxos;
-                details["utxos"] = QJsonObject{{ m_asset->id(), utxos }};
-            }
-
-            if (m_previous_transaction) {
-                details["previous_transaction"] = m_previous_transaction->data();
-                details["subaccount"] = int(m_account->pointer());
-            } else {
-                QJsonObject addressee;
-                addressee.insert("address", m_recipient->address().trimmed());
-                addressee.insert("satoshi", m_recipient->convert()->satoshi().toLongLong());
-                addressee.insert("is_greedy", !m_recipient->address().contains("amount") && m_recipient->isGreedy());
-                if (session->network()->isLiquid() && m_recipient->convert()->asset()) {
-                    addressee.insert("asset_id", m_recipient->convert()->asset()->id());
-                }
-                QJsonArray addressees;
-                addressees.append(addressee);
-                details["addressees"] = addressees;
-            }
-            if (m_fee_rate > 0) {
-                details["fee_rate"] = m_fee_rate;
-            } else if (m_previous_transaction) {
-                const auto estimates = gdk::get_fee_estimates(session->m_session);
-                const auto previous_fee_rate = m_previous_transaction->data().value("fee_rate");
-                if (estimates.size() > 0) {
-                    const auto fee_rate = previous_fee_rate.toInt() + estimates.at(0).toInt();
-                    details["fee_rate"] = fee_rate;
-                }
-            } else {
-                const auto estimates = gdk::get_fee_estimates(session->m_session);
-                if (estimates.size() > 24) {
-                    details["fee_rate"] = estimates.at(24);
-                }
-            }
-            auto task = new CreateTransactionTask(details, session);
-            const auto seq = ++m_seq;
-            connect(task, &CreateTransactionTask::finished, this, [=, this] {
-                if (m_seq == seq) {
-                    setTransaction(task->transaction());
-                    task->deleteLater();
-                }
-            });
-            connect(task, &CreateTransactionTask::failed, this, [=, this](const QString& error) {
-                if (m_seq == seq) {
-                    qDebug() << error;
-                    task->deleteLater();
-                    setTransaction({});
-                }
-            });
-            group->add(task);
-        }
-        monitor()->add(group);
-        dispatcher()->add(group);
+    if (!m_context) {
+        qDebug() << Q_FUNC_INFO << "no context";
+        return;
     }
+
+    if (!m_account) {
+        qDebug() << Q_FUNC_INFO << "no account";
+        return;
+    }
+
+    qDebug() << Q_FUNC_INFO;
+
+    auto group = new TaskGroup(this);
+
+    if (!m_previous_transaction && m_utxos.isNull()) {
+        qDebug() << Q_FUNC_INFO << "get unspents";
+
+        auto task = new GetUnspentOutputsTask(0, false, m_account);
+        connect(task, &Task::finished, this, [=, this] {
+            m_utxos = task->unspentOutputs();
+            emit utxosChanged();
+            task->deleteLater();
+            update();
+        });
+        group->add(task);
+    } else {
+        if (!m_previous_transaction && m_recipient->address().trimmed().isEmpty()) {
+            qDebug() << Q_FUNC_INFO << "missing address";
+            delete group;
+            setTransaction({});
+            return;
+        }
+
+        auto session = m_account->session();
+
+        QJsonObject details;
+        if (!m_previous_transaction && m_coins.isEmpty()) {
+            details["utxos"] = m_utxos;
+        } else {
+            qDebug() << "use coins";
+            QJsonArray utxos;
+            for (auto coin : m_coins) {
+                auto output = coin.value<Output*>();
+                utxos.append(output->data());
+            }
+            qDebug() << utxos;
+            details["utxos"] = QJsonObject{{ m_asset->id(), utxos }};
+        }
+
+        if (m_previous_transaction) {
+            details["previous_transaction"] = m_previous_transaction->data();
+            details["subaccount"] = int(m_account->pointer());
+        } else {
+            QJsonObject addressee;
+            addressee.insert("address", m_recipient->address().trimmed());
+            addressee.insert("satoshi", m_recipient->convert()->satoshi().toLongLong());
+            addressee.insert("is_greedy", !m_recipient->address().contains("amount") && m_recipient->isGreedy());
+            if (session->network()->isLiquid() && m_recipient->convert()->asset()) {
+                addressee.insert("asset_id", m_recipient->convert()->asset()->id());
+            }
+            QJsonArray addressees;
+            addressees.append(addressee);
+            details["addressees"] = addressees;
+        }
+        if (m_fee_rate > 0) {
+            details["fee_rate"] = m_fee_rate;
+        } else if (m_previous_transaction) {
+            const auto estimates = gdk::get_fee_estimates(session->m_session);
+            const auto previous_fee_rate = m_previous_transaction->data().value("fee_rate");
+            if (estimates.size() > 0) {
+                const auto fee_rate = previous_fee_rate.toInt() + estimates.at(0).toInt();
+                details["fee_rate"] = fee_rate;
+            }
+        } else {
+            const auto estimates = gdk::get_fee_estimates(session->m_session);
+            if (estimates.size() > 24) {
+                details["fee_rate"] = estimates.at(24);
+            }
+        }
+        qDebug() << Q_FUNC_INFO << details;
+
+        auto task = new CreateTransactionTask(details, session);
+        const auto seq = ++m_seq;
+        connect(task, &CreateTransactionTask::finished, this, [=, this] {
+            if (m_seq == seq) {
+                setTransaction(task->transaction());
+                task->deleteLater();
+            }
+        });
+        connect(task, &CreateTransactionTask::failed, this, [=, this](const QString& error) {
+            if (m_seq == seq) {
+                qDebug() << error;
+                task->deleteLater();
+                setTransaction({});
+            }
+        });
+        group->add(task);
+    }
+    monitor()->add(group);
+    dispatcher()->add(group);
 }
 
 void CreateTransactionController::timerEvent(QTimerEvent* event)

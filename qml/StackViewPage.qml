@@ -37,6 +37,7 @@ Page {
             spacing: 0
             id: header_layout
             Pane {
+                Layout.alignment: Qt.AlignVCenter
                 id: left_pane
                 background: null
                 padding: 0
@@ -56,11 +57,22 @@ Page {
                 id: center_pane
                 background: null
                 padding: 0
-                contentItem: Label {
-                    color: '#FFF'
-                    font.pixelSize: 14
-                    font.weight: 600
-                    text: self.title
+                contentItem: ColumnLayout {
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        color: '#FFF'
+                        font.pixelSize: 14
+                        font.weight: 600
+                        text: self.StackView.view?.title || self.title
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignCenter
+                        color: '#FFF'
+                        font.pixelSize: 12
+                        font.weight: 500
+                        text: self.title
+                        visible: !!self.StackView.view?.title
+                    }
                 }
             }
             HSpacer {
@@ -69,6 +81,7 @@ Page {
                 Layout.preferredWidth: Math.max(UtilJS.effectiveWidth(left_pane) - UtilJS.effectiveWidth(right_pane), 0)
             }
             Pane {
+                Layout.alignment: Qt.AlignVCenter
                 id: right_pane
                 background: null
                 padding: 0

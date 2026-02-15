@@ -12,7 +12,24 @@ StackViewPage {
     required property Asset asset
     required property Context context
     property bool readonly: false
-
+    property bool invoice: false
+    readonly property bool lightningEnabled: self.context.mainnet && !self.context.watchonly && !controller.context.wallet.login.device && self.account.network.liquid && self.asset.id === self.account.network.policyAsset
+    readonly property string qrcode: self.invoice ? 'lightning:' + invoice_controller.swap?.data?.invoice.toUpperCase() ?? '' : controller.uri
+    readonly property var error: {
+        if (!self.invoice) return null
+        if (amount_field.text.length === 0) return null
+        const amount = Number(controller.convert.result?.satoshi ?? 0)
+        const { limits } = context.swapsInfo.reverse?.['BTC']?.['L-BTC'] ?? { minimal: 100, maximal: 25000000 }
+        let value = Number(limits.minimal ?? 0)
+        if (amount < value) {
+            return { code: 'id_amount_below_minimum_allowed', value }
+        }
+        value = Number(limits.maximal ?? 0)
+        if (amount > value) {
+            return { code: 'id_amount_above_maximum_allowed', value }
+        }
+        return null
+    }
     ReceiveAddressController {
         id: controller
         context: self.context
@@ -20,6 +37,12 @@ StackViewPage {
         account: self.account
         asset: self.asset
         convert.unit: controller.account.session.unit
+    }
+    InvoiceController {
+        id: invoice_controller
+        context: self.context
+        address: controller.address?.address ?? ''
+        satoshi: controller.convert.result?.satoshi ?? ''
     }
 
     TaskPageFactory {
@@ -36,9 +59,10 @@ StackViewPage {
     footerItem: RowLayout {
         spacing: 20
         RegularButton {
-            id: more_options_button
             Layout.fillWidth: true
+            id: more_options_button
             text: qsTrId('id_more_options')
+            visible: !self.invoice
             onClicked: if (!more_options_menu.visible) more_options_menu.open()
             MoreOptionsMenu {
                 id: more_options_menu
@@ -50,13 +74,22 @@ StackViewPage {
         }
         PrimaryButton {
             Layout.fillWidth: true
-            enabled: !controller.generating && (controller.context.device?.connected ?? false)
+            enabled: !controller.generating && (controller.context.device?.connected ?? false) && !self.invoice
             text: qsTrId('id_verify_on_device')
             visible: controller.context.wallet.login.device?.type === 'jade'
             onClicked: {
                 self.StackView.view.push(jade_verify_page, { context: self.context, address: controller.address })
                 Analytics.recordEvent('verify_address', AnalyticsJS.segmentationSubAccount(Settings, controller.account))
             }
+        }
+        PrimaryButton {
+            Layout.fillWidth: true
+            id: confirm_button
+            busy: invoice_controller.busy
+            enabled: !confirm_button.busy && !self.error
+            text: qsTrId('id_confirm')
+            visible: self.invoice
+            onClicked: invoice_controller.request()
         }
     }
     contentItem: VFlickable {
@@ -100,11 +133,103 @@ StackViewPage {
             onClicked: self.StackView.view.push(account_asset_selector)
         }
         FieldTitle {
-            text: qsTrId('id_account_address')
+            text: qsTrId('Payer Sends')
+            visible: self.lightningEnabled
+        }
+        Pane {
+            Layout.fillWidth: true
+            padding: 0
+            visible: self.lightningEnabled
+            background: Rectangle {
+                border.width: 0.5
+                border.color: '#313131'
+                color: '#121414'
+                radius: 4
+            }
+            contentItem: RowLayout {
+                Option {
+                    id: liquid_option
+                    text: 'Liquid'
+                    checked: !self.invoice
+                    onClicked: self.invoice = false
+                }
+                Option {
+                    id: lightning_option
+                    text: 'Lightning'
+                    checked: self.invoice
+                    onClicked: {
+                        self.invoice = true
+                        amount_field.visible = true
+                        amount_field.forceActiveFocus()
+                    }
+                }
+            }
+        }
+        component Option: AbstractButton {
+            Layout.fillWidth: true
+            Layout.preferredWidth: 0
+            id: option
+            implicitHeight: 35
+            background: Item {
+                Rectangle {
+                    anchors.fill: parent
+                    visible: option.checked
+                    border.width: option.checked ? 1 : 0.5
+                    border.color: Qt.alpha('#FFF', 0.3)
+                    color: '#3A3A3D'
+                    radius: 4
+                }
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: -4
+                    border.width: 2
+                    border.color: '#00BCFF'
+                    color: 'transparent'
+                    radius: 8
+                    visible: option.visualFocus
+                }
+            }
+            contentItem: Label {
+                font.pixelSize: 12
+                font.weight: 600
+                horizontalAlignment: Label.AlignHCenter
+                verticalAlignment: Label.AlignVCenter
+                opacity: option.checked ? 1 : 0.3
+                text: option.text
+            }
+        }
+        FieldTitle {
+            text: qsTrId('id_request_amount')
+            visible: amount_field.visible
+        }
+        AmountField {
+            Layout.fillWidth: true
+            id: amount_field
+            convert: controller.convert
+            error: error_pane.expanded ? self.error : null
+            session: controller.account.session
+            visible: false
+        }
+        Convert {
+            id: error_value_convert
+            asset: self.asset
+            context: self.context
+            input: ({ satoshi: String(self.error?.value ?? 0) })
+            unit: amount_field.convert.unit
+        }
+        ErrorPane {
+            Layout.topMargin: -15
+            id: error_pane
+            error: self.error ? qsTrId(self.error?.code) + ' - ' + (amount_field.fiat ? '~ ' + error_value_convert.fiat.label : error_value_convert.output.label) : null
+        }
+        FieldTitle {
+            text: self.invoice ? qsTrId('id_invoice') : qsTrId('id_account_address')
+            visible: !self.invoice || invoice_controller.swap?.data?.invoice.length > 0
         }
         Pane {
             Layout.fillWidth: true
             padding: 20
+            visible: !self.invoice || invoice_controller.swap?.data?.invoice.length > 0
             background: Rectangle {
                 radius: 5
                 color: '#181818'
@@ -122,18 +247,24 @@ StackViewPage {
                         Layout.fillWidth: true
                         Layout.margins: 10
                         id: qrcode
-                        text: controller.uri
+                        text: self.qrcode
                         implicitHeight: 192
                         implicitWidth: 192
                         radius: 8
-                        border: 8
+                        border: 0
+                        color: self.invoice ? '#DFB316' : '#00BCFF'
                         corners: true
                         AssetIcon {
                             anchors.centerIn: parent
                             asset: controller.asset
-                            size: 32
+                            size: 24
                             border: 4
-                            visible: !!controller.asset
+                            visible: !self.invoice && !!controller.asset
+                        }
+                        Image {
+                            anchors.centerIn: parent
+                            source: 'qrc:/svg3/lightning.svg'
+                            visible: self.invoice
                         }
                     }
                     ColumnLayout {
@@ -143,6 +274,7 @@ StackViewPage {
                         CircleButton {
                             Layout.alignment: Qt.AlignTop
                             icon.source: 'qrc:/svg2/refresh.svg'
+                            visible: !self.invoice
                             onClicked: controller.generate()
                         }
                     }
@@ -153,7 +285,7 @@ StackViewPage {
                 AddressLabel {
                     Layout.fillWidth: true
                     Layout.preferredWidth: 0
-                    address: controller.address
+                    address: self.invoice ? invoice_controller.swap?.data?.invoice : controller.address
                 }
                 RowLayout {
                     spacing: 10
@@ -167,24 +299,37 @@ StackViewPage {
                     CopyAddressButton {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 0
-                        content: controller.uri
-                        text: qsTrId('id_copy_address')
+                        content: self.invoice ? 'lightning:' + invoice_controller.swap?.data?.invoice.toUpperCase() : controller.uri
+                        text: self.invoice ? qsTrId('id_copy') : qsTrId('id_copy_address')
                     }
                 }
             }
         }
         FieldTitle {
-            text: qsTrId('id_request_amount')
-            visible: amount_field.visible
+            visible: invoice_controller.swap?.data?.invoice.length > 0
+            text: 'Amount to receive: ' + (amount_field.fiat ? amount_to_receive.fiat.label : amount_to_receive.output.label)
         }
-        AmountField {
-            Layout.fillWidth: true
-            id: amount_field
-            convert: controller.convert
-            session: controller.account.session
-            visible: false
+        Convert {
+            id: amount_to_receive
+            asset: self.asset
+            context: self.context
+            // TODO: remove hardcoded claim fee of 23 sats
+            input: ({ satoshi: Number(controller.convert.result?.satoshi ?? 0) - Number(invoice_controller.swap?.data?.fee ?? 0) - 23 })
+            unit: amount_field.convert.unit
         }
+
         VSpacer {
+        }
+        Label {
+            Layout.fillWidth: true
+            Layout.preferredWidth: 0
+            color: '#A0A0A0'
+            font.pixelSize: 12
+            font.weight: 400
+            horizontalAlignment: Label.AlignHCenter
+            text: 'You will receive Liquid Bitcoin via Lightning invoice.'
+            wrapMode: Label.WordWrap
+            visible: self.invoice
         }
     }
 
@@ -197,7 +342,7 @@ StackViewPage {
     Component {
         id: qrcode_page
         StackViewPage {
-            title: qsTrId('id_receive')
+            title: qsTrId('id_qr_code')
             contentItem: ColumnLayout {
                 spacing: 20
                 id: layout
@@ -208,7 +353,7 @@ StackViewPage {
                     id: qrcode
                     border: 16
                     layer.enabled: true
-                    text: controller.uri
+                    text: self.qrcode
                     Layout.fillWidth: true
                     Layout.minimumHeight: layout.width
                     radius: 4
@@ -243,8 +388,9 @@ StackViewPage {
             context: controller.context
             onCloseClicked: self.closeClicked()
             onSelected: (account, asset) => {
-                controller.account = account
-                controller.asset = asset
+                self.account = account
+                self.asset = asset
+                amount_field.text = '0'
                 self.StackView.view.pop(self)
             }
         }

@@ -1,6 +1,7 @@
 #ifndef GREEN_TRANSACTION_H
 #define GREEN_TRANSACTION_H
 
+#include "context.h"
 #include "green.h"
 
 #include <QJsonObject>
@@ -11,7 +12,7 @@ Q_MOC_INCLUDE("account.h")
 Q_MOC_INCLUDE("asset.h")
 Q_MOC_INCLUDE("payment.h")
 
-class Transaction : public QObject
+class Transaction : public ContextTransaction
 {
     Q_OBJECT
     Q_PROPERTY(Account* account READ account CONSTANT)
@@ -38,12 +39,13 @@ public:
     virtual ~Transaction();
 
     Type type() const { return m_type; }
-    QString hash() const { return m_hash; }
+    QString hash() const { return id(); }
     QString memo() const { return m_memo; }
+
+    QDateTime timestamp() const override;
 
     bool isUnconfirmed() const;
 
-    Context* context() const;
     Account* account() const;
 
     QJsonObject data() const;
@@ -76,7 +78,6 @@ private:
     void setMemo(const QString& memo);
 private:
     Account* const m_account;
-    QString const m_hash;
     Type m_type{Type::Unknown};
     QJsonObject m_data;
     QString m_memo;

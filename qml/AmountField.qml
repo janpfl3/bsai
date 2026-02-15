@@ -11,8 +11,12 @@ TTextField {
     property bool dynamic: true
     required property Session session
     property string unit: self.session?.unit ?? ''
+    property bool embed: false
     readonly property var units: ['BTC', 'sats', 'mBTC', '\u00B5BTC']
     required property Convert convert
+    property alias leftItem: left_loader.sourceComponent
+    property alias thirdLabel: third_label.text
+    property real spacing: 4
     function setUnit(unit) {
         self.fiat = false
         self.unit = unit
@@ -88,46 +92,64 @@ TTextField {
             }
         }
     }
-
     onTextChanged: self.text = self.text.replace(/\s+/g, '')
     onTextEdited: self.setText(self.text)
 
     Layout.fillWidth: true
     id: self
-    topPadding: 22
-    bottomPadding: self.convert.fiat.available ? 32 : 22
-    leftPadding: Math.max(60, 15 + 7 + unit_label.width)
-    rightPadding: Math.max(60, 15 + 7 + unit_label.width)
+    topPadding: self.embed ? 0 : 16
+    bottomPadding: {
+        if (!self.convert.fiat.available) return self.embed ? 0 : 16
+        return self.spacing + Math.max(second_label.height, third_label.height) + (self.embed ? 0 : 16)
+    }
+    leftPadding: {
+        const l = (self.embed ? 0 : 16) + left_loader.anchors.leftMargin + left_loader.width + 7
+        const r = (self.embed ? 0 : 16) + 7 + unit_label.width
+        return self.horizontalAlignment === TextInput.AlignHCenter ? Math.max(l, r) : l
+    }
+    rightPadding: {
+        const l = (self.embed ? 0 : 16) + left_loader.anchors.leftMargin + left_loader.width + 7
+        const r = (self.embed ? 0 : 16) + 7 + unit_label.width
+        return self.horizontalAlignment === TextInput.AlignHCenter ? Math.max(l, r) : r
+    }
     validator: AmountValidator {
     }
     horizontalAlignment: TextInput.AlignHCenter
     font.pixelSize: 24
     font.weight: 500
-    CircleButton {
-        focusPolicy: Qt.NoFocus
-        anchors.verticalCenter: parent.verticalCenter
+    Loader {
+        id: left_loader
+        // anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 18
-        visible: !self.readOnly && self.text !== ''
-        icon.source: 'qrc:/svg2/x-circle.svg'
-        onClicked: self.clearText()
+        anchors.leftMargin: self.embed ? 0 : 18
+        anchors.bottom: self.baseline
+        anchors.bottomMargin: -4.5
+        // visible: !self.embed &&
+        sourceComponent: CircleButton {
+            focusPolicy: Qt.NoFocus
+            icon.source: 'qrc:/svg2/x-circle.svg'
+            visible: !self.readOnly && self.text !== ''
+            onClicked: self.clearText()
+        }
     }
     AbstractButton {
         id: unit_label
-        leftPadding: 6
-        rightPadding: 6
-        bottomPadding: 4
-        topPadding: 4
+        leftPadding: 0
+        rightPadding: 0
+        bottomPadding: 0
+        topPadding: 0
         anchors.right: parent.right
-        anchors.rightMargin: 15
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: self.convert.fiat.available ? -2 : 3
+        anchors.rightMargin: self.embed ? 0 : 16
+        //anchors.verticalCenter: parent.verticalCenter
+        //anchors.verticalCenterOffset: self.convert.fiat.available ? -2 : 3
+        anchors.bottom: self.baseline
+        anchors.bottomMargin: -4.5
         enabled: self.dynamic && (self.convert.fiat.available ?? false)
         contentItem: RowLayout {
+            opacity: unit_label.enabled && unit_label.hovered ? 1 : 0.9
             spacing: 4
             Label {
                 color: '#00BCFF'
-                opacity: unit_label.enabled && unit_label.hovered ? 1 : 0.9
                 font.pixelSize: 18
                 font.weight: 500
                 text: (self.fiat ? self.convert.fiat.currency : self.convert.output.unit) ?? ''
@@ -148,6 +170,9 @@ TTextField {
             border.color: '#00BCFF'
             color: 'transparent'
             visible: unit_label.visualFocus
+        }
+        HoverHandler {
+            cursorShape: Qt.PointingHandCursor
         }
         GMenu {
             id: unit_menu
@@ -187,24 +212,41 @@ TTextField {
             pointerY: p.y > wh ? 1 : 0
         }
     }
+
     Label {
         id: second_label
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: (self.leftPadding - self.rightPadding) / 2
-        anchors.top: parent.baseline
-        anchors.topMargin: 8
-        horizontalAlignment: Label.AlignHCenter
-        text: self.fiat ? self.convert.output.label : self.convert.fiat.label
-        color: '#FFF'
-        opacity: 0.4
+        anchors.horizontalCenter: self.horizontalAlignment === TextInput.AlignHCenter ? parent.horizontalCenter : undefined
+        anchors.right: self.horizontalAlignment === TextInput.AlignRight ? parent.right : undefined
+        anchors.rightMargin: self.embed ? 0 : 16
+        anchors.bottom: self.bottom
+        anchors.bottomMargin: self.embed ? 0 : 16
+        color: second_hover_handler.hovered ? '#FAFAFA' : '#525252'
         font.features: { 'calt': 0, 'zero': 1 }
         font.pixelSize: 12
         font.weight: 500
+        horizontalAlignment: Label.AlignHCenter
+        text: self.fiat ? self.convert.output.label : self.convert.fiat.label
         visible: self.text !== '' && self.convert.fiat.available
         TapHandler {
             enabled: self.dynamic
-            cursorShape: Qt.ArrowCursor
             onTapped: self.toggleFiat()
         }
+        HoverHandler {
+            id: second_hover_handler
+            cursorShape: Qt.PointingHandCursor
+            enabled: self.dynamic
+        }
+    }
+    Label {
+        id: third_label
+        anchors.horizontalCenter: self.horizontalAlignment === TextInput.AlignHCenter ? parent.horizontalCenter : undefined
+        anchors.left: parent.left
+        anchors.leftMargin: self.embed ? 0 : 16
+        anchors.bottom: self.bottom
+        anchors.bottomMargin: self.embed ? 0 : 16
+        color: '#A0A0A0'
+        font.features: { 'calt': 0, 'zero': 1 }
+        font.pixelSize: 12
+        font.weight: 500
     }
 }

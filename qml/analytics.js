@@ -25,7 +25,7 @@ function segmentationNetwork(context) {
         multisig = multisig || !network.electrum
     }
 
-    if (context.deployment === 'mainnet') {
+    if (context.mainnet) {
         if (mainnet && liquid) {
             segmentation.wallet_networks = 'mainnet-mixed'
         } else if (mainnet && !liquid) {

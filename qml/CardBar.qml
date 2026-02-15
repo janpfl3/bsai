@@ -53,33 +53,40 @@ Pane {
             Layout.alignment: Qt.AlignCenter
             spacing: 5
             TransactButton {
+                action.shortcut: 'Ctrl+B'
+                action.onTriggered: {
+                    const drawer = buy_bitcoin_drawer_component.createObject(self, { context: self.context })
+                    drawer.open()
+                }
                 enabled: !!UtilJS.accounts(self.context).find(account => !account.network.liquid)
                 icon.source: 'qrc:/svg/coin.svg'
                 text: 'Buy'
-                action: Action {
-                    shortcut: 'Ctrl+B'
-                    onTriggered: {
-                        const drawer = buy_bitcoin_drawer_component.createObject(self, { context: self.context })
-                        drawer.open()
-                    }
-                }
+                visible: self.context.mainnet
             }
             TransactButton {
+                action.shortcut: 'Ctrl+S'
+                action.onTriggered: openSendDrawer()
                 enabled: !self.context.watchonly
                 icon.source: 'qrc:/svg/send.svg'
                 text: qsTrId('id_send')
-                action.shortcut: 'Ctrl+S'
-                action.onTriggered: openSendDrawer()
                 // TODO move to send page
                 // self.checkDeviceMatches() && self.currentAccount && !(self.currentAccount.session.config?.twofactor_reset?.is_active ?? false)
             }
             TransactButton {
-                icon.source: 'qrc:/svg/receive.svg'
-                text: qsTrId('id_receive')
                 action.shortcut: 'Ctrl+R'
                 action.onTriggered: openReceiveDrawer()
+                icon.source: 'qrc:/svg/receive.svg'
+                text: qsTrId('id_receive')
                 // TODO move to receive page
                 // self.checkDeviceMatches() && self.currentAccount && !(self.currentAccount.session.config?.twofactor_reset?.is_active ?? false)
+            }
+            TransactButton {
+                action.shortcut: 'Ctrl+W'
+                action.onTriggered: openSwapDrawer()
+                enabled: !self.context.watchonly && !self.context.wallet.login.device
+                icon.source: 'qrc:/000000/24/arrows-down-up.svg'
+                text: qsTrId('id_swap')
+                visible: self.context.mainnet
             }
         }
     }

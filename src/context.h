@@ -8,16 +8,36 @@
 #include <QQmlEngine>
 #include <QStandardItemModel>
 
+#include <memory>
+
+#include "lwk/lwk.hpp"
+
 Q_MOC_INCLUDE("network.h")
 Q_MOC_INCLUDE("device.h")
 Q_MOC_INCLUDE("notification.h")
 Q_MOC_INCLUDE("session.h")
 Q_MOC_INCLUDE("wallet.h")
 
+class ContextTransaction : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("")
+public:
+    ContextTransaction(const QString& id, Context* context);
+    Context* context() const { return m_context; }
+    QString id() const { return m_id; }
+    virtual QDateTime timestamp() const;
+protected:
+    Context* const m_context;
+    const QString m_id;
+};
+
 class Context : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString deployment READ deployment CONSTANT)
+    Q_PROPERTY(bool mainnet READ isMainnet CONSTANT)
     Q_PROPERTY(bool bip39 READ bip39 CONSTANT)
     Q_PROPERTY(QString xpubHashId READ xpubHashId NOTIFY xpubHashIdChanged)
     Q_PROPERTY(Wallet* wallet READ wallet NOTIFY walletChanged)
@@ -31,6 +51,7 @@ class Context : public QObject
     Q_PROPERTY(QStringList mnemonic READ mnemonic NOTIFY mnemonicChanged)
     Q_PROPERTY(TaskDispatcher* dispatcher READ dispatcher CONSTANT)
     Q_PROPERTY(QQmlListProperty<Notification> notifications READ notifications NOTIFY notificationsChanged)
+    Q_PROPERTY(QJsonObject swapsInfo READ swapsInfo NOTIFY swapsInfoChanged)
     QML_ELEMENT
     QML_UNCREATABLE("")
 public:
@@ -38,6 +59,7 @@ public:
     ~Context();
 
     QString deployment() const { return m_deployment; }
+    bool isMainnet() const { return m_deployment == "mainnet"; }
     bool bip39() const { return m_bip39; }
 
     void setSkipLoadAccounts(bool skip_load_accounts);
@@ -77,7 +99,7 @@ public:
     Q_INVOKABLE Account* getOrCreateAccount(Network* network, quint32 pointer);
     Account* getOrCreateAccount(Network* network, const QJsonObject& data);
     Account* getAccountByPointer(Network* network, int pointer) const;
-    QList<Transaction*> getTransaction(const QString& hash) const;
+    QList<ContextTransaction*> getTransaction(const QString& hash) const;
     Address* getOrCreateAddress(const QString& address);
     Payment* getOrCreatePayment(const QString& id);
 
@@ -130,6 +152,7 @@ signals:
     void coinUpdated();
     void addressUpdated();
     void paymentUpdated();
+    void swapsInfoChanged();
 
 private:
     const QString m_deployment;
@@ -158,10 +181,10 @@ public:
 
     QJsonObject m_hw_device;
 
-    QMap<Transaction*, QStandardItem*> m_transaction_item;
-    QMultiMap<QString, Transaction*> m_transaction_map;
+    QMap<ContextTransaction*, QStandardItem*> m_transaction_item;
+    QMultiMap<QString, ContextTransaction*> m_transaction_map;
     QStandardItemModel* const m_transaction_model;
-    void addTransaction(Transaction* transaction);
+    void addTransaction(ContextTransaction* transaction);
     void removeTransaction(Transaction* transaction);
     QStandardItemModel* transactionModel() const { return m_transaction_model; }
 
@@ -179,6 +202,14 @@ public:
     QMap<Payment*, QStandardItem*> m_payment_item;
     QStandardItemModel* const m_payment_model;
     QStandardItemModel* paymentModel() const { return m_payment_model; }
+
+    void addSwap(Swap* swap);
+    void removeSwap(Swap* swap);
+    std::shared_ptr<lwk::BoltzSession> m_boltz_session;
+    QJsonObject m_swaps_info;
+    QList<Swap*> m_swaps;
+    QJsonObject swapsInfo() const;
+    void setSwapsInfo(const QJsonObject& swaps_info);
 };
 
 class ContextManager : public QObject

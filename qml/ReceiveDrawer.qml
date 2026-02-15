@@ -10,9 +10,9 @@ WalletDrawer {
     minimumContentWidth: 400
     contentItem: GStackView {
         id: stack_view
+        title: qsTrId('id_receive')
         initialItem: ReceiveAccountAssetSelector {
             context: self.context
-            title: qsTrId('id_receive')
             onCloseClicked: self.close()
             onSelected: (account, asset) => {
                 stack_view.replace(null, receive_page, { account, asset }, StackView.PushTransition)
@@ -23,6 +23,7 @@ WalletDrawer {
         id: receive_page
         ReceivePage {
             context: self.context
+            title: qsTrId('id_review')
             onCloseClicked: self.close()
         }
     }

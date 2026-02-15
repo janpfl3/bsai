@@ -66,6 +66,8 @@ QtObject {
     id: self
     onPromptChanged: {
         const prompt = self.prompt
+        if (!prompt) return
+        if (self.target.currentItem?.prompt === prompt) return
         if (prompt instanceof CodePrompt) {
             const status = prompt.result.status
             if (status === 'request_code') {
@@ -126,7 +128,7 @@ QtObject {
             }
         }
         id: view
-        title: self.title
+        title: qsTrId('id_twofactor_authentication')
         contentItem: VFlickable {
             alignment: Qt.AlignTop
             spacing: 10
@@ -205,14 +207,16 @@ QtObject {
             }
         }
         id: view
-        title: self.title
+        title: qsTrId('id_twofactor_authentication')
         contentItem: VFlickable {
             alignment: Qt.AlignTop
             Image {
                 Layout.alignment: Qt.AlignCenter
-                Layout.preferredHeight: 160
+                Layout.fillWidth: true
+                Layout.maximumHeight: 160
                 antialiasing: true
                 fillMode: Image.PreserveAspectFit
+                horizontalAlignment: Image.AlignHCenter
                 mipmap: true
                 smooth: true
                 source: `qrc:/svg3/2fa_${view.prompt.result.method}.svg`

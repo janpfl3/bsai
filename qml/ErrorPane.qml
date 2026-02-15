@@ -6,13 +6,28 @@ import QtQuick.Layouts
 
 Collapsible {
     required property var error
+    property var _error
     Layout.fillWidth: true
     id: self
     animationVelocity: 300
-    contentWidth: self.width
-    contentHeight: pane.height
-    collapsed: !self.error
+    collapsed: true
     z: -1
+    onErrorChanged: {
+        if (self.error) {
+            self._error = self.error
+            timer.restart()
+        } else {
+            self.collapsed = true
+            timer.stop()
+        }
+    }
+    Timer {
+        id: timer
+        interval: self.animationVelocity * 2
+        repeat: false
+        running: false
+        onTriggered: self.collapsed = false
+    }
     Pane {
         id: pane
         leftPadding: 10
@@ -35,7 +50,7 @@ Collapsible {
                 font.pixelSize: 12
                 font.weight: 600
                 color: '#C91D36'
-                text: self.error && self.error.startsWith('id_') ? qsTrId(self.error) : (self.error ?? '')
+                text: self._error && self._error.startsWith('id_') ? qsTrId(self._error) : (self._error ?? '')
                 wrapMode: Label.Wrap
             }
         }

@@ -14,6 +14,9 @@ StackViewPage {
     required property list<Account> accounts
     id: self
     title: qsTrId('id_select_account')
+    rightItem: CloseButton {
+        onClicked: self.closeClicked()
+    }
     contentItem: VFlickable {
         alignment: Qt.AlignTop
         spacing: 5

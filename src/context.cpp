@@ -13,6 +13,7 @@
 #include "payment.h"
 #include "session.h"
 #include "sessionmanager.h"
+#include "swap.h"
 #include "task.h"
 #include "transaction.h"
 #include "wallet.h"
@@ -29,6 +30,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QUrl>
+#include <QtConcurrentRun>
 
 namespace {
 void UpdateAsset(GA_session* session, Asset* asset)
@@ -329,7 +331,7 @@ Account* Context::getAccountByPointer(Network* network, int pointer) const
     return m_accounts_by_pointer.value({ network, pointer });
 }
 
-QList<Transaction *> Context::getTransaction(const QString &hash) const
+QList<ContextTransaction*> Context::getTransaction(const QString &hash) const
 {
     return m_transaction_map.values(hash);
 }
@@ -705,12 +707,12 @@ void Context::refreshAccounts()
     connect(group, &TaskGroup::finished, group, &QObject::deleteLater);
 }
 
-void Context::addTransaction(Transaction* transaction)
+void Context::addTransaction(ContextTransaction* transaction)
 {
     auto item = m_transaction_item.value(transaction);
 
     if (!item) {
-        m_transaction_map.insert(transaction->hash(), transaction);
+        m_transaction_map.insert(transaction->id(), transaction);
 
         item = new QStandardItem;
         item->setData(QVariant::fromValue(transaction), Qt::UserRole);
@@ -718,10 +720,7 @@ void Context::addTransaction(Transaction* transaction)
         m_transaction_model->appendRow(item);
     }
 
-    const auto created_at_ts = transaction->data().value("created_at_ts");
-    const auto timestamp = created_at_ts.isNull() ? QDateTime::currentDateTime() : QDateTime::fromMSecsSinceEpoch(created_at_ts.toInteger() / 1000);
-
-    item->setData(QVariant::fromValue(timestamp), Qt::UserRole + 1);
+    item->setData(QVariant::fromValue(transaction->timestamp()), Qt::UserRole + 1);
 }
 
 void Context::removeTransaction(Transaction* transaction)
@@ -1031,15 +1030,16 @@ void TransactionModel::exportToFile()
 
 bool TransactionModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-    auto transaction = sourceModel()->index(source_row, 0, source_parent).data(Qt::UserRole).value<Transaction*>();
+    auto context_transaction = sourceModel()->index(source_row, 0, source_parent).data(Qt::UserRole).value<ContextTransaction*>();
 
-    if (!transaction->data().contains("satoshi")) return false;
-    if (!transaction->data().contains("type")) return false;
+    if (const auto transaction = qobject_cast<Transaction*>(context_transaction)) {
+        if (!transaction->data().contains("satoshi")) return false;
+        if (!transaction->data().contains("type")) return false;
 
-    if (!filterAccountsAcceptsTransaction(transaction)) return false;
-    if (!filterAssetsAcceptsTransaction(transaction)) return false;
-    if (!filterTextAcceptsTransaction(transaction)) return false;
-
+        if (!filterAccountsAcceptsTransaction(transaction)) return false;
+        if (!filterAssetsAcceptsTransaction(transaction)) return false;
+        if (!filterTextAcceptsTransaction(transaction)) return false;
+    }
     return ContextModel::filterAcceptsRow(source_row, source_parent);
 }
 
@@ -1358,9 +1358,47 @@ ContextManager *ContextManager::instance()
 Context* ContextManager::create(const QString& deployment, bool bip39)
 {
     auto context = new Context(deployment, bip39, this);
-    connect(context, &QObject::destroyed, this, [=] {
+    connect(context, &QObject::destroyed, this, [=, this] {
         m_contexts.removeOne(context);
     });
     m_contexts.append(context);
     return context;
+}
+
+ContextTransaction::ContextTransaction(const QString& id, Context* context)
+    : QObject(context)
+    , m_context(context)
+    , m_id(id)
+{
+}
+
+QDateTime ContextTransaction::timestamp() const
+{
+    return QDateTime::currentDateTime();
+}
+
+void Context::addSwap(Swap* swap)
+{
+    m_swaps.append(swap);
+    swap->sync();
+    // TODO addTransaction(swap);
+}
+
+void Context::removeSwap(Swap* swap)
+{
+    Q_ASSERT(m_boltz_session);
+    m_swaps.removeOne(swap);
+    m_boltz_session->remove_swap(swap->id().toStdString());
+}
+
+QJsonObject Context::swapsInfo() const
+{
+    return m_swaps_info;
+}
+
+void Context::setSwapsInfo(const QJsonObject& swaps_info)
+{
+    if (m_swaps_info == swaps_info) return;
+    m_swaps_info = swaps_info;
+    emit swapsInfoChanged();
 }

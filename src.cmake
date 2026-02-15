@@ -93,6 +93,10 @@ SET(TARGET_SOURCES
         src/chartpriceservice.h src/chartpriceservice.cpp
         src/buybitcoinquoteservice.h src/buybitcoinquoteservice.cpp
         src/payment.h src/payment.cpp
+        src/lwk/lwk.cpp src/lwk/lwk.hpp src/lwk/lwk_scaffolding.hpp
+	src/lwktask.h src/lwktask.cpp
+	src/paymentparser.h src/paymentparser.cpp
+        src/swap.h src/swap.cpp
 )
 
 if (WIN32)

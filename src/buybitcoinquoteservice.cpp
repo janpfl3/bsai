@@ -1,6 +1,6 @@
+#include "analytics.h"
 #include "buybitcoinquoteservice.h"
 #include "context.h"
-#include "analytics.h"
 #include "task.h"
 
 #include <QDebug>
@@ -701,7 +701,6 @@ PaymentSyncController::PaymentSyncController(QObject* parent)
 #include "payment.h"
 void PaymentSyncController::sync()
 {
-    qDebug() << Q_FUNC_INFO;
     auto task = new LoadPaymentsTask(qmlEngine(this)->networkAccessManager(), context());
     connect(task, &Task::finished, this, [=, this] {
         for (const auto payment : context()->m_payments.values()) {

@@ -10,9 +10,9 @@ StackViewPage {
     signal assetClicked(Asset asset)
 
     required property Context context
-    required property var networks
     required property var assets
     id: self
+    title: 'Select Asset'
     padding: 0
     background: null
     contentItem: VFlickable {

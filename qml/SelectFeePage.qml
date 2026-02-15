@@ -20,6 +20,9 @@ StackViewPage {
         id: estimates
         session: self.account.session
     }
+    rightItem: CloseButton {
+        onClicked: self.closeClicked()
+    }
     contentItem: ColumnLayout {
         spacing: 10
         FeeRateButton {

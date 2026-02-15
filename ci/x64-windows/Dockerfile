@@ -58,4 +58,7 @@ RUN cmd /S /C ""C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\V
 COPY hidapi.bat .
 RUN cmd /S /C ""C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat" x64 && hidapi.bat"
 
+COPY leveldb.bat .
+RUN cmd /S /C ""C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat" x64 && leveldb.bat"
+
 COPY depends\ C:\depends

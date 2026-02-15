@@ -288,7 +288,7 @@ function colorFromProviderName(name) {
 }
 
 function formatFeeRate(fee_rate, network) {
-    if (network && network.liquid) {
+    if (network?.liquid) {
         return Math.round(fee_rate / 10) / 100 + ' sat/vbyte'
     } else {
         return Math.round(fee_rate / 100) / 10 + ' sat/vbyte'

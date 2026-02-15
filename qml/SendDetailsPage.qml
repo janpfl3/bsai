@@ -8,13 +8,13 @@ import "analytics.js" as AnalyticsJS
 import "util.js" as UtilJS
 
 StackViewPage {
-    required property Context context
     required property Account account
-    required property string address
-    required property string input
-    required property var amount
     required property Asset asset
-    property url url
+    required property Context context
+    required property string input
+    required property var payment
+    readonly property string address: self.payment?.address ?? ''
+    readonly property var amount: ({ satoshi: self.payment?.amount ?? '0' })
     property var available: {
         if (controller.coins.length > 0) {
             let satoshi = 0
@@ -60,8 +60,9 @@ StackViewPage {
         active: self.StackView.visible
         segmentation: AnalyticsJS.segmentationSubAccount(Settings, controller.account)
     }
+    StackView.onActivated: amount_field.forceActiveFocus()
     id: self
-    title: qsTrId('id_send')
+    title: qsTrId('id_details')
     rightItem: CloseButton {
         onClicked: self.closeClicked()
     }
@@ -179,7 +180,7 @@ StackViewPage {
         AmountField {
             Layout.fillWidth: true
             id: amount_field
-            focus: !self.amount
+            // focus: !self.amount
             readOnly: false
             convert: controller.recipient.convert
             session: controller.account.session
@@ -307,9 +308,6 @@ StackViewPage {
             text: qsTrId('id_next')
             onClicked: {
                 self.StackView.view.push(send_confirm_page, {
-                    context: self.context,
-                    account: controller.account,
-                    asset: controller.asset,
                     recipient: controller.recipient,
                     transaction: controller.transaction,
                     fiat: amount_field.fiat,
@@ -338,6 +336,10 @@ StackViewPage {
     Component {
         id: send_confirm_page
         SendConfirmPage {
+            account: controller.account
+            asset: controller.asset
+            context: self.context
+            payment: self.payment
             onCloseClicked: self.closeClicked()
         }
     }
@@ -356,6 +358,7 @@ StackViewPage {
         id: select_fee_page
         SelectFeePage {
             previousTransaction: null
+            onCloseClicked: self.closeClicked()
             onFeeRateSelected: (fee_rate) => {
                 controller.feeRate = fee_rate
                 self.StackView.view.pop()

@@ -100,20 +100,22 @@ QImage ZXingImageProvider::requestImage(const QString& id, QSize* size, const QS
         *size = QSize(512, 512);
     }
     if (contents.isEmpty()) {
-        QImage image(*size, QImage::Format_RGB32);
+        QImage image(*size, QImage::Format_ARGB32_Premultiplied);
         image.fill(0x0);
         return image;
     } else {
         ZXing::MultiFormatWriter writer(ZXing::BarcodeFormat::QRCode);
-        writer.setEccLevel(7);
+        // writer.setEccLevel(7);
         writer.setEncoding(ZXing::CharacterSet::UTF8);
-        writer.setMargin(0);
+        // writer.setMargin(0);
         const auto bitmatrix = writer.encode(contents.toStdString(), size->width(), size->height());
 
-        QImage image(*size, QImage::Format_RGB32);
+        QImage image(*size, QImage::Format_ARGB32);
+        const QColor f(0, 0, 0, 255);
+        const QColor g(0, 0, 0, 0);
         for (int x = 0; x < size->width(); x++) {
             for (int y = 0; y < size->height(); y++) {
-                image.setPixel(x, y, bitmatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                image.setPixelColor(QPoint(x, y), bitmatrix.get(x, y) ? f : g);
             }
         }
         return image;

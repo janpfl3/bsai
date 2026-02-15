@@ -11,7 +11,9 @@ rm -rf breakpad && mkdir -p breakpad && cd breakpad
 
 fetch breakpad
 
-(cd src && git apply /tools/breakpad.patch)
+if [ "$HOST" = "linux" ]; then
+    (cd src && git apply /tools/breakpad.patch)
+fi
 
 mkdir build && cd build
 

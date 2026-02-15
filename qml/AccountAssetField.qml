@@ -37,7 +37,11 @@ AbstractButton {
             Layout.alignment: Qt.AlignCenter
             Layout.maximumWidth: 32
             Layout.maximumHeight: 32
-            source: self.asset ? UtilJS.assetIcon(self.asset) : UtilJS.accountIcon(self.account)
+            source: {
+                if (self.asset) return UtilJS.assetIcon(self.asset)
+                if (self.account) return UtilJS.accountIcon(self.account)
+                return ''
+            }
         }
         ColumnLayout {
             Layout.alignment: Qt.AlignCenter

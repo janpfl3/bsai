@@ -123,6 +123,7 @@ StackViewPage {
                     enabled: !self.account.network.liquid && self.asset.key === 'btc'
                     icon.source: 'qrc:/fafafa/20/coin-vertical.svg'
                     text: 'Buy'
+                    visible: self.context.mainnet
                     onClicked: {
                         self.StackView.view.push(buy_page)
                     }
@@ -134,7 +135,7 @@ StackViewPage {
                     icon.source: 'qrc:/svg/send-white.svg'
                     text: qsTrId('id_send')
                     onClicked: {
-                        self.StackView.view.push(send_page)
+                        self.StackView.view.push(recipient_page)
                     }
                 }
                 ActionButton {
@@ -231,13 +232,22 @@ StackViewPage {
         }
     }
 
+    // Component {
+    //     id: send_page
+    //     SendPage {
+    //         context: self.context
+    //         account: self.account
+    //         asset: self.asset
+    //         readonly: true
+    //         onCloseClicked: self.closeClicked()
+    //     }
+    // }
     Component {
-        id: send_page
-        SendPage {
+        id: recipient_page
+        RecipientPage {
             context: self.context
             account: self.account
             asset: self.asset
-            readonly: true
             onCloseClicked: self.closeClicked()
         }
     }

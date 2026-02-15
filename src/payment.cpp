@@ -40,7 +40,12 @@ void Payment::refresh()
 
     if (!blockchain_transaction_id.isEmpty()) {
         const auto transactions = m_context->getTransaction(blockchain_transaction_id);
-        if (!transactions.isEmpty()) transaction = transactions.first();
+        for (const auto t : transactions) {
+            transaction = qobject_cast<Transaction*>(t);
+            if (transaction) {
+                break;
+            }
+        }
     }
 
     if (m_transaction == transaction) {

@@ -34,6 +34,7 @@ find_package(KDSingleApplication-qt6 CONFIG REQUIRED)
 find_package(libgpgme)
 find_package(libserialport REQUIRED)
 find_package(ZXing REQUIRED)
+find_package(leveldb REQUIRED)
 
 if (WIN32 AND NOT QT_FEATURE_static)
 else()
@@ -111,6 +112,7 @@ target_link_libraries(${APP_TARGET}
     hidapi::hidapi
     KDAB::kdsingleapplication
     ${FFMPEG_LIBRARIES}
+    leveldb::leveldb
 )
 
 if(TARGET libgpgme::libgpgme)
@@ -121,6 +123,7 @@ if (WIN32 AND NOT QT_FEATURE_static)
     target_link_libraries(${APP_TARGET}
         PRIVATE
         "C:/depends/windows-x86_64/lib/libgreen_gdk.lib"
+        "C:/depends/windows-x86_64/lib/lwk.lib"
     )
     target_include_directories(${APP_TARGET} PRIVATE
         "C:/depends/windows-x86_64/include/gdk"
@@ -177,9 +180,15 @@ endif()
 if (WIN32)
     target_link_libraries(${APP_TARGET} PRIVATE hid ntdll)
 elseif (APPLE)
+    find_library(LIBLWK lwk REQUIRED)
+    target_link_libraries(${APP_TARGET} PRIVATE
+      ${LIBLWK}
+      "-framework SystemConfiguration"
+    )
     set_target_properties(${APP_TARGET} PROPERTIES OUTPUT_NAME "Blockstream")
 elseif (UNIX)
-    target_link_libraries(${APP_TARGET} PRIVATE dl Xrender)
+    find_library(LIBLWK lwk REQUIRED)
+    target_link_libraries(${APP_TARGET} PRIVATE dl Xrender ${LIBLWK})
     qt_import_plugins(${APP_TARGET} INCLUDE Qt6::QXcbIntegrationPlugin Qt6::QFFmpegMediaPlugin)
     if (GREEN_WAYLAND)
         target_link_libraries(${APP_TARGET} PRIVATE Qt6::WaylandClient Xrender)

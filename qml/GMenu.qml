@@ -52,6 +52,8 @@ Popup {
     }
     contentItem: Flickable {
         ScrollIndicator.vertical: ScrollIndicator {
+            contentItem.opacity: 0.75
+            contentItem.states: []
         }
         clip: true
         contentHeight: content_item.height

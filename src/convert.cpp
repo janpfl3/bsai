@@ -237,7 +237,7 @@ bool Convert::isLiquidAsset() const
 void Convert::invalidate()
 {
     if (m_timer_id != -1) killTimer(m_timer_id);
-    m_timer_id = startTimer(50);
+    m_timer_id = startTimer(20);
 }
 
 void Convert::update()
@@ -330,7 +330,7 @@ bool Convert::mainnet() const
 {
     if (!m_context && !m_account) return false;
     const auto context = m_context ? m_context : m_account->context();
-    return context->deployment() == "mainnet";
+    return context->isMainnet();
 }
 
 void Convert::timerEvent(QTimerEvent *event)

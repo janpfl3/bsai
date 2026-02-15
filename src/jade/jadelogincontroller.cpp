@@ -545,7 +545,7 @@ void JadeGenuineCheckController::genuineCheck()
 
             group->add(new ConnectTask(m_session));
             group->add(new RSAVerifyTask(pubkey_pem, challenge, signature, m_session));
-            group->add(new RSAVerifyTask(g_ext_pubkey_pem, pubkey_pem.toLatin1(), ext_signature, m_session));
+            group->add(new RSAVerifyTask(g_ext_pubkey_pem, pubkey_pem.toUtf8(), ext_signature, m_session));
 
             connect(group, &TaskGroup::finished, this, &JadeGenuineCheckController::success);
             connect(group, &TaskGroup::failed, this, &JadeGenuineCheckController::failed);

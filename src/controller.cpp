@@ -82,7 +82,7 @@ void Controller::setRecoveryEmail(const QString& email)
     if (!m_context) return;
     const auto method = QByteArray{"email"};
     const auto twofactor_details = QJsonObject{
-        { "data", email.toLatin1().data() },
+        { "data", email.toUtf8().data() },
         { "confirmed", true },
         { "enabled", false }
     };
@@ -219,7 +219,6 @@ void AddressValidationController::setInput(const QString& input)
     emit inputChanged();
 
     m_results = {};
-
     const auto session = m_context->primarySession();
 
     auto group = new TaskGroup(this);

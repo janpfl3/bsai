@@ -57,6 +57,14 @@ FROM base AS gpgme
 COPY tools/buildgpgme.sh tools/
 RUN tools/buildgpgme.sh
 
+FROM base AS leveldb
+COPY tools/buildleveldb.sh tools/
+RUN tools/buildleveldb.sh
+
+FROM base AS lwk
+COPY tools/buildlwk.sh tools/
+RUN . /root/.cargo/env && tools/buildlwk.sh
+
 FROM base
 COPY --from=hidapi /depends /depends
 COPY --from=countly /depends /depends
@@ -67,3 +75,5 @@ COPY --from=libserialport /depends /depends
 COPY --from=crashpad /depends /depends
 COPY --from=breakpad /depends /depends
 COPY --from=gpgme /depends /depends
+COPY --from=leveldb /depends /depends
+COPY --from=lwk /depends /depends

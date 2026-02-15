@@ -19,7 +19,7 @@ StackViewPage {
         return false
     }
     id: self
-    title: qsTrId('id_select_asset')
+    title: qsTrId('id_select_account__asset')
     footer: null
     rightItem: CloseButton {
         onClicked: self.closeClicked()
@@ -51,7 +51,7 @@ StackViewPage {
                     enabled: self.supportsLiquid
                     index: -1
                     icon.source: 'qrc:/svg2/liquid_icon.svg'
-                    text: 'Receive any Liquid Asset'
+                    text: qsTrId('id_receive_any_liquid_asset')
                     highlighted: self.anyLiquid
                     onClicked: {
                         self.anyLiquid = !self.anyLiquid
@@ -66,7 +66,7 @@ StackViewPage {
                     enabled: self.supportsLiquid
                     index: -1
                     icon.source: 'qrc:/svg2/amp_icon.svg'
-                    text: 'Receive any AMP Asset'
+                    text: qsTrId('id_receive_any_amp_asset')
                     highlighted: self.anyAMP
                     onClicked: {
                         self.anyLiquid = false

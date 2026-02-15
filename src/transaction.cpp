@@ -25,9 +25,8 @@ Transaction::Type ParseType(const QString& type)
 } // namespace
 
 Transaction::Transaction(const QString& hash, Account* account)
-    : QObject(account)
+    : ContextTransaction(hash, account->context())
     , m_account(account)
-    , m_hash(hash)
 {
 }
 
@@ -35,14 +34,16 @@ Transaction::~Transaction()
 {
 }
 
+QDateTime Transaction::timestamp() const
+{
+    const auto created_at_ts = m_data.value("created_at_ts");
+    const auto timestamp = created_at_ts.isNull() ? QDateTime::currentDateTime() : QDateTime::fromMSecsSinceEpoch(created_at_ts.toInteger() / 1000);
+    return timestamp;
+}
+
 bool Transaction::isUnconfirmed() const
 {
     return m_data.value("block_height").toInt(0) == 0;
-}
-
-Context* Transaction::context() const
-{
-    return m_account->context();
 }
 
 Account *Transaction::account() const

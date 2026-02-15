@@ -31,7 +31,7 @@ JadeBleImpl::~JadeBleImpl()
 // Manage connection
 bool JadeBleImpl::isConnectedImpl() {
     Q_ASSERT(m_controller);
-    return m_service && m_service->state() == QLowEnergyService::ServiceDiscovered;
+    return m_service && m_service->state() == QLowEnergyService::RemoteServiceDiscovered;
 }
 
 void JadeBleImpl::connectDeviceImpl()
@@ -133,7 +133,7 @@ void JadeBleImpl::onServiceStateChange(const QLowEnergyService::ServiceState new
         return;
     }
 
-    if (newState != QLowEnergyService::ServiceDiscovered) {
+    if (newState != QLowEnergyService::RemoteServiceDiscovered) {
         qDebug() << "JadeBleImpl::onServiceStateChange() ignoring state:" << newState;
         return;
     }
