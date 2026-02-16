@@ -85,10 +85,9 @@ Pane {
                 Layout.preferredWidth: 1
                 Layout.alignment: Qt.AlignTop
                 implicitHeight: denomination_combo.height
-                GDropdown {
+                GComboBox {
                     id: denomination_combo
                     anchors.right: parent.right
-                    width: Math.min(80, parent.width)
                     property var units: ['BTC', 'mBTC', '\u00B5BTC', 'bits', 'sats']
                     enabled: !self.wallet.locked
                     model: units.map(unit => ({
@@ -97,10 +96,10 @@ Pane {
                     }))
                     textRole: 'text'
                     valueRole: 'value'
-                    currentValue: self.session.settings.unit
-                    onValueChanged: (value) => {
-                        if (value === '') return
-                        if (value === self.session.settings.unit) return
+                    currentIndex: denomination_combo.units.indexOf(self.session.settings.unit)
+                    onActivated: (index) => {
+                        const value = denomination_combo.model[index].value
+                        if (value === '' || value === self.session.settings.unit) return
                         controller.changeSettings({ unit: value })
                     }
                 }
@@ -147,10 +146,9 @@ Pane {
                 Layout.alignment: Qt.AlignTop
                 spacing: 8
 
-                GDropdown {
+                GComboBox {
                     id: currency_combo
                     Layout.alignment: Qt.AlignRight
-                    width: Math.min(200, parent.width)
                     enabled: !self.wallet.locked
                     model: Object.keys(self.per_currency).sort().map(currency => ({
                         text: currency,
@@ -158,30 +156,43 @@ Pane {
                     }))
                     textRole: 'text'
                     valueRole: 'value'
-                    currentValue: self.session.settings.pricing?.currency ?? ''
-                    onValueChanged: (currency) => {
+                    currentIndex: {
+                        const currency = self.session.settings.pricing?.currency ?? ''
+                        if (!currency) return -1
+                        return currency_combo.model.findIndex(item => item.value === currency)
+                    }
+                    onActivated: (index) => {
+                        const currency = currency_combo.model[index].value
                         if (currency === '') return
                         self.updateCurrency(currency)
                     }
                 }
-                GDropdown {
+                GComboBox {
                     id: exchange_combo
-                    Layout.alignment: Qt.AlignRight
-                    width: Math.min(200, parent.width)
+                    popup.width: 160
                     enabled: !self.wallet.locked
-                    model: currency_combo.currentValue ? self.per_currency[currency_combo.currentValue].sort().map(exchange => ({
-                        text: exchange,
-                        value: exchange
-                    })) : []
+                    model: {
+                        const currencyIndex = currency_combo.currentIndex
+                        if (currencyIndex < 0) return []
+                        const currency = currency_combo.model[currencyIndex]?.value
+                        return currency ? self.per_currency[currency].sort().map(exchange => ({
+                            text: exchange,
+                            value: exchange
+                        })) : []
+                    }
                     textRole: 'text'
                     valueRole: 'value'
-                    currentValue: self.session.settings.pricing?.exchange ?? ''
-                    onValueChanged: (exchange) => {
-                        if (exchange === '') return
-                        if (exchange === self.session.settings.pricing.exchange) return
+                    currentIndex: {
+                        const exchange = self.session.settings.pricing?.exchange ?? ''
+                        if (!exchange) return -1
+                        return exchange_combo.model.findIndex(item => item.value === exchange)
+                    }
+                    onActivated: (index) => {
+                        const exchange = exchange_combo.model[index].value
+
+                        if (exchange === '' || exchange === self.session.settings.pricing.exchange) return
                         const currency = self.session.settings.pricing.currency
-                        const pricing = { currency, exchange }
-                        controller.changeSettings({ pricing })
+                        controller.changeSettings({ pricing: { currency, exchange } })
                     }
                 }
             }
@@ -227,18 +238,21 @@ Pane {
                 Layout.preferredWidth: 1
                 Layout.alignment: Qt.AlignTop
                 implicitHeight: timeout_combo.height
-                GDropdown {
+                GComboBox {
                     id: timeout_combo
                     anchors.right: parent.right
-                    width: Math.min(120, parent.width)
                     model: [1, 2, 5, 10, 60].map(minutes => ({
                         text: qsTrId('id_1d_minutes').arg(minutes),
                         value: minutes
                     }))
                     textRole: 'text'
                     valueRole: 'value'
-                    currentValue: self.session.settings.altimeout
-                    onValueChanged: (minutes) => {
+                    currentIndex: {
+                        const value = self.session.settings.altimeout
+                        return timeout_combo.model.findIndex(item => item.value === value)
+                    }
+                    onActivated: (index) => {
+                        const minutes = timeout_combo.model[index].value
                         controller.changeSettings({ altimeout: minutes })
                     }
                 }

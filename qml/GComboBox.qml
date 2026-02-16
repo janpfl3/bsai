@@ -2,31 +2,149 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+pragma ComponentBehavior: Bound
+
 ComboBox {
     id: self
-    bottomPadding: 10
-    topPadding: 10
-    leftPadding: 20
-    rightPadding: 20 + self.indicator.width + self.spacing
-    font.pixelSize: 14
-    font.weight: 600
-    background: Item {
-        implicitWidth: 200
-        implicitHeight: 48
-        Rectangle {
-            radius: self.visualFocus ? 4 : 8
-            opacity: self.activeFocus ? 1 : (self.enabled ? 0.8 : 0.5)
-            color: Qt.lighter('#262626', self.hovered ? 1.2 : 1)
-            anchors.fill: parent
-            anchors.margins: self.visualFocus ? 4 : 0
+    
+    property real maxPopupHeight: 300
+    readonly property real xPadding: 12
+    readonly property real yPadding: 8
+    
+    leftPadding: xPadding
+    rightPadding: xPadding
+    topPadding: yPadding
+    bottomPadding: yPadding
+    
+    // Disable default indicator to use custom one in contentItem
+    indicator: Item {}
+    
+    background: Rectangle {
+        color: '#FFF'
+        radius: 4
+        opacity: 0.2
+        visible: self.hovered || self.popup.visible
+    }
+    
+    HoverHandler {
+        cursorShape: self.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+    }
+    
+    contentItem: RowLayout {
+        spacing: 4
+        opacity: 0.7
+        Label {
+            Layout.fillWidth: true
+            text: self.displayText
+            color: '#FFFFFF'
+            font: self.font
         }
-        Rectangle {
-            border.width: 2
-            border.color: '#00BCFF'
-            color: 'transparent'
+        Image {
+            Layout.alignment: Qt.AlignCenter
+            source: 'qrc:/svg2/caret-down-white.svg'
+        }
+    }
+    
+    delegate: ItemDelegate {
+        id: delegateItem
+        required property int index
+        required property var modelData
+        
+        leftPadding: self.xPadding
+        rightPadding: self.xPadding
+        topPadding: self.yPadding
+        bottomPadding: self.yPadding
+        width: listView.width
+        highlighted: self.highlightedIndex === index
+        
+        background: Rectangle {
+            color: '#FFFFFF'
+            radius: 4
+            opacity: 0.2
+            visible: delegateItem.hovered || delegateItem.highlighted
+        }
+        
+        HoverHandler {
+            cursorShape: Qt.PointingHandCursor
+        }
+        
+        contentItem: RowLayout {
+            spacing: 12
+            Label {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignCenter
+                color: '#FFFFFF'
+                font.pixelSize: 14
+                font.weight: 400
+                text: {
+                    if (!delegateItem.modelData) return ''
+                    return self.textRole ? delegateItem.modelData[self.textRole] ?? '' : delegateItem.modelData
+                }
+            }
+            Image {
+                Layout.alignment: Qt.AlignCenter
+                Layout.maximumWidth: 16
+                Layout.maximumHeight: 16
+                source: 'qrc:/svg2/check.svg'
+                opacity: self.currentIndex === delegateItem.index ? 1 : 0
+            }
+        }
+    }
+    
+    popup: Popup {
+        id: popupItem
+        x: self.width - width
+        y: self.height + self.yPadding
+        padding: 0
+        implicitHeight: Math.min(contentItem.implicitHeight, self.maxPopupHeight)
+        width: self.width + self.xPadding * 2
+
+        background: Rectangle {
+            color: '#262626'
+            border.color: '#343842'
+            border.width: 0.5
             radius: 8
-            anchors.fill: parent
-            opacity: self.visualFocus ? 1 : 0
+        }
+        
+        contentItem: Item {
+            implicitHeight: listView.implicitHeight + self.yPadding * 2
+            
+            ListView {
+                id: listView
+                anchors.fill: parent
+                anchors.margins: 8
+                
+                model: self.delegateModel
+                currentIndex: self.highlightedIndex
+                highlightMoveDuration: 0
+                clip: true
+                implicitHeight: Math.min(contentHeight, self.maxPopupHeight - 2 * self.yPadding)
+                spacing: 4
+                
+                ScrollBar.vertical: ScrollBar {
+                    id: scrollbar
+                    parent: listView.parent
+                    
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    
+                    policy: ScrollBar.AlwaysOn
+                    visible: listView.contentHeight > listView.height
+                    opacity: 0.3
+                    
+                    background: Rectangle {
+                        color: 'transparent'
+                        implicitWidth: 2
+                    }
+
+                    contentItem: Rectangle {
+                        implicitWidth: 2
+                        color: '#FFFFFF'
+                        radius: 1
+                    }
+                }
+            }
         }
     }
 }
