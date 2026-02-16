@@ -33,7 +33,7 @@ Pane {
         if (currency === self.session.settings.pricing.currency) return
         const exchange = self.session.settings.pricing.exchange
         const pricing = { currency, exchange }
-        if (self.per_currency[currency].indexOf(self.session.settings.pricing.exchange) < 0) {
+        if (self.per_currency[currency].indexOf(exchange) < 0) {
             pricing.exchange = self.per_currency[currency][0]
         }
         controller.changeSettings({ pricing })

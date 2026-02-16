@@ -134,7 +134,6 @@ AbstractButton {
                         const item = item_button.modelData
                         const value = typeof item === 'object' ? item[self.valueRole] : item
                         if (value !== self.currentValue) {
-                            self.currentValue = value
                             self.valueChanged(value)
                         }
                         menu.close()
