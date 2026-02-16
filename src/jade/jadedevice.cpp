@@ -7,7 +7,16 @@
 #include <QVersionNumber>
 
 namespace {
-const QVersionNumber JADE_MIN_ALLOWED_FW_VERSION{1, 0, 37};
+
+bool checkDeviceConnected(JadeDevice* device, Activity* activity)
+{
+    if (!device || !device->isConnected()) {
+        activity->setMessage({{"message", "Device not connected"}});
+        activity->fail();
+        return false;
+    }
+    return true;
+}
 
 bool IsSegwitAddressType(const QString& addr_type)
 {
@@ -19,6 +28,9 @@ bool IsSegwitAddressType(const QString& addr_type)
     }
     Q_UNREACHABLE();
 }
+
+const QVersionNumber JADE_MIN_ALLOWED_FW_VERSION{1, 0, 37};
+
 } // namespace
 
 class JadeGetWalletPublicKeyActivity : public GetWalletPublicKeyActivity
@@ -31,6 +43,8 @@ public:
     {}
     void fetch() override
     {
+        if (!checkDeviceConnected(m_device, this)) return;
+
         m_device->api()->getXpub(m_network->canonicalId(), m_path, [this](const QVariantMap& msg) {
             if (msg.contains("error")) return fail();
             Q_ASSERT(msg.contains("result") && msg["result"].typeId() == QMetaType::QString);
@@ -68,6 +82,8 @@ public:
     }
     virtual void exec() override
     {
+        if (!checkDeviceConnected(m_device, this)) return;
+
         m_device->api()->signMessage(m_path, m_message, m_ae_host_commitment, m_ae_host_entropy, [this](const QVariantMap& result) {
             if (result.contains("error")) {
                 qDebug() << "JadeSignMessageActivity" << result;
@@ -174,6 +190,8 @@ public:
             }
         }
 
+        if (!checkDeviceConnected(m_device, this)) return;
+
         m_device->api()->signTx(m_network->canonicalId(), m_transaction, inputs, change, [this](const QVariantMap& result) {
             if (result.contains("result")) {
                 for (const auto& s : result["result"].toMap()["signatures"].toList()) {
@@ -208,6 +226,8 @@ public:
     }
     void exec() override
     {
+        if (!checkDeviceConnected(m_device, this)) return;
+
         // TODO: the following QByteArray::fromHex should be done in resolver (and refactor ledger activity)
         const auto script = QByteArray::fromHex(m_script.toLocal8Bit());
         m_device->api()->getBlindingKey(script, [this](const QVariantMap& msg) {
@@ -238,6 +258,8 @@ public:
     }
     void exec() override
     {
+        if (!checkDeviceConnected(m_device, this)) return;
+
         m_device->api()->getSharedNonce(m_script, m_pubkey, [this](const QVariantMap& msg) {
             Q_ASSERT(msg.contains("result") && msg["result"].typeId() == QMetaType::QByteArray);
             m_nonce = msg["result"].toByteArray();
@@ -343,6 +365,8 @@ public:
         progress()->setIndeterminate(false);
         progress()->setTo(m_outputs.size() + 1 + 1 + m_inputs.size());
 
+        if (!checkDeviceConnected(m_device, this)) return;
+
         m_device->api()->signLiquidTx(m_network->canonicalId(), m_transaction, m_inputs, m_trusted_commitments, m_change, [this](const QVariantMap& msg) {
             qDebug() << msg;
             if (handleError(msg)) return;
@@ -388,6 +412,8 @@ JadeGetMasterBlindingKeyActivity::JadeGetMasterBlindingKeyActivity(JadeDevice* d
 }
 void JadeGetMasterBlindingKeyActivity::exec()
 {
+    if (!checkDeviceConnected(m_device, this)) return;
+
     m_device->api()->getMasterBlindingKey(m_only_if_silent, [=, this](const QVariantMap& msg) {
         if (msg.contains("result")) {
             m_master_blinding_key = msg["result"].toByteArray();
@@ -432,6 +458,8 @@ public:
     }
     void exec() override
     {
+        if (!checkDeviceConnected(m_device, this)) return;
+
         QByteArray txhashes;
         QList<uint32_t> utxo_indices;
         for (auto value : m_inputs) {
