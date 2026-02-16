@@ -525,8 +525,9 @@ void AuthHandlerTask::handleResolveCode(const QJsonObject& result)
             setResolver(nullptr);
             resolveCode(QJsonDocument(data).toJson(QJsonDocument::Compact));
         });
-        connect(resolver, &Resolver::failed, this, [this] {
+        connect(resolver, &Resolver::failed, this, [this](const QString& error) {
             setResolver(nullptr);
+            setError(error);
             setStatus(Status::Failed);
         });
         resolver->resolve();

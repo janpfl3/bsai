@@ -95,7 +95,7 @@ void SignMessageResolver::resolve()
     });
     connect(activity, &Activity::failed, this, [this, activity] {
         activity->deleteLater();
-        emit failed();
+        emit failed(getActivityError(activity, "Failed to sign message"));
     });
     ActivityManager::instance()->exec(activity);
     pushActivity(activity);

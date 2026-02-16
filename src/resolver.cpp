@@ -25,6 +25,12 @@ void Resolver::pushActivity(Activity* activity)
     emit activityChanged();
 }
 
+QString Resolver::getActivityError(Activity* activity, const QString& defaultMessage) const
+{
+    const QString error = activity->message().value("message").toString();
+    return error.isEmpty() ? defaultMessage : error;
+}
+
 TwoFactorResolver::TwoFactorResolver(const QJsonObject& result, AuthHandlerTask* task)
     : Resolver(result, task)
     , m_method(result.value("method").toString())
@@ -102,7 +108,7 @@ void GetXPubsResolver::resolve()
     });
     connect(activity, &GetWalletPublicKeyActivity::failed, this, [this, activity] {
         activity->deleteLater();
-        emit failed();
+        emit failed(getActivityError(activity, "Failed to get wallet public key"));
     });
     ActivityManager::instance()->exec(activity);
 }
@@ -142,7 +148,7 @@ void SignTransactionResolver::resolve()
     });
     connect(activity, &SignTransactionActivity::failed, [this, activity] {
         activity->deleteLater();
-        emit failed();
+        emit failed(getActivityError(activity, "Failed to sign transaction"));
     });
     ActivityManager::instance()->exec(activity);
 }
@@ -169,7 +175,7 @@ void BlindingKeysResolver::resolve()
     });
     connect(activity, &Activity::failed, this, [this, activity] {
         activity->deleteLater();
-        emit failed();
+        emit failed(getActivityError(activity, "Failed to get blinding key"));
     });
     ActivityManager::instance()->exec(activity);
 }
@@ -205,9 +211,9 @@ void BlindingNoncesResolver::resolve()
                 m_blinding_keys.append(QString::fromLocal8Bit(activity->publicKey().toHex()));
                 resolve();
             });
-            connect(activity, &Activity::failed, this, [=, this] {
+            connect(activity, &Activity::failed, this, [this, activity] {
                 activity->deleteLater();
-                emit failed();
+                emit failed(getActivityError(activity, "Failed to get blinding key"));
             });
             ActivityManager::instance()->exec(activity);
         } else {
@@ -216,7 +222,7 @@ void BlindingNoncesResolver::resolve()
     });
     connect(activity, &Activity::failed, this, [this, activity] {
         activity->deleteLater();
-        emit failed();
+        emit failed(getActivityError(activity, "Failed to get blinding nonce"));
     });
     ActivityManager::instance()->exec(activity);
 }
@@ -271,7 +277,10 @@ void SignLiquidTransactionResolver::resolve()
 
         emit resolved(data);
     });
-    connect(activity, &Activity::failed, this, &Resolver::failed);
+    connect(activity, &Activity::failed, this, [this, activity] {
+        activity->deleteLater();
+        emit failed(getActivityError(activity, "Failed to sign liquid transaction"));
+    });
     ActivityManager::instance()->exec(activity);
     pushActivity(activity);
 }
@@ -290,7 +299,10 @@ void GetMasterBlindingKeyResolver::resolve()
             { "master_blinding_key", QString::fromLocal8Bit(activity->masterBlindingKey().toHex()) }
         });
     });
-    connect(activity, &Activity::failed, this, &Resolver::failed);
+    connect(activity, &Activity::failed, this, [this, activity] {
+        activity->deleteLater();
+        emit failed(getActivityError(activity, "Failed to get master blinding key"));
+    });
     ActivityManager::instance()->exec(activity);
     pushActivity(activity);
 }
@@ -324,7 +336,10 @@ void GetBlindingFactorsResolver::resolve()
             { "amountblinders", amountblinders }
         });
     });
-    connect(activity, &Activity::failed, this, &Resolver::failed);
+    connect(activity, &Activity::failed, this, [this, activity] {
+        activity->deleteLater();
+        emit failed(getActivityError(activity, "Failed to get blinding factors"));
+    });
     ActivityManager::instance()->exec(activity);
     pushActivity(activity);
 }

@@ -32,12 +32,13 @@ public:
 public slots:
     virtual void resolve() = 0;
 signals:
-    void failed();
+    void failed(const QString& error);
     void resolved(const QJsonObject& data);
     void progress(int current, int total);
     void activityChanged();
 protected:
     void pushActivity(Activity* activity);
+    QString getActivityError(Activity* activity, const QString& defaultMessage) const;
     QJsonObject const m_result;
 private:
     Activity* m_activity{nullptr};
