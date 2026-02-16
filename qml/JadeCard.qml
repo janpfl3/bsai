@@ -20,6 +20,22 @@ WalletHeaderCard {
     }
     readonly property bool debug: Qt.application.arguments.indexOf('--debugjade') > 0
 
+    function isJadeLocked() {
+        return self.device?.connected && self.device?.state === JadeDevice.StateLocked
+    }
+
+    function getJadeStatusOptions () {
+        if (!self.device?.connected) {
+            return { text: 'Disconnected', color: '#FF6467' }
+        }
+
+        if (self.isJadeLocked()) {
+            return { text: 'Locked', color: '#FDC700' }
+        }
+
+        return { text: 'Connected', color: '#00C60D' }
+    }
+
     Component.onCompleted: firmware_controller.check(self.device)
     JadeFirmwareController {
         id: firmware_controller
@@ -107,36 +123,26 @@ WalletHeaderCard {
             }
             RowLayout {
                 Layout.fillHeight: false
+                spacing: 4
                 Rectangle {
                     Layout.alignment: Qt.AlignCenter
-                    color: self.device?.connected ? '#01B35A' : 'red'
-                    implicitWidth: 10
-                    implicitHeight: 10
-                    radius: 5
+                    color: self.getJadeStatusOptions().color
+                    implicitWidth: 8
+                    implicitHeight: 8
+                    radius: 4
                 }
                 Label {
-                    Layout.fillWidth: true
-                    font.capitalization: Font.AllUppercase
-                    font.pixelSize: 16
+                    font.pixelSize: 14
                     font.weight: 400
-                    opacity: 0.8
-                    text: self.device?.connected ? 'connected' : 'disconnected'
+                    color: '#A0A0A0'
+                    text: self.getJadeStatusOptions().text
                 }
-            }
-            RegularButton {
-                visible: {
-                    if (!self.debug) return false
-                    switch (self.device?.state) {
-                    case JadeDevice.StateTemporary:
-                    case JadeDevice.StateLocked:
-                        return true
-                    default:
-                        return false
-                    }
+                LinkButton {
+                    text: qsTrId('id_unlock')
+                    visible: self.isJadeLocked()
+                    enabled: unlock_controller.monitor?.idle ?? true
+                    onClicked: unlock_controller.unlock()
                 }
-                text: qsTrId('id_unlock')
-                onClicked: unlock_controller.unlock()
-                busy: !(unlock_controller.monitor?.idle ?? true)
             }
             VSpacer {
             }
