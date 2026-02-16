@@ -36,6 +36,9 @@ ItemDelegate {
             velocity: 1
         }
     }
+    HoverHandler {
+        cursorShape: delegate.highlighted  ? Qt.ArrowCursor : Qt.PointingHandCursor
+    }
     width: ListView.view?.width ?? 0
     contentItem: ColumnLayout {
         spacing: 0
@@ -187,7 +190,15 @@ ItemDelegate {
                             font.weight: 400
                             text: qsTrId('id_unarchive')
                             visible: delegate.highlighted && delegate.account.hidden
-                            onClicked: controller.setAccountHidden(delegate.account, false)
+                            onClicked: {
+                                controller.setAccountHidden(delegate.account, false)
+                                // If the account doesn't have a name, set it to the default visible name,
+                                // so the account is not archived again automatically after logging out and back in.
+                                if (delegate.account.name === '') {
+                                    const newAccountName = UtilJS.accountName(delegate.account)
+                                    controller.setAccountName(delegate.account, newAccountName)
+                                }
+                            }
                         }
                         CircleButton {
                             id: tool_button
