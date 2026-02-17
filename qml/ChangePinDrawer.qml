@@ -30,12 +30,10 @@ WalletDrawer {
     }
 
     id: self
-    objectName: "ChangePinDrawer"
     minimumContentWidth: pin_field.width
     contentItem: GStackView {
         id: stack_view
         initialItem: StackViewPage {
-            objectName: "ChangePinPage"
             title: self.title
             rightItem: CloseButton {
                 onClicked: self.close()
@@ -107,7 +105,6 @@ WalletDrawer {
     Component {
         id: ok_page
         StackViewPage {
-            objectName: "ChangePinSuccessPage"
             title: self.title
             rightItem: CloseButton {
                 onClicked: self.close()

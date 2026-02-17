@@ -14,7 +14,6 @@ StackViewPage {
             controller.signup('mainnet')
         }
     }
-    objectName: "RegisterPage"
     id: self
     padding: 0
     leftItem: Item {

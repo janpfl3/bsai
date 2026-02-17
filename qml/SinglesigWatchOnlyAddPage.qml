@@ -33,7 +33,6 @@ StackViewPage {
             error_badge.raise(error);
         }
     }
-    objectName: "SinglesigWatchOnlyAddPage"
     id: self
     footer: null
     padding: 60

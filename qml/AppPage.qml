@@ -8,7 +8,6 @@ import "util.js" as UtilJS
 
 MainPage {
     signal crashClicked
-    objectName: "AppPage"
 
     function openPreferences() {
         if (side_bar.currentView === SideBar.View.Preferences) {

@@ -47,7 +47,6 @@ StackViewPage {
             controller.login()
         }
     }
-    objectName: "MultisigWatchOnlyAddPage"
     id: self
     footer: null
     padding: 60

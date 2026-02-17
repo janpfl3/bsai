@@ -16,7 +16,6 @@ StackViewPage {
         id: controller
         context: account.context
     }
-    objectName: "AccountAssetPage"
     id: self
     title: UtilJS.accountName(self.account)
     centerItem: EditableLabel {

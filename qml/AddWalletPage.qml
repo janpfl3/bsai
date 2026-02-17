@@ -11,7 +11,6 @@ StackViewPage {
     signal restoreWallet()
     signal watchOnlyWallet()
     StackView.onActivated: Analytics.recordEvent('wallet_add')
-    objectName: "AddWalletPage"
     id: self
     padding: 60
     footer: Pane {

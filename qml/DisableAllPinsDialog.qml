@@ -7,7 +7,6 @@ WalletDialog {
     onClosed: self.destroy()
 
     id: self
-    objectName: "DisableAllPinsDialog"
     clip: true
     header: null
     title: qsTrId('id_disable_pin_access')

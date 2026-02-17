@@ -9,7 +9,6 @@ StackViewPage {
     signal loginFinished(Context context)
     signal loginFailed()
     required property LedgerDevice device
-    objectName: "LedgerPage"
     function pushView() {
         if (stack_view.depth > 0) return
         if (!self.device.compatible) return

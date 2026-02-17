@@ -18,7 +18,6 @@ AbstractDrawer {
     }
     onClosed: self.destroy()
     id: self
-    objectName: "JadeGenuineCheckDrawer"
     edge: Qt.RightEdge
     minimumContentWidth: 400
     JadeGenuineCheckController {

@@ -7,7 +7,6 @@ import "util.js" as UtilJS
 
 StackViewPage {
     signal deviceSelected(LedgerDevice device)
-    objectName: "ConnectLedgerPage"
     id: self
     footer: null
     padding: 60

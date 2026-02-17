@@ -11,7 +11,6 @@ AbstractDialog {
         active: true
     }
     id: self
-    objectName: "PreferencesDialog"
     clip: true
     width: 500
     height: 650

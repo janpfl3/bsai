@@ -36,7 +36,6 @@ StackViewPage {
         onTriggered: self.StackView.view.pop()
     }
     StackView.onActivated: self.update()
-    objectName: "JadeVerifyAddressPage"
     id: self
     title: qsTrId('id_verify_on_device')
     footer: BusyIndicator {

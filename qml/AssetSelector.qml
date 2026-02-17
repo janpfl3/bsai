@@ -12,7 +12,6 @@ StackViewPage {
     required property Context context
     required property Asset asset
 
-    objectName: "AssetSelector"
     id: self
     title: qsTrId('id_select_asset')
     contentItem: ColumnLayout {

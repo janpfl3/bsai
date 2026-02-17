@@ -45,7 +45,6 @@ StackViewPage {
         active: self.StackView.visible
         segmentation: AnalyticsJS.segmentationSubAccount(Settings, self.account)
     }
-    objectName: "RedepositLiquidConfirmPage"
     id: self
     title: qsTrId('id_confirm_transaction')
     rightItem: CloseButton {

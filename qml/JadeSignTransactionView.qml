@@ -16,7 +16,6 @@ StackViewPage {
             self.StackView.view.pop()
         }
     }
-    objectName: "JadeSignTransactionView"
     id: self
     rightItem: CloseButton {
         onClicked: self.closeClicked()

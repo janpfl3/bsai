@@ -9,7 +9,6 @@ import "util.js" as UtilJS
 StackViewPage {
     signal deviceSelected(JadeDevice device)
     signal qrmodeSelected()
-    objectName: "ConnectJadePage"
     id: self
     footer: null
     padding: 60

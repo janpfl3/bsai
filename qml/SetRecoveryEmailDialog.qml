@@ -5,7 +5,6 @@ import QtQuick.Layouts
 
 ControllerDialog {
     id: self
-    objectName: "SetRecoveryEmailDialog"
     title: qsTrId('id_set_an_email_for_recovery')
     controller: Controller {
         context: self.wallet.context

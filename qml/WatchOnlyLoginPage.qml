@@ -15,7 +15,6 @@ StackViewPage {
         password_field.clear()
         self.contentItem.enabled = true
     }
-    objectName: "WatchOnlyLoginPage"
     AnalyticsView {
         name: 'Login'
         active: UtilJS.effectiveVisible(self)

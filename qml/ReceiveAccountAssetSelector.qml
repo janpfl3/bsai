@@ -18,7 +18,6 @@ StackViewPage {
         }
         return false
     }
-    objectName: "ReceiveAccountAssetSelector"
     id: self
     title: qsTrId('id_select_asset')
     footer: null

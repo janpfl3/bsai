@@ -12,7 +12,6 @@ StackViewPage {
     required property JadeDevice device
     required property var firmware
     required property bool fetching
-    objectName: "JadeBasicUpdateView"
     id: self
     background: Item {
         BusyIndicator {

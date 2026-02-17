@@ -22,7 +22,6 @@ StackViewPage {
 
     }
     StackView.onActivated: pin_field.forceActiveFocus()
-    objectName: "SetupPinPage"
     id: self
     padding: 60
     title: self.context?.wallet?.name ?? ''

@@ -71,7 +71,6 @@ StackViewPage {
         id: controller
         context: self.context
     }
-    objectName: "AssetDetailsPage"
     id: self
     title: self.asset.name
     rightItem: RowLayout {

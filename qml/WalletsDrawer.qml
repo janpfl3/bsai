@@ -14,7 +14,6 @@ AbstractDrawer {
     modal: false
     z: 0
     contentItem: Page {
-        objectName: "WalletsDrawerPage"
         spacing: 10
         background: null
         header: RowLayout {
@@ -109,7 +108,6 @@ AbstractDrawer {
     component WalletButton: ListButton {
         required property Wallet wallet
         id: button
-        objectName: "WalletButton"
         contentItem: RowLayout {
             spacing: 14
             Image {

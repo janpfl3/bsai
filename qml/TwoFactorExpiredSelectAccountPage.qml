@@ -9,7 +9,6 @@ import "util.js" as UtilJS
 StackViewPage {
     required property Context context
     required property TwoFactorExpiredNotification notification
-    objectName: "TwoFactorExpiredSelectAccountPage"
     id: self
     contentItem: Flickable {
         ScrollIndicator.vertical: ScrollIndicator {

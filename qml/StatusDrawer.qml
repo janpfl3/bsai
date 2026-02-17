@@ -18,7 +18,6 @@ AbstractDrawer {
     }
 
     id: self
-    objectName: "StatusDrawer"
     edge: Qt.RightEdge
     minimumContentWidth: 350
     contentItem: GStackView {
@@ -30,7 +29,6 @@ AbstractDrawer {
     onClosed: stack_view.pop(stack_view.initialItem)
 
     component StatusPage: StackViewPage {
-        objectName: "StatusPage"
         id: page
         title: qsTrId('id_status')
         rightItem: CloseButton {

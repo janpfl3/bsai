@@ -33,7 +33,6 @@ Dialog {
         source: ApplicationWindow.contentItem
     }
     id: self
-    objectName: "JadeNotificationDialog"
     anchors.centerIn: parent
     closePolicy: Dialog.NoAutoClose
     topPadding: 60

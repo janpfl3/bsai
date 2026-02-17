@@ -10,7 +10,6 @@ import "util.js" as UtilJS
 WalletDrawer {
     required property Asset asset
     id: self
-    objectName: "CreateAccountDrawer"
     preferredContentWidth: stack_view.currentItem.implicitWidth
 
     contentItem: GStackView {

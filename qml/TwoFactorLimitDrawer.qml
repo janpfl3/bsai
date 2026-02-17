@@ -41,7 +41,6 @@ WalletDrawer {
     Component {
         id: ok_page
         StackViewPage {
-            objectName: "TwoFactorLimitOkPage"
             title: self.title
             rightItem: CloseButton {
                 onClicked: self.close()
@@ -87,7 +86,6 @@ WalletDrawer {
     Component {
         id: error_page
         ErrorPage {
-            objectName: "TwoFactorLimitErrorPage"
             title: self.title
             rightItem: CloseButton {
                 onClicked: self.close()
@@ -96,11 +94,9 @@ WalletDrawer {
     }
 
     id: self
-    objectName: "TwoFactorLimitDrawer"
     contentItem: GStackView {
         id: stack_view
         initialItem: StackViewPage {
-            objectName: "TwoFactorLimitPage"
             StackView.onActivated: controller.monitor.clear()
             title: self.title
             rightItem: CloseButton {

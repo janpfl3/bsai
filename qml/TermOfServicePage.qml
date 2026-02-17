@@ -9,7 +9,6 @@ StackViewPage {
     signal start()
     signal startDevice()
 
-    objectName: "TermOfServicePage"
     id: self
     padding: 60
     leftItem: BackButton {

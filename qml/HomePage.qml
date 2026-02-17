@@ -14,7 +14,6 @@ Page {
     signal transactionClicked(Transaction transaction)
     signal transactionsClicked()
     required property Context context
-    objectName: "HomePage"
     id: self
     background: null
     padding: 0

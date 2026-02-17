@@ -10,7 +10,6 @@ StackViewPage {
     signal connectJadeClicked()
     signal connectLedgerClicked()
     StackView.onActivated: Analytics.recordEvent('wallet_hww')
-    objectName: "UseDevicePage"
     id: self
     footer: null
     padding: 60

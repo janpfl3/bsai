@@ -21,7 +21,6 @@ WalletDrawer {
     }
 
     id: self
-    objectName: "BuyDrawer"
     minimumContentWidth: 450
     contentItem: GStackView {
         id: stack_view

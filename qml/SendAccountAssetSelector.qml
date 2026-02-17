@@ -10,7 +10,6 @@ StackViewPage {
     signal selected(account: Account, asset: Asset)
     required property Context context
     property var networks
-    objectName: "SendAccountAssetSelector"
     id: self
     title: qsTrId('Choose Asset')
     contentItem: ColumnLayout {

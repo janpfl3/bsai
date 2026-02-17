@@ -20,7 +20,6 @@ StackViewPage {
         }
         onSubmitted: (result) => self.submitted(result.request)
     }
-    objectName: "RequestSupportPage"
     id: self
     title: {
         if (self.type === 'incident') return 'Contact us'

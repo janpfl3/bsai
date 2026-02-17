@@ -67,7 +67,6 @@ StackViewPage {
         segmentation: AnalyticsJS.segmentationSubAccount(Settings, controller.account)
     }
     id: self
-    objectName: 'SendPage'
     title: qsTrId('id_send')
     rightItem: CloseButton {
         onClicked: self.closeClicked()

@@ -10,7 +10,6 @@ Dialog {
     signal cancel()
     onClosed: self.destroy()
     id: self
-    objectName: "DeploymentDialog"
     closePolicy: Popup.NoAutoClose
     modal: true
     x: parent.width / 2 - self.implicitWidth / 2

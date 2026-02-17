@@ -14,7 +14,6 @@ AbstractDrawer {
     onClosed: drawer.destroy()
 
     id: drawer
-    objectName: "NotificationDrawer"
     edge: Qt.RightEdge
     minimumContentWidth: 450
     contentItem: GStackView {
