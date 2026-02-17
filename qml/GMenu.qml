@@ -101,6 +101,7 @@ Popup {
                 Layout.fillWidth: true
                 text: self.details?.text ?? ''
                 font: self.font
+                wrapMode: Label.WordWrap
             }
             Label {
                 Layout.leftMargin: 12

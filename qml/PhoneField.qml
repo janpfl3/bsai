@@ -50,8 +50,8 @@ TTextField {
         }
         GMenu {
             id: countries_menu
-            x: country_button.width * 0.5 - countries_menu.width * 0.1
-            y: country_button.height + 8
+            x: country_button.x - 30
+            y: country_button.height + 12
             pointerX: 0.1
             pointerY: 0
             font: self.font
@@ -59,6 +59,7 @@ TTextField {
                 model: countries
                 delegate: GMenu.Item {
                     hideIcon: true
+                    Layout.maximumWidth: self.width
                     details: ({ text: name, count: '+' + code })
                     onClicked: {
                         countries_menu.close()
