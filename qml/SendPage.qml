@@ -109,7 +109,7 @@ StackViewPage {
             visible: controller.coins.length > 0
             background: Rectangle {
                 radius: 5
-                color: '#262626'
+                color: '#181818'
             }
             contentItem: RowLayout {
                 spacing: 10

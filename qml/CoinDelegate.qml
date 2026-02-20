@@ -18,7 +18,7 @@ ItemDelegate {
     topPadding: 20
     bottomPadding: 20
     background: Rectangle {
-        color: '#34373E'
+        color: '#181818'
         radius: 5
     }
     contentItem: RowLayout {
