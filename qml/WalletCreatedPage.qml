@@ -10,25 +10,6 @@ StackViewPage {
     id: self
     padding: 60
     header: null
-    footer: Pane {
-        background: null
-        bottomPadding: 20
-        contentItem: RowLayout {
-            HSpacer {
-            }
-            Label {
-                Layout.alignment: Qt.AlignCenter
-                Layout.maximumWidth: 450
-                horizontalAlignment: Label.AlignHCenter
-                font.pixelSize: 14
-                opacity: 0.6
-                text: 'Warning: If you forget your PIN and have not enabled biometrics or a recovery method, you will lose access to funds.'
-                wrapMode: Label.Wrap
-            }
-            HSpacer {
-            }
-        }
-    }
     contentItem: ColumnLayout {
         VSpacer {
         }
