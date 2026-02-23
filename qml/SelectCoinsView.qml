@@ -118,18 +118,6 @@ StackViewPage {
     }
     footerItem: ColumnLayout {
         spacing: 10
-        PrimaryButton {
-            Layout.fillWidth: true
-            enabled: self.selection.size > 0
-            text: qsTrId('id_confirm_coin_selection')
-            onClicked: {
-                const coins = []
-                for (const output of self.selection) {
-                    coins.push(output)
-                }
-                self.coinsSelected(coins)
-            }
-        }
         Label {
             Layout.alignment: Qt.AlignCenter
             font.pixelSize: 12
@@ -144,33 +132,48 @@ StackViewPage {
             text: qsTrId('id_you_can_send_up_to')
             visible: self.selection.size > 0
         }
-        Label {
+        RowLayout {
             Layout.alignment: Qt.AlignCenter
-            font.pixelSize: 16
-            font.weight: 400
-            text: convert.output.label
+            spacing: 10
             visible: self.selection.size > 0
-        }
-        Label {
-            Layout.alignment: Qt.AlignCenter
-            font.pixelSize: 16
-            font.weight: 400
-            opacity: 0.6
-            text: convert.fiat.label
-            visible: self.selection.size > 0
-        }
-        Convert {
-            id: convert
-            account: self.account
-            asset: self.asset
-            input: {
-                let satoshi = 0
-                for (const output of self.selection) {
-                    satoshi += output.data.satoshi
-                }
-                return { satoshi }
+            Label {
+                Layout.alignment: Qt.AlignCenter
+                font.pixelSize: 16
+                font.weight: 400
+                text: convert.output.label
             }
-            unit: self.unit
+            Label {
+                Layout.alignment: Qt.AlignCenter
+                font.pixelSize: 16
+                font.weight: 400
+                opacity: 0.6
+                text: ' (' + convert.fiat.label + ')'
+            }
+            Convert {
+                id: convert
+                account: self.account
+                asset: self.asset
+                input: {
+                    let satoshi = 0
+                    for (const output of self.selection) {
+                        satoshi += output.data.satoshi
+                    }
+                    return { satoshi }
+                }
+                unit: self.unit
+            }
+        }
+        PrimaryButton {
+            Layout.fillWidth: true
+            enabled: self.selection.size > 0
+            text: qsTrId('id_confirm_coin_selection')
+            onClicked: {
+                const coins = []
+                for (const output of self.selection) {
+                    coins.push(output)
+                }
+                self.coinsSelected(coins)
+            }
         }
     }
 
