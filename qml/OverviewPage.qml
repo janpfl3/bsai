@@ -80,38 +80,6 @@ Page {
         return UtilJS.confirmations(transaction.account.session, transaction.data.block_height)
     }
 
-    function localizedLabel(label) {
-        switch (label) {
-            case '':
-            case 'all':
-                return qsTrId('id_all')
-            case 'csv':
-                return qsTrId('id_csv')
-            case 'p2wsh':
-                return qsTrId('id_p2wsh')
-            case 'p2sh':
-                return qsTrId('id_p2sh')
-            case 'not_confidential':
-                return qsTrId('id_not_confidential')
-            case 'dust':
-                return qsTrId('id_dust')
-            case 'locked':
-                return qsTrId('id_locked')
-            case 'expired':
-                return qsTrId('id_2fa_expired')
-            case 'p2wpkh':
-                return 'p2wpkh'
-            case 'p2sh-p2wpkh':
-                return 'p2sh-p2wpkh'
-            case 'p2tr':
-                return 'p2tr'
-            default:
-                console.warn(`missing localized label for ${label}`)
-                console.trace()
-                return label
-        }
-    }
-
     Component {
         id: notification_drawer
         NotificationDrawer {

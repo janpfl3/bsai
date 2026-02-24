@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import QtQml.Models
 
 import "analytics.js" as AnalyticsJS
+import "util.js" as UtilJS
 
 StackViewPage {
     signal coinsSelected(var coins)
@@ -62,7 +63,7 @@ StackViewPage {
                         font.weight: 400
                         font.styleName: 'Regular'
                     }
-                    text: localizedLabel(modelData)
+                    text: UtilJS.localizedLabel(modelData)
                     property string buttonTag: modelData
                     font.capitalization: Font.AllUppercase
                 }

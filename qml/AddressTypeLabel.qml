@@ -15,7 +15,7 @@ Label {
     bottomPadding: 2
     leftPadding: 6
     rightPadding: 6
-    text: localizedLabel(self.address.type)
+    text: UtilJS.localizedLabel(self.address.type)
     background: Rectangle {
         radius:  2
         color: '#68727D'

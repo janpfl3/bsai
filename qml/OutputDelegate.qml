@@ -38,7 +38,7 @@ ItemDelegate {
         spacing: 20
         AssetIcon {
             Layout.alignment: Qt.AlignCenter
-            asset: output.asset
+            asset: self.output.asset
         }
         RowLayout {
             Layout.fillWidth: false
@@ -46,10 +46,8 @@ ItemDelegate {
             Layout.minimumWidth: self.width / 7
             Layout.preferredWidth: 0
             AccountLabel {
-                Layout.maximumWidth: parent.width
+                Layout.fillWidth: true
                 account: self.output.account
-            }
-            HSpacer {
             }
         }
         Label {
@@ -64,9 +62,10 @@ ItemDelegate {
         Repeater {
             model: self.tags
             delegate: Tag2 {
+                required property var modelData
                 text: modelData.name
-                color: modelData.color ?? 'white'
-                backgroundColor: modelData.backgroundColor
+                color: modelData.color ?? '#A0A0A0'
+                backgroundColor: modelData.backgroundColor ?? '#393939'
             }
         }
         TransactionStatusBadge {
@@ -108,13 +107,13 @@ ItemDelegate {
         if (output.locked) tags.push({ name: qsTrId('id_locked') })
         if (output.dust) tags.push({ name: qsTrId('id_dust') })
         if (output.account.network.liquid && !output.confidential) tags.push({ name: qsTrId('id_not_confidential') })
-        tags.push({ name: localizedLabel(output.addressType) })
+        tags.push({ name: UtilJS.localizedLabel(output.addressType) })
         return tags
     }
 
     component Tag2: Tag {
         id: tag2
-        property color backgroundColor: '#68727D'
+        property color backgroundColor: '#393939'
         background: Rectangle {
             radius:  2
             color: tag2.backgroundColor
@@ -126,6 +125,5 @@ ItemDelegate {
         bottomPadding: 2
         leftPadding: 6
         rightPadding: 6
-        text: localizedLabel(self.address.type)
     }
 }

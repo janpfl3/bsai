@@ -54,7 +54,7 @@ ItemDelegate {
                     font.capitalization: Font.AllUppercase
                 }
                 Tag2 {
-                    text: localizedLabel(output.addressType)
+                    text: UtilJS.localizedLabel(output.addressType)
                     font.capitalization: Font.AllUppercase
                 }
                 Tag2 {
