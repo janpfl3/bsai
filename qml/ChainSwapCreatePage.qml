@@ -241,6 +241,7 @@ StackViewPage {
                     text: field.label
                 }
                 LinkButton {
+                    Layout.fillWidth: true
                     text: UtilJS.accountName(field.account)
                     visible: field.showSelectAccount
                     onClicked: {

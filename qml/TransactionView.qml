@@ -210,6 +210,7 @@ StackViewPage {
                 text: qsTrId('id_account')
             }
             AccountLabel {
+                Layout.fillWidth: true
                 account: self.transaction.account
             }
             Label {

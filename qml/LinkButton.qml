@@ -26,5 +26,6 @@ AbstractButton {
         font: self.font
         text: self.text
         opacity: self.enabled ? 1 : 0.6
+        elide: Text.ElideRight
     }
 }
