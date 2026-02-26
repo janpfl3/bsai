@@ -107,13 +107,15 @@ end;
 function NeedVCRedist64(): Boolean;
 var
   Installed: Cardinal;
+  Minor: Cardinal;
 begin
-  if RegQueryDWordValue(HKLM,
+  Result := True;
+  if not RegQueryDWordValue(HKLM,
     'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64',
-    'Installed', Installed) then
-  begin
-    Result := (Installed <> 1);
-  end
-  else
-    Result := True;
+    'Installed', Installed) then Exit;
+  if Installed <> 1 then Exit;
+  if not RegQueryDWordValue(HKLM,
+    'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64',
+    'Minor', Minor) then Exit;
+  Result := (Minor < 30);
 end;
