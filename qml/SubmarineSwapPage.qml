@@ -67,10 +67,10 @@ StackViewPage {
         onClicked: self.closeClicked()
     }
     footerItem: PrimaryButton {
-        id: continue_button
-        enabled: !continue_button.busy && (controller.transaction?.transaction?.length ?? 0) > 0 && (controller.transaction?.error?.length ?? 0) === 0
+        id: confirm_button
+        enabled: !confirm_button.busy && (controller.transaction?.transaction?.length ?? 0) > 0 && (controller.transaction?.error?.length ?? 0) === 0
         busy: submarine_controller.busy || !(controller.monitor?.idle ?? true) || !(sign_transaction_controller.monitor?.idle ?? true)
-        text: qsTrId('id_continue')
+        text: qsTrId('id_confirm')
         onClicked: sign_transaction_controller.sign()
     }
     contentItem: VFlickable {
@@ -116,7 +116,7 @@ StackViewPage {
             readOnly: true
             session: self.account.session
             convert: Convert {
-                asset: AssetManager.assetWithId(self.context.deployment, 'btc')
+                asset: self.asset
                 context: self.context
                 input: ({ satoshi: Number(self.payment.amount_milli_satoshis) / 1000 })
                 unit: self.context.primarySession.unit
@@ -156,7 +156,7 @@ StackViewPage {
             error: submarine_controller.error || controller.transaction.error
         }
         ColumnLayout {
-            visible: continue_button.enabled
+            visible: confirm_button.enabled
             spacing: 5
             Fee {
                 id: total_fees
