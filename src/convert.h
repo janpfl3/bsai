@@ -32,6 +32,7 @@ public:
     void clearInput();
     QString unit() const { return m_unit; }
     void setUnit(const QString& unit);
+    Q_INVOKABLE void changeUnit(const QString& unit);
     QJsonObject result() const { return m_result; }
     void setResult(const QJsonObject& result);
     QVariantMap fiat() const;

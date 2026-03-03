@@ -20,7 +20,7 @@ TTextField {
     function setUnit(unit) {
         self.fiat = false
         self.unit = unit
-        self.convert.unit = unit
+        self.convert.changeUnit(unit)
         const text = self.fiat ? self.convert.fiat.amount : self.convert.format(self.unit).amount
         if (self.text.length > 0) {
             self.text = self.readOnly ? text : text.replace(/\s+/g, '')

@@ -111,6 +111,19 @@ void Convert::setUnit(const QString& unit)
     emit outputChanged();
 }
 
+void Convert::changeUnit(const QString& unit)
+{
+    if (m_unit == unit) return;
+    m_unit = unit;
+    const auto u = m_unit == "\u00B5BTC" ? "ubtc" : m_unit.toLower();
+    auto value = m_result.value(u);
+    if (!value.isNull()) {
+        m_input = {{ u, value.toVariant() }};
+    }
+    emit unitChanged();
+    emit outputChanged();
+}
+
 void Convert::setResult(const QJsonObject& result)
 {
     Q_ASSERT(!result.contains("satoshi") || result.value("satoshi").type() == QJsonValue::String);
@@ -237,7 +250,7 @@ bool Convert::isLiquidAsset() const
 void Convert::invalidate()
 {
     if (m_timer_id != -1) killTimer(m_timer_id);
-    m_timer_id = startTimer(20);
+    m_timer_id = startTimer(10);
 }
 
 void Convert::update()
