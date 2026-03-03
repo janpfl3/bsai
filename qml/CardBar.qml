@@ -14,6 +14,7 @@ Pane {
     required property Context context
     id: self
     clip: true
+    focusPolicy: Qt.ClickFocus
     leftPadding: 16
     rightPadding: 16
     topPadding: 0
@@ -30,6 +31,7 @@ Pane {
             Layout.fillWidth: true
             id: flickable
             contentWidth: layout.implicitWidth
+            focusPolicy: Qt.ClickFocus
             implicitHeight: layout.implicitHeight
             RowLayout {
                 id: layout

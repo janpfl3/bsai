@@ -29,8 +29,11 @@ Page {
     }
     id: self
     background: null
+    focusPolicy: Qt.ClickFocus
     spacing: 32
     header: Pane {
+        focusPolicy: Qt.ClickFocus
+        padding: 0
         background: Item {
             Rectangle {
                 anchors.bottom: parent.bottom
@@ -40,7 +43,6 @@ Page {
                 color: '#414141'
             }
         }
-        padding: 0
         contentItem: RowLayout {
             spacing: 4
             TabButton2 {

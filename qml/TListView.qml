@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Controls
 
 ListView {
-    id: self
     ScrollIndicator.vertical: ScrollIndicator {
     }
+    id: self
     clip: true
+    focusPolicy: Qt.ClickFocus
 }

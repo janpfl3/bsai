@@ -12,6 +12,7 @@ Flickable {
     clip: true
     contentWidth: self.width
     contentHeight: layout.height
+    focusPolicy: Qt.ClickFocus
     ColumnLayout {
         id: layout
         spacing: 0

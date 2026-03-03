@@ -34,6 +34,7 @@ GPane {
         return false
     }
 
+    focusPolicy: Qt.ClickFocus
     topPadding: 0
     leftPadding: 0
     rightPadding: 0

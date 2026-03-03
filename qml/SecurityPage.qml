@@ -241,6 +241,7 @@ Page {
 
     id: self
     background: null
+    focusPolicy: Qt.ClickFocus
     contentItem: VFlickable {
         alignment: Qt.AlignTop
         ColumnLayout {

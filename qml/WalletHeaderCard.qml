@@ -17,6 +17,7 @@ Page {
     Layout.minimumWidth: 180
     id: self
     background: null
+    focusPolicy: Qt.ClickFocus
     padding: 0
     opacity: {
         if (!self.flickable) return 1

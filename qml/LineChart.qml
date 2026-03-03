@@ -8,8 +8,6 @@ Page {
     property url iconSource: 'qrc:/svg/btc.svg'
     property Context context
 
-    id: root
-
     ChartPriceService {
         id: priceSource
         currency: root.userCurrency
@@ -46,6 +44,8 @@ Page {
         onTriggered: priceSource.refresh()
     }
 
+    id: root
+    focusPolicy: Qt.ClickFocus
     title: qsTr('Bitcoin Price')
 
     property color fillColor: Qt.rgba(0.0, 0.737, 1.0, 0.2) 

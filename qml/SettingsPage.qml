@@ -11,6 +11,7 @@ Page {
     required property Context context
     id: self
     background: null
+    focusPolicy: Qt.ClickFocus
     padding: 0
 
     readonly property list<Session> sessions: {

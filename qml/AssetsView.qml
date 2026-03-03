@@ -101,6 +101,7 @@ Pane {
         rightPadding: 24
         topPadding: 12
         bottomPadding: 12
+        focusPolicy: Qt.ClickFocus
         background: Rectangle {
             border.color: '#262626'
             border.width: 1

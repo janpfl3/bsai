@@ -196,6 +196,7 @@ Pane {
         Layout.fillWidth: true
         background: null
         clip: true
+        focusPolicy: Qt.ClickFocus
         padding: 0
         contentItem: RowLayout {
             spacing: 0
@@ -229,6 +230,7 @@ Pane {
         Layout.fillWidth: true
         id: button
         clip: true
+        focusPolicy: Qt.ClickFocus
         bottomPadding: 12
         leftPadding: 24
         rightPadding: 24

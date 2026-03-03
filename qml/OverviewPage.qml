@@ -114,6 +114,7 @@ Page {
     rightPadding: 0
     topPadding: 0
     bottomPadding: 0
+    focusPolicy: Qt.ClickFocus
     title: self.wallet.name
     spacing: 0
 

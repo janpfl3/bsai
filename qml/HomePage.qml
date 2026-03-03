@@ -16,6 +16,7 @@ Page {
     required property Context context
     id: self
     background: null
+    focusPolicy: Qt.ClickFocus
     padding: 0
     contentItem: SplitView {
         id: split_view
@@ -207,6 +208,7 @@ Page {
         rightPadding: 24
         topPadding: 12
         bottomPadding: 12
+        focusPolicy: Qt.ClickFocus
         background: Rectangle {
             border.color: '#262626'
             border.width: 1
@@ -269,6 +271,7 @@ Page {
         rightPadding: 24
         topPadding: 12
         bottomPadding: 12
+        focusPolicy: Qt.ClickFocus
         width: ListView.view.width
         background: Rectangle {
             border.color: '#262626'
