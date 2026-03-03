@@ -490,26 +490,27 @@ void LwkCreateSessionTask::update()
             if (!data) continue;
 
             try {
+                const auto type = QJsonDocument::fromJson(QByteArray::fromStdString(*data)).object().value("swap_type").toString();
                 Swap* swap = nullptr;
-                if (data->find("submarine") != std::string::npos) {
+                if (type == "submarine") {
                     swap = new SubmarineSwap(session->restore_prepare_pay(*data), m_context);
-                } else if (data->find("chain") != std::string::npos) {
+                } else if (type == "chain") {
                     swap = new ChainSwap(session->restore_lockup(*data), m_context);
-                } else if (data->find("reverse") != std::string::npos) {
+                } else if (type == "reverse") {
                     swap = new ReverseSwap(session->restore_invoice(*data), m_context);
+                } else {
+                    qWarning() << Q_FUNC_INFO << "unexpected swap type" << swap_id.c_str() << qPrintable(type);
                 }
                 if (swap) {
                     m_context->addSwap(swap);
                 }
             } catch (lwk::lwk_error::Generic error) {
-                qDebug() << Q_FUNC_INFO << "error: " << error.what();
+                qDebug() << Q_FUNC_INFO << "error: " << error.msg.c_str();
                 qDebug() << Q_FUNC_INFO << "swap: " << data->c_str();
             }
         }
 
         m_context->m_boltz_session = session;
-
-        m_context->setSwapsInfo(QJsonDocument::fromJson(QByteArray::fromStdString(session->fetch_swaps_info())).object());
 
         setStatus(Status::Finished);
     });
@@ -701,72 +702,92 @@ QVariantMap parseQuote(const lwk::Quote& quote)
     };
 }
 
-class ChainSwapQuoteControllerPrivate
+class SwapQuoteControllerPrivate
 {
 public:
     QVariantMap quote;
-    bool send_bitcoin{true};
+    lwk::SwapAsset send_asset{lwk::SwapAsset::kOnchain};
+    lwk::SwapAsset receive_asset{lwk::SwapAsset::kLiquid};
     bool send_amount{true};
     QString amount;
 };
 
-ChainSwapQuoteController::ChainSwapQuoteController(QObject* parent)
+SwapQuoteController::SwapQuoteController(QObject* parent)
     : Controller(parent)
-    , d(new ChainSwapQuoteControllerPrivate)
+    , d(new SwapQuoteControllerPrivate)
 {
+    connect(this, &Controller::contextChanged, this, &SwapQuoteController::update);
 }
 
-ChainSwapQuoteController::~ChainSwapQuoteController()
+SwapQuoteController::~SwapQuoteController()
 {
     delete d;
 }
 
-QVariantMap ChainSwapQuoteController::quote() const
+bool SwapQuoteController::isLightning() const
+{
+    return d->send_asset == lwk::SwapAsset::kLightning || d->receive_asset == lwk::SwapAsset::kLightning;
+}
+
+void SwapQuoteController::setLightning(bool lightning)
+{
+    if (d->send_asset == lwk::SwapAsset::kOnchain) {
+        d->send_asset = lwk::SwapAsset::kLightning;
+    } else if (d->receive_asset == lwk::SwapAsset::kOnchain) {
+        d->receive_asset = lwk::SwapAsset::kLightning;
+    }
+    update();
+}
+
+QVariantMap SwapQuoteController::quote() const
 {
     return d->quote;
 }
 
-QString ChainSwapQuoteController::receiveNetworkKey() const
+QString SwapQuoteController::receiveNetworkKey() const
 {
-    return d->send_bitcoin ? "liquid" : "bitcoin";
+    return d->receive_asset == lwk::SwapAsset::kLiquid ? "liquid" : "bitcoin";
 }
 
-QString ChainSwapQuoteController::sendNetworkKey() const
+QString SwapQuoteController::sendNetworkKey() const
 {
-    return d->send_bitcoin ? "bitcoin" : "liquid";
+    return d->send_asset == lwk::SwapAsset::kLiquid ? "liquid" : "bitcoin";
 }
 
-void ChainSwapQuoteController::receive(const QString& amount)
+void SwapQuoteController::receive(const QString& amount)
 {
     if (!context()) return;
+    if (d->amount == amount) return;
     d->send_amount = false;
     d->amount = amount;
     update();
 }
 
-void ChainSwapQuoteController::send(const QString& amount)
+void SwapQuoteController::send(const QString& amount)
 {
     if (!context()) return;
+    if (d->amount == amount) return;
     d->send_amount = true;
     d->amount = amount;
     update();
 }
 
-void ChainSwapQuoteController::swapNetworks()
+void SwapQuoteController::swapNetworks()
 {
     if (!context()) return;
-    d->send_bitcoin = !d->send_bitcoin;
+    qSwap(d->send_asset, d->receive_asset);
     update();
 }
 
-void ChainSwapQuoteController::update()
+void SwapQuoteController::update()
 {
+    if (!m_context) return;
     if (!m_context->m_boltz_session) return;
 
-    d->quote.clear();
     bool ok = false;
     uint64_t satoshi = d->amount.toULongLong(&ok);
     if (!ok) {
+        d->quote.clear();
         emit updated();
         return;
     }
@@ -778,8 +799,8 @@ void ChainSwapQuoteController::update()
         try {
             auto builder = d->send_amount ? session->quote(satoshi) : session->quote_receive(satoshi);
 
-            builder->send(d->send_bitcoin ? lwk::SwapAsset::kOnchain : lwk::SwapAsset::kLiquid);
-            builder->receive(d->send_bitcoin ? lwk::SwapAsset::kLiquid : lwk::SwapAsset::kOnchain);
+            builder->send(d->send_asset);
+            builder->receive(d->receive_asset);
 
             return parseQuote(builder->build());
         } catch (...) {

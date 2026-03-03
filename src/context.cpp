@@ -1390,15 +1390,3 @@ void Context::removeSwap(Swap* swap)
     m_swaps.removeOne(swap);
     m_boltz_session->remove_swap(swap->id().toStdString());
 }
-
-QJsonObject Context::swapsInfo() const
-{
-    return m_swaps_info;
-}
-
-void Context::setSwapsInfo(const QJsonObject& swaps_info)
-{
-    if (m_swaps_info == swaps_info) return;
-    m_swaps_info = swaps_info;
-    emit swapsInfoChanged();
-}

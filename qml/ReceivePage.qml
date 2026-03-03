@@ -17,19 +17,19 @@ StackViewPage {
     readonly property string qrcode: self.invoice ? 'lightning:' + invoice_controller.swap?.data?.invoice.toUpperCase() ?? '' : controller.uri
     readonly property var error: {
         if (!self.invoice) return null
-        if (amount_field.text.length === 0) return null
+        if (amount_field.text.length === 0) return { code: 'invalid', visible: false }
         const amount = Number(controller.convert.result?.satoshi ?? 0)
-        const { limits } = context.swapsInfo.reverse?.['BTC']?.['L-BTC'] ?? { minimal: 100, maximal: 25000000 }
-        let value = Number(limits.minimal ?? 0)
+        let value = Number(quote_controller.quote?.min ?? 100)
         if (amount < value) {
-            return { code: 'id_amount_below_minimum_allowed', value }
+            return { code: 'id_amount_below_minimum_allowed', value, visible: true }
         }
-        value = Number(limits.maximal ?? 0)
+        value = Number(quote_controller.quote?.max ?? 100)
         if (amount > value) {
-            return { code: 'id_amount_above_maximum_allowed', value }
+            return { code: 'id_amount_above_maximum_allowed', value, visible: true }
         }
         return null
     }
+
     ReceiveAddressController {
         id: controller
         context: self.context
@@ -38,11 +38,24 @@ StackViewPage {
         asset: self.asset
         convert.unit: controller.account.session.unit
     }
+    SwapQuoteController {
+        id: quote_controller
+        context: self.context
+        lightning: true
+    }
+    Connections {
+        enabled: self.invoice
+        target: amount_field.convert
+        function onResultChanged() {
+            quote_controller.send(amount_field.convert.result?.satoshi ?? 0)
+        }
+    }
+
     InvoiceController {
         id: invoice_controller
         context: self.context
         address: controller.address?.address ?? ''
-        satoshi: controller.convert.result?.satoshi ?? ''
+        satoshi: quote_controller.quote?.send_amount ?? ''
     }
 
     TaskPageFactory {
@@ -88,7 +101,7 @@ StackViewPage {
             busy: invoice_controller.busy
             enabled: !confirm_button.busy && !self.error
             text: qsTrId('id_confirm')
-            visible: self.invoice
+            visible: self.invoice && !invoice_controller.swap
             onClicked: invoice_controller.request()
         }
     }
@@ -220,7 +233,7 @@ StackViewPage {
         ErrorPane {
             Layout.topMargin: -15
             id: error_pane
-            error: self.error ? qsTrId(self.error?.code) + ' - ' + (amount_field.fiat ? '~ ' + error_value_convert.fiat.label : error_value_convert.output.label) : null
+            error: self.error && self.error.visible ? qsTrId(self.error?.code) + ' - ' + (amount_field.fiat ? '~ ' + error_value_convert.fiat.label : error_value_convert.output.label) : null
         }
         FieldTitle {
             text: self.invoice ? qsTrId('id_invoice') : qsTrId('id_account_address')
@@ -306,15 +319,14 @@ StackViewPage {
             }
         }
         FieldTitle {
-            visible: invoice_controller.swap?.data?.invoice.length > 0
+            visible: !self.error
             text: 'Amount to receive: ' + (amount_field.fiat ? amount_to_receive.fiat.label : amount_to_receive.output.label)
         }
         Convert {
             id: amount_to_receive
             asset: self.asset
             context: self.context
-            // TODO: remove hardcoded claim fee of 23 sats
-            input: ({ satoshi: Number(controller.convert.result?.satoshi ?? 0) - Number(invoice_controller.swap?.data?.fee ?? 0) - 23 })
+            input: ({ satoshi: quote_controller.quote?.receive_amount ?? 0 })
             unit: amount_field.convert.unit
         }
 

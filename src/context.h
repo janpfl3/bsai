@@ -51,7 +51,6 @@ class Context : public QObject
     Q_PROPERTY(QStringList mnemonic READ mnemonic NOTIFY mnemonicChanged)
     Q_PROPERTY(TaskDispatcher* dispatcher READ dispatcher CONSTANT)
     Q_PROPERTY(QQmlListProperty<Notification> notifications READ notifications NOTIFY notificationsChanged)
-    Q_PROPERTY(QJsonObject swapsInfo READ swapsInfo NOTIFY swapsInfoChanged)
     QML_ELEMENT
     QML_UNCREATABLE("")
 public:
@@ -152,7 +151,6 @@ signals:
     void coinUpdated();
     void addressUpdated();
     void paymentUpdated();
-    void swapsInfoChanged();
 
 private:
     const QString m_deployment;
@@ -206,10 +204,7 @@ public:
     void addSwap(Swap* swap);
     void removeSwap(Swap* swap);
     std::shared_ptr<lwk::BoltzSession> m_boltz_session;
-    QJsonObject m_swaps_info;
     QList<Swap*> m_swaps;
-    QJsonObject swapsInfo() const;
-    void setSwapsInfo(const QJsonObject& swaps_info);
 };
 
 class ContextManager : public QObject

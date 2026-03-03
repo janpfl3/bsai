@@ -88,17 +88,20 @@ private:
     void setSwap(SubmarineSwap* swap);
 };
 
-class ChainSwapQuoteControllerPrivate;
-class ChainSwapQuoteController : public Controller
+class SwapQuoteControllerPrivate;
+class SwapQuoteController : public Controller
 {
     Q_OBJECT
     Q_PROPERTY(QVariantMap quote READ quote NOTIFY updated)
+    Q_PROPERTY(bool lightning READ isLightning WRITE setLightning NOTIFY updated)
     Q_PROPERTY(QString receiveNetworkKey READ receiveNetworkKey NOTIFY updated)
     Q_PROPERTY(QString sendNetworkKey READ sendNetworkKey NOTIFY updated)
     QML_ELEMENT
 public:
-    ChainSwapQuoteController(QObject* parent = nullptr);
-    ~ChainSwapQuoteController();
+    SwapQuoteController(QObject* parent = nullptr);
+    ~SwapQuoteController();
+    bool isLightning() const;
+    void setLightning(bool lightning);
     QVariantMap quote() const;
     QString receiveNetworkKey() const;
     QString sendNetworkKey() const;
@@ -109,7 +112,7 @@ public slots:
 signals:
     void updated();
 private:
-    ChainSwapQuoteControllerPrivate* const d;
+    SwapQuoteControllerPrivate* const d;
     void update();
 };
 

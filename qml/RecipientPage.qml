@@ -17,14 +17,38 @@ StackViewPage {
     property var error: null
     function update() {
         let { asset_id, network, type } = recipient_field.payment
+        let error
 
         self.page = (() => {
             if (type === 'lightning_invoice') {
-                if (self.context.mainnet && !self.context.watchonly && !self.context.wallet.login.device) {
-                    network = 'liquid'
-                    asset_id = NetworkManager.network('liquid').policyAsset
-                    return submarine_swap_page
+                const { amount_milli_satoshis } = recipient_field.payment
+                if (!amount_milli_satoshis) {
+                    error = 'Format not supported. Please paste an invoice with an amount.'
+                    return null
                 }
+                if (!self.context.mainnet) {
+                    error = 'Not supported in testnet.'
+                    return null
+                }
+                if (self.context.watchonly) {
+                    error = 'Not supported in watch-only.'
+                    return null
+                }
+                if (self.context.wallet.login.device) {
+                    error = 'Not supported with Hardware Wallet.'
+                    return null
+                }
+                network = 'liquid'
+                asset_id = NetworkManager.network('liquid').policyAsset
+                return submarine_swap_page
+            }
+            if (type === 'bolt12') {
+                error = 'BOLT12 not supported. Please paste an invoice with an amount.'
+                return null
+            }
+            if (type === 'lnurl') {
+                error = 'LnUrl not supported. Please paste an invoice with an amount.'
+                return null
             }
             if (type === 'address' || type === 'bip21') {
                 return send_page
@@ -65,27 +89,33 @@ StackViewPage {
                     }
                 }
             }
-            return [...assets.values()].sort((a, b) => {
-                if (a.asset.weight > b.asset.weight) return -1
-                if (b.asset.weight > a.asset.weight) return 1
-                if (b.asset.weight === 0) {
-                    if (a.asset.icon && !b.asset.icon) return -1
-                    if (!a.asset.icon && b.asset.icon) return 1
-                    if (Object.keys(a.asset.data).length > 0 && Object.keys(b.asset.data).length === 0) return -1
-                    if (Object.keys(a.asset.data).length === 0 && Object.keys(b.asset.data).length > 0) return 1
-                }
-                return a.asset.name.localeCompare(b.asset.name)
-            })
+            return [...assets.values()]
+                .filter((a) => !self.asset || a.asset.id === self.asset.id)
+                .sort((a, b) => {
+                    if (a.asset.weight > b.asset.weight) return -1
+                    if (b.asset.weight > a.asset.weight) return 1
+                    if (b.asset.weight === 0) {
+                        if (a.asset.icon && !b.asset.icon) return -1
+                        if (!a.asset.icon && b.asset.icon) return 1
+                        if (Object.keys(a.asset.data).length > 0 && Object.keys(b.asset.data).length === 0) return -1
+                        if (Object.keys(a.asset.data).length === 0 && Object.keys(b.asset.data).length > 0) return 1
+                    }
+                    return a.asset.name.localeCompare(b.asset.name)
+                })
         })()
+        if (error) {
+            self.error = { code: error, visible: true }
+            return
+        }
         if (!self.page || !recipient_field.payment.valid) {
-            self.error = { code: 'invalid destination', visible: recipient_field.text !== '' }
+            self.error = { code: 'id_invalid_address', visible: recipient_field.text !== '' }
             return
         }
         if (self.accounts.length === 0) {
-            self.error = { code: 'no account available', visible: true }
+            self.error = { code: 'No account available', visible: true }
         }
         if (self.assets.length === 0) {
-            self.error = { code: 'no asset available', visible: true }
+            self.error = { code: 'No asset available', visible: true }
             return
         }
         if (self.assets.length > 1) {

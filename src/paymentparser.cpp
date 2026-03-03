@@ -110,6 +110,18 @@ void PaymentParser::setInput(const QString& input)
             result.insert("valid", true);
             result.insert("type", "bip21");
             fill(result, *payment->liquid_bip21());
+        } else if (payment->kind() == lwk::PaymentKind::kLightningOffer) {
+            result.insert("valid", true);
+            result.insert("type", "bolt12");
+            if (payment->lightning_offer()) {
+                result.insert("lightning_offer", QString::fromStdString(*payment->lightning_offer()));
+            }
+        } else if (payment->kind() == lwk::PaymentKind::kLnUrl) {
+            result.insert("valid", true);
+            result.insert("type", "lnurl");
+            if (payment->lnurl()) {
+                result.insert("lnurl", QString::fromStdString(*payment->lnurl()));
+            }
         } else {
             qDebug() << Q_FUNC_INFO << "unhandled kind" << int(payment->kind());
             result.insert("valid", false);

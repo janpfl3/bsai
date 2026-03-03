@@ -36,7 +36,7 @@ StackViewPage {
         receive_field.account = accounts.find(account => account.network.key === controller.receiveNetworkKey) ?? null
         send_field.account = accounts.find(account => account.network.key === controller.sendNetworkKey) ?? null
     }
-    ChainSwapQuoteController {
+    SwapQuoteController {
         id: controller
         context: self.context
         onQuoteChanged: {
@@ -84,14 +84,18 @@ StackViewPage {
                     }
                     onActivated: self.sendActive = true
                     amountField.onFiatChanged: {
-                        if (send_field.amountField.fiat) {
-                            receive_field.amountField.setFiat()
-                        } else {
-                            receive_field.amountField.setUnit(send_field.amountField.unit)
+                        if (self.sendActive) {
+                            if (send_field.amountField.fiat) {
+                                receive_field.amountField.setFiat()
+                            } else {
+                                receive_field.amountField.setUnit(send_field.amountField.unit)
+                            }
                         }
                     }
                     amountField.onUnitChanged: {
-                        receive_field.amountField.setUnit(send_field.amountField.unit)
+                        if (self.sendActive) {
+                            receive_field.amountField.setUnit(send_field.amountField.unit)
+                        }
                     }
                 }
                 CircleButton {
@@ -126,14 +130,18 @@ StackViewPage {
                     }
                     onActivated: self.sendActive = false
                     amountField.onFiatChanged: {
-                        if (receive_field.amountField.fiat) {
-                            send_field.amountField.setFiat()
-                        } else {
-                            send_field.amountField.setUnit(receive_field.amountField.unit)
+                        if (!self.sendActive) {
+                            if (receive_field.amountField.fiat) {
+                                send_field.amountField.setFiat()
+                            } else {
+                                send_field.amountField.setUnit(receive_field.amountField.unit)
+                            }
                         }
                     }
                     amountField.onUnitChanged: {
-                        send_field.amountField.setUnit(receive_field.amountField.unit)
+                        if (!self.sendActive) {
+                            send_field.amountField.setUnit(receive_field.amountField.unit)
+                        }
                     }
                 }
                 Convert {
