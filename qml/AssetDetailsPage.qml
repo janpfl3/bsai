@@ -23,7 +23,7 @@ StackViewPage {
         for (const account of UtilJS.accounts(self.context)) {
             if (account.network.liquid && self.asset.key === 'btc') continue
             if (!account.network.liquid && self.asset.key !== 'btc') continue
-            const satoshi = account.json.satoshi[self.asset.id]
+            const satoshi = account.json?.satoshi?.[self.asset.id] ?? 0
             if (self.showAllAccounts || satoshi) {
                 relevant.push({ account, satoshi: String(satoshi ?? 0) })
             } else {
