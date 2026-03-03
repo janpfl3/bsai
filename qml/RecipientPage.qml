@@ -11,6 +11,7 @@ StackViewPage {
     required property Context context
     required property Account account
     required property Asset asset
+    property url url
     property Component page
     property list<Account> accounts
     property var assets
@@ -148,6 +149,11 @@ StackViewPage {
     rightItem: CloseButton {
         onClicked: self.closeClicked()
     }
+    Component.onCompleted: {
+        if (self.url && self.url.toString() !== '') {
+            self.update()
+        }
+    }
     contentItem: VFlickable {
         alignment: Qt.AlignTop
         spacing: 5
@@ -177,6 +183,7 @@ StackViewPage {
         }
         RecipientField {
             id: recipient_field
+            text: self.url
             error: self.error?.visible ? self.error.code : null
             onPaymentChanged: self.update()
         }

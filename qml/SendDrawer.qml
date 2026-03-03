@@ -19,6 +19,7 @@ WalletDrawer {
             context: self.context
             account: null
             asset: null
+            url: self.url
             onCloseClicked: self.close()
         }
     }
@@ -28,7 +29,7 @@ WalletDrawer {
         segmentation: AnalyticsJS.segmentationSession(Settings, self.context)
     }
     onClosed: {
-        if (self.url && stack_view.currentItem instanceof SendPage) {
+        if (self.url && stack_view.currentItem instanceof RecipientPage) {
             WalletManager.openUrl = self.url
         }
     }
