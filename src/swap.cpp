@@ -86,9 +86,10 @@ lwk::PaymentState ReverseSwap::advance()
     return m_invoice_response->advance();
 }
 
-SubmarineSwap::SubmarineSwap(std::shared_ptr<lwk::PreparePayResponse> prepare_pay_response, Context* context)
+SubmarineSwap::SubmarineSwap(const QString& invoice, std::shared_ptr<lwk::PreparePayResponse> prepare_pay_response, Context* context)
     : Swap(swapId(prepare_pay_response), context)
     , m_prepare_pay_response(prepare_pay_response)
+    , m_invoice(invoice)
 {
 }
 

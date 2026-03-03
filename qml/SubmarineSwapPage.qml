@@ -46,6 +46,7 @@ StackViewPage {
         memo: note_text_area.text
         transaction: controller.transaction
         onTransactionCompleted: transaction => {
+            Settings.registerEvent({ invoice: self.payment.invoice })
             self.StackView.view.push(complete_page, { swap: submarine_controller.swap, transaction })
         }
         onFailed: (error) => {

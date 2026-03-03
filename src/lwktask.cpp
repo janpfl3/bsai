@@ -359,6 +359,18 @@ void SubmarineController::update()
 {
     if (!m_context->m_boltz_session) return;
 
+    for (const auto swap : m_context->m_swaps) {
+        auto submarine_swap = qobject_cast<SubmarineSwap*>(swap);
+        if (submarine_swap && submarine_swap->invoice() == d->payment) {
+            qDebug() << Q_FUNC_INFO << "found swap for invoice" << submarine_swap->status();
+            d->busy = false;
+            emit busyChanged();
+            setSwap(submarine_swap);
+            setError({});
+            return;
+        }
+    }
+
     typedef std::variant<std::shared_ptr<lwk::PreparePayResponse>, std::pair<std::string, uint64_t>, std::string> Result;
     using Watcher = QFutureWatcher<Result>;
     const auto watcher = new Watcher(this);
@@ -390,7 +402,7 @@ void SubmarineController::update()
 
         if (result.index() == 0) {
             auto prepare_pay_response = std::get<0>(result);
-            auto swap = new SubmarineSwap(prepare_pay_response, context());
+            auto swap = new SubmarineSwap(d->payment, prepare_pay_response, context());
             context()->addSwap(swap);
             setSwap(swap);
             setError({});
@@ -490,10 +502,12 @@ void LwkCreateSessionTask::update()
             if (!data) continue;
 
             try {
-                const auto type = QJsonDocument::fromJson(QByteArray::fromStdString(*data)).object().value("swap_type").toString();
+                const auto swap_data = QJsonDocument::fromJson(QByteArray::fromStdString(*data)).object();
+                const auto type = swap_data.value("swap_type").toString();
                 Swap* swap = nullptr;
                 if (type == "submarine") {
-                    swap = new SubmarineSwap(session->restore_prepare_pay(*data), m_context);
+                    auto invoice = swap_data.value("bolt11_invoice").toString();
+                    swap = new SubmarineSwap(invoice, session->restore_prepare_pay(*data), m_context);
                 } else if (type == "chain") {
                     swap = new ChainSwap(session->restore_lockup(*data), m_context);
                 } else if (type == "reverse") {

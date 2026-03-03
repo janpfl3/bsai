@@ -56,13 +56,15 @@ class SubmarineSwap : public Swap
     QML_ELEMENT
     QML_UNCREATABLE("")
 public:
-    SubmarineSwap(std::shared_ptr<lwk::PreparePayResponse> prepare_pay_response, Context* context);
+    SubmarineSwap(const QString& invoice, std::shared_ptr<lwk::PreparePayResponse> prepare_pay_response, Context* context);
     SubmarineSwap(const QString& address, uint64_t amount, Context* context);
+    QString invoice() const { return m_invoice; }
     QVariantMap data() const override;
 protected:
     lwk::PaymentState advance() override;
 private:
     std::shared_ptr<lwk::PreparePayResponse> m_prepare_pay_response;
+    QString m_invoice;
     QString m_address;
     uint64_t m_amount;
 };

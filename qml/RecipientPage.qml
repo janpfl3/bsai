@@ -17,13 +17,13 @@ StackViewPage {
     property var assets
     property var error: null
     function update() {
-        let { asset_id, network, type } = recipient_field.payment
+        const payment = recipient_field.payment
+        let { asset_id, network, type } = payment
         let error
 
         self.page = (() => {
             if (type === 'lightning_invoice') {
-                const { amount_milli_satoshis } = recipient_field.payment
-                if (!amount_milli_satoshis) {
+                if (!payment.amount_milli_satoshis) {
                     error = 'Format not supported. Please paste an invoice with an amount.'
                     return null
                 }
@@ -37,6 +37,10 @@ StackViewPage {
                 }
                 if (self.context.wallet.login.device) {
                     error = 'Not supported with Hardware Wallet.'
+                    return null
+                }
+                if (Settings.isEventRegistered({ invoice: payment.invoice })) {
+                    error = 'Invoice already paid.'
                     return null
                 }
                 network = 'liquid'
