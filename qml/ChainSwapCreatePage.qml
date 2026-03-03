@@ -50,6 +50,7 @@ StackViewPage {
     FeeEstimates {
         id: fee_estimates
         session: send_field.account.session
+        onSessionChanged: self.feeRate = Qt.binding(() => fee_estimates.fees[3] ?? 0)
     }
     id: self
     title: qsTrId('id_details')

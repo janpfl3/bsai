@@ -249,6 +249,7 @@ StackViewPage {
     Component {
         id: complete_page
         TransactionCompletedPage {
+            property var swap
             title: qsTrId('id_success')
             onCloseClicked: self.closeClicked()
         }
