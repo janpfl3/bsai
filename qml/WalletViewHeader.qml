@@ -10,7 +10,7 @@ import QtQml
 import "analytics.js" as AnalyticsJS
 import "util.js" as UtilJS
 
-MainPageHeader {
+GPane {
     signal sendClicked()
     signal archivedAccountsClicked()
     signal statusClicked()

@@ -95,7 +95,6 @@ SET(QML_FILES
     qml/MainPage.qml
     qml/OverviewPage.qml
     qml/SetRecoveryEmailDialog.qml
-    qml/MainPageHeader.qml
     qml/LedgerSignTransactionView.qml
     qml/AssetIcon.qml
     qml/ProviderIcon.qml
