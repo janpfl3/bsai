@@ -43,6 +43,7 @@
       <array>
         <string>bitcoin</string>
         <string>liquidnetwork</string>
+        <string>lightning</string>
       </array>
     </dict>
   </array>

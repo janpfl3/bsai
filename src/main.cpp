@@ -261,7 +261,8 @@ int ui_handler(Application& app, int argc, char *argv[]) {
         const auto uri = g_args.positionalArguments().first();
         const auto url = QUrl::fromUserInput(uri);
         const auto scheme = url.scheme();
-        if (scheme == "http" || scheme == "bitcoin" || scheme == "liquidnetwork") {
+        bool is_supported_scheme = scheme == "bitcoin" || scheme == "liquidnetwork" || scheme == "lightning";
+        if (is_supported_scheme) {
             wallet_manager.setOpenUrl(uri);
         }
     }
@@ -280,18 +281,15 @@ int ui_handler(Application& app, int argc, char *argv[]) {
     QString path = QDir::toNativeSeparators(app.applicationFilePath());
 
     QSettings set("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
-    set.beginGroup("bitcoin");
-    set.setValue("Default", "URL:bitcoin");
-    set.setValue("DefaultIcon/Default", path);
-    set.setValue("URL Protocol", "");
-    set.setValue("shell/open/command/Default", QString("\"%1\"").arg(path) + " \"%1\"");
-    set.endGroup();
-    set.beginGroup("liquidnetwork");
-    set.setValue("Default", "URL:liquidnetwork");
-    set.setValue("DefaultIcon/Default", path);
-    set.setValue("URL Protocol", "");
-    set.setValue("shell/open/command/Default", QString("\"%1\"").arg(path) + " \"%1\"");
-    set.endGroup();
+    const QStringList protocols = {"bitcoin", "liquidnetwork", "lightning"};
+    for (const auto& protocol : protocols) {
+        set.beginGroup(protocol);
+        set.setValue("Default", QString("URL:%1").arg(protocol));
+        set.setValue("DefaultIcon/Default", path);
+        set.setValue("URL Protocol", "");
+        set.setValue("shell/open/command/Default", QString("\"%1\"").arg(path) + " \"%1\"");
+        set.endGroup();
+    }
 #endif
 
     app.connect(&kdsa, &KDSingleApplication::messageReceived, &app, [&app](const QByteArray &message ) {
