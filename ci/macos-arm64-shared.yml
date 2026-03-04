@@ -74,7 +74,8 @@ macos-arm64-shared:staple:
     paths:
       - macos-arm64-shared/Blockstream.dmg
   needs:
-    - macos-arm64-shared:build
+    - job: macos-arm64-shared:build
+      optional: true
   script:
     - mv macos-arm64-shared/Blockstream.app Blockstream.app
     - tools/macos-staple.sh Blockstream.app

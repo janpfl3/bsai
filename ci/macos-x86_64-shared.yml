@@ -73,7 +73,8 @@ macos-x86_64-shared:staple:
     paths:
       - macos-x86_64-shared/Blockstream.dmg
   needs:
-    - macos-x86_64-shared:build
+    - job: macos-x86_64-shared:build
+      optional: true
   script:
     - mv macos-x86_64-shared/Blockstream.app Blockstream.app
     - tools/macos-staple.sh Blockstream.app

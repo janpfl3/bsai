@@ -26,7 +26,8 @@ macos-universal-shared:staple:
       - macos-universal-shared/Blockstream.app
       - macos-universal-shared/Blockstream.dmg
   needs:
-    - macos-universal-shared:build
+    - job: macos-universal-shared:build
+      optional: true
   script:
     - mv macos-universal-shared/Blockstream.app Blockstream.app
     - tools/macos-staple.sh Blockstream.app

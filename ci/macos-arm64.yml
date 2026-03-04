@@ -43,7 +43,8 @@ macos-arm64:staple:
       - "macos-arm64/Blockstream.app"
       - "macos-arm64/Blockstream.dmg"
   needs:
-    - macos-arm64:build
+    - job: macos-arm64:build
+      optional: true
   script:
     - mv macos-arm64/Blockstream.app Blockstream.app
     - tools/macos-staple.sh Blockstream.app
