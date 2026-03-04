@@ -94,7 +94,11 @@ SET(TARGET_SOURCES
         src/buybitcoinquoteservice.h src/buybitcoinquoteservice.cpp
         src/payment.h src/payment.cpp
         src/lwk/lwk.cpp src/lwk/lwk.hpp src/lwk/lwk_scaffolding.hpp
-	src/lwktask.h src/lwktask.cpp
+	src/lwkcreatesessiontask.h src/lwkcreatesessiontask.cpp
+	src/invoicecontroller.h src/invoicecontroller.cpp
+	src/submarinecontroller.h src/submarinecontroller.cpp
+	src/swapquotecontroller.h src/swapquotecontroller.cpp
+	src/chainswapcontroller.h src/chainswapcontroller.cpp
 	src/paymentparser.h src/paymentparser.cpp
         src/swap.h src/swap.cpp
 )

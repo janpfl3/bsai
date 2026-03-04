@@ -324,7 +324,7 @@ static bool compatibleToNetworks(Network* network, const QList<Network*> network
     return true;
 }
 
-#include "lwktask.h"
+#include "lwkcreatesessiontask.h"
 
 void LoadController::load()
 {
