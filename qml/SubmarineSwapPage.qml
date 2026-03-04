@@ -110,16 +110,18 @@ StackViewPage {
         }
         FieldTitle {
             text: qsTrId('id_amount')
+            visible: confirm_button.enabled
         }
         AmountField {
             Layout.fillWidth: true
             id: amount_field
             readOnly: true
             session: self.account.session
+            visible: confirm_button.enabled
             convert: Convert {
                 asset: self.asset
                 context: self.context
-                input: ({ satoshi: Number(self.payment.amount_milli_satoshis) / 1000 })
+                input: ({ satoshi: submarine_controller.swap?.data?.boltz_fee ? String(Number(self.payment.amount_milli_satoshis) / 1000) : submarine_controller.swap?.data?.amount ?? '0' })
                 unit: self.context.primarySession.unit
             }
         }
@@ -186,6 +188,7 @@ StackViewPage {
                         Fee {
                             Layout.minimumWidth: 350
                             text: 'Swap Fee'
+                            visible: submarine_controller.swap?.data?.boltz_fee ?? false
                             convert: Convert {
                                 context: self.context
                                 account: self.account
@@ -197,6 +200,7 @@ StackViewPage {
                             color: '#FFFFFF'
                             opacity: 0.5
                             text: 'Includes service and Lightning routing'
+                            visible: submarine_controller.swap?.data?.boltz_fee ?? false
                         }
                         Fee {
                             Layout.topMargin: 5
@@ -221,7 +225,7 @@ StackViewPage {
                 convert: Convert {
                     context: self.context
                     account: self.account
-                    input: ({ satoshi: String(Number(self.payment.amount_milli_satoshis) / 1000) })
+                    input: ({ satoshi: submarine_controller.swap?.data?.boltz_fee ? String(Number(self.payment.amount_milli_satoshis) / 1000) : submarine_controller.swap?.data?.amount ?? '0' })
                     unit: amount_field.convert.unit
                 }
             }
