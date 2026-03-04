@@ -164,7 +164,11 @@ StackViewPage {
                     id: liquid_option
                     text: 'Liquid'
                     checked: !self.invoice
-                    onClicked: self.invoice = false
+                    onClicked: {
+                        self.invoice = false
+                        amount_field.visible = false
+                        amount_field.clearText()
+                    }
                 }
                 Option {
                     id: lightning_option
@@ -173,6 +177,7 @@ StackViewPage {
                     onClicked: {
                         self.invoice = true
                         amount_field.visible = true
+                        amount_field.clearText()
                         amount_field.forceActiveFocus()
                     }
                 }
@@ -234,6 +239,24 @@ StackViewPage {
             Layout.topMargin: -15
             id: error_pane
             error: self.error && self.error.visible ? qsTrId(self.error?.code) + ' - ' + (amount_field.fiat ? '~ ' + error_value_convert.fiat.label : error_value_convert.output.label) : null
+        }
+        Label {
+            Layout.fillWidth: true
+            Layout.preferredWidth: 0
+            color: '#A0A0A0'
+            font.pixelSize: 12
+            font.weight: 400
+            horizontalAlignment: Label.AlignHCenter
+            visible: self.invoice && !self.error
+            text: 'Amount to receive: ' + (amount_field.fiat ? amount_to_receive.fiat.label : amount_to_receive.output.label)
+            wrapMode: Label.WordWrap
+        }
+        Convert {
+            id: amount_to_receive
+            asset: self.asset
+            context: self.context
+            input: ({ satoshi: quote_controller.quote?.receive_amount ?? 0 })
+            unit: amount_field.convert.unit
         }
         FieldTitle {
             text: self.invoice ? qsTrId('id_invoice') : qsTrId('id_account_address')
@@ -318,18 +341,6 @@ StackViewPage {
                 }
             }
         }
-        FieldTitle {
-            visible: !self.error
-            text: 'Amount to receive: ' + (amount_field.fiat ? amount_to_receive.fiat.label : amount_to_receive.output.label)
-        }
-        Convert {
-            id: amount_to_receive
-            asset: self.asset
-            context: self.context
-            input: ({ satoshi: quote_controller.quote?.receive_amount ?? 0 })
-            unit: amount_field.convert.unit
-        }
-
         VSpacer {
         }
         Label {
@@ -340,8 +351,8 @@ StackViewPage {
             font.weight: 400
             horizontalAlignment: Label.AlignHCenter
             text: 'You will receive Liquid Bitcoin via Lightning invoice.'
-            wrapMode: Label.WordWrap
             visible: self.invoice
+            wrapMode: Label.WordWrap
         }
     }
 
