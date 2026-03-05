@@ -156,10 +156,10 @@ QString GetPlatformName()
     return "linux";
 }
 
-void HideApplication()
+void ShowApplication()
 {
 #ifdef Q_OS_MACOS
     ProcessSerialNumber psn = { 0, kCurrentProcess };
-    TransformProcessType(&psn, kProcessTransformToBackgroundApplication);
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
 #endif
 }

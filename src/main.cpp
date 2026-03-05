@@ -201,14 +201,12 @@ int main(int argc, char *argv[])
 
 #ifdef ENABLE_SENTRY
 int crash_handler(Application& app, int argc, char *argv[]) {
-    HideApplication();
     return crashpad::HandlerMain(argc, argv, nullptr);
 }
 #endif
 
 int watchdog_handler(Application& app)
 {
-    HideApplication();
     QStringList args = app.arguments().mid(1);
     for (int i = 0; i < args.length();) {
         if (args[i] == "--tempdatadir") {
@@ -222,31 +220,42 @@ int watchdog_handler(Application& app)
     }
     args.append({ "--ui", "--datadir", g_data_location });
 
-    for (int attempts = 5; attempts > 0; --attempts) {
-        QFile file(GetLogFilename());
-        file.open(QFile::WriteOnly | QFile::Append);
-        file.write("---------");
-        file.flush();
-        QProcess process;
-        QEventLoop loop;
-        QObject::connect(&process, &QProcess::readyReadStandardOutput, &loop, [&] {
-            const auto data = process.readAllStandardOutput();
-            write(0, data.constData(), data.size());
-            file.write(data);
+    const auto start_ui = [&app](QStringList args, int attempts = 1) {
+        for (int i = 0; i < attempts; i++) {
+            QFile file(GetLogFilename());
+            file.open(QFile::WriteOnly | QFile::Append);
+            file.write("---------");
             file.flush();
-        });
-        QObject::connect(&process, &QProcess::readyReadStandardError, &loop, [&] {
-            const auto data = process.readAllStandardError();
-            write(1, data.constData(), data.size());
-            file.write(data);
-            file.flush();
-        });
-        QObject::connect(&process, &QProcess::finished, &loop, &QEventLoop::quit);
-        process.start(app.arguments().constFirst(), args);
-        loop.exec();
-        QTextStream(&file) << Q_FUNC_INFO << process.exitStatus();
-        if (process.exitStatus() == QProcess::NormalExit) break;
-    }
+            QProcess process;
+            QEventLoop loop;
+            QObject::connect(&process, &QProcess::readyReadStandardOutput, &loop, [&] {
+                const auto data = process.readAllStandardOutput();
+                write(0, data.constData(), data.size());
+                file.write(data);
+                file.flush();
+            });
+            QObject::connect(&process, &QProcess::readyReadStandardError, &loop, [&] {
+                const auto data = process.readAllStandardError();
+                write(1, data.constData(), data.size());
+                file.write(data);
+                file.flush();
+            });
+            QObject::connect(&process, &QProcess::finished, &loop, &QEventLoop::quit);
+            process.start(app.arguments().constFirst(), args);
+            loop.exec();
+            QTextStream(&file) << Q_FUNC_INFO << process.exitStatus();
+            if (process.exitStatus() == QProcess::NormalExit) break;
+        }
+    };
+
+    QObject::connect(&app, &Application::fileOpenEventReceived, [&](const QString& url) {
+        // It will start new UI process which will handle the URL and then exit immediately,
+        // so we don't need to worry about killing it
+        start_ui(args + QStringList{ url });
+    });
+
+    start_ui(args, 5);
+    
     return 0;
 }
 
@@ -277,6 +286,8 @@ int ui_handler(Application& app, int argc, char *argv[]) {
         return 0;
     }
 
+    ShowApplication();
+
 #ifdef Q_OS_WIN
     QString path = QDir::toNativeSeparators(app.applicationFilePath());
 
@@ -299,6 +310,13 @@ int ui_handler(Application& app, int argc, char *argv[]) {
             WalletManager::instance()->setOpenUrl(QString::fromUtf8(message.mid(5)));
             app.raise();
         }
+    });
+
+    // If app is launched with --ui flag directly, file open events are handled here
+    QObject::connect(&app, &Application::fileOpenEventReceived, [&app, &wallet_manager](const QString& url) {
+        qInfo() << "UI received FileOpen event directly:" << url;
+        wallet_manager.setOpenUrl(url);
+        app.raise();
     });
 
 #if defined (Q_OS_LINUX)

@@ -30,8 +30,7 @@ bool Application::event(QEvent* event)
 {
     if (event->type() == QEvent::FileOpen) {
         auto open_event = static_cast<QFileOpenEvent*>(event);
-        WalletManager::instance()->setOpenUrl(open_event->url().toString());
-        raise();
+        emit fileOpenEventReceived(open_event->url().toString());
     }
     return QApplication::event(event);
 }

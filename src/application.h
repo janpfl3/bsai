@@ -2,6 +2,7 @@
 #define GREEN_APPLICATION_H
 
 #include <QApplication>
+#include <QString>
 
 class Application : public QApplication
 {
@@ -9,6 +10,8 @@ class Application : public QApplication
 public:
     Application(int &argc, char **argv);
     void raise();
+signals:
+    void fileOpenEventReceived(const QString& url);
 protected:
     bool event(QEvent *event) override;
 };

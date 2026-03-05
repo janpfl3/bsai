@@ -28,6 +28,6 @@ QString GetHardwareModel();
 
 QString GetPlatformName();
 
-void HideApplication();
+void ShowApplication();
 
 #endif // GREEN_UTIL_H
