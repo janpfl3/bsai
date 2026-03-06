@@ -131,9 +131,10 @@ void LwkCreateSessionTask::update()
         return;
     }
 
+    constexpr int BOLTZ_BIP85_INDEX{26589};
     const auto m = m_context->credentials().value("mnemonic").toString();
     const auto p = m_context->credentials().value("bip39_passphrase").toString();
-    const auto r = derive_mnemonic(m_context->isMainnet(), m, p, 26589);
+    const auto r = derive_mnemonic(m_context->isMainnet(), m, p, BOLTZ_BIP85_INDEX);
 
     using Watcher = QFutureWatcher<std::shared_ptr<lwk::BoltzSession>>;
     const auto watcher = new Watcher(this);

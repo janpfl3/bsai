@@ -38,9 +38,11 @@ protected:
     void timerEvent(QTimerEvent* event);
 private:
     InvoiceControllerPrivate* const d;
-    void invalidate();
+    void invalidate(int timeout);
     void update();
     bool isValid() const;
+    void setSwap(ReverseSwap* swap);
+    void setBusy(bool busy);
 };
 
 #endif // BLOCKSTREAM_INVOICECONTROLLER_H
