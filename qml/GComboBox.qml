@@ -26,10 +26,6 @@ ComboBox {
         visible: self.hovered || self.popup.visible
     }
     
-    HoverHandler {
-        cursorShape: self.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-    }
-    
     contentItem: RowLayout {
         spacing: 4
         opacity: 0.7
@@ -62,10 +58,6 @@ ComboBox {
             radius: 4
             opacity: 0.2
             visible: delegateItem.hovered || delegateItem.highlighted
-        }
-        
-        HoverHandler {
-            cursorShape: Qt.PointingHandCursor
         }
         
         contentItem: RowLayout {

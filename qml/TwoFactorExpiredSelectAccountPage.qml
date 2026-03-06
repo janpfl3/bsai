@@ -67,6 +67,7 @@ StackViewPage {
         LinkButton {
             Layout.alignment: Qt.AlignCenter
             text: qsTrId('id_learn_more')
+            external: true
             onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/900001391763-How-does-Blockstream-Green-s-2FA-multisig-protection-work#h_01HRYKB9YRHWX02REXYY34VPV9')
         }
     }

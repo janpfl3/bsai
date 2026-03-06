@@ -105,9 +105,6 @@ Pane {
                             })
                             drawer.open()
                         }
-                        HoverHandler {
-                            cursorShape: Qt.PointingHandCursor
-                        }
                     }
                 }
             }

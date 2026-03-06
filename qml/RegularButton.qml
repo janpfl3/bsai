@@ -6,9 +6,6 @@ AbstractButton {
     property bool black: false
     property bool cyan: false
     property bool busy: false
-    HoverHandler {
-        cursorShape: Qt.PointingHandCursor
-    }
     id: self
     focusPolicy: Qt.StrongFocus
     font.pixelSize: 16

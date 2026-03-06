@@ -117,7 +117,6 @@ Page {
                 anchors.fill: parent
                 anchors.margins: -20
                 enabled: card.rightAction.enabled
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 preventStealing: true
                 onClicked: card.rightAction.trigger()
             }
@@ -378,6 +377,7 @@ Page {
                                     }
                                     LinkButton {
                                         text: 'Shop Now'
+                                        external: true
                                         font.pixelSize: 14
                                         onClicked: Qt.openUrlExternally('https://store.blockstream.com/products/jade-plus')
                                     }
@@ -449,10 +449,6 @@ Page {
                             const drawer = jade_details_drawer.createObject(self)
                             drawer.open()
                         }
-                    }
-                    HoverHandler {
-                        enabled: hardware_wallet_label.hoveredLink
-                        cursorShape: Qt.PointingHandCursor
                     }
                 }
                 RowLayout {
@@ -557,6 +553,7 @@ Page {
                         Component {
                             LinkButton {
                                 text: 'What is a recovery phrase?'
+                                external: true
                                 font.pixelSize: 14
                                 onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/900001392563-What-is-a-recovery-phrase')
                             }
@@ -564,6 +561,7 @@ Page {
                         Component {
                             LinkButton {
                                 text: 'How does the Blockstream app generate my recovery phrase?'
+                                external: true
                                 font.pixelSize: 14
                                 onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/47242018755993-How-does-the-Blockstream-app-generate-my-recovery-phrase')
                             }
@@ -571,6 +569,7 @@ Page {
                         Component {
                             LinkButton {
                                 text: 'How is my software wallet security different than Jade\'s?'
+                                external: true
                                 font.pixelSize: 14
                                 onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/52243836841369-How-is-my-software-wallet-security-different-than-Jade-s')
                             }

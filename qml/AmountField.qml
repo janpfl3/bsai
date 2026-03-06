@@ -171,9 +171,6 @@ TTextField {
             color: 'transparent'
             visible: unit_label.visualFocus
         }
-        HoverHandler {
-            cursorShape: Qt.PointingHandCursor
-        }
         GMenu {
             id: unit_menu
             x: unit_menu_anchors.x
@@ -233,7 +230,6 @@ TTextField {
         }
         HoverHandler {
             id: second_hover_handler
-            cursorShape: Qt.PointingHandCursor
             enabled: self.dynamic
         }
     }

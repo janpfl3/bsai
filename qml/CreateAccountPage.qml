@@ -280,6 +280,7 @@ StackViewPage {
                 LinkButton {
                     Layout.alignment: Qt.AlignCenter
                     text: 'https://blockstream.com/app'
+                    external: true
                     onClicked: Qt.openUrlExternally('https://blockstream.com/app')
                 }
                 VSpacer {

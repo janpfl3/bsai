@@ -80,6 +80,7 @@ MainPage {
                 Layout.alignment: Qt.AlignCenter
                 Layout.topMargin: 20
                 text: qsTrId('id_learn_more')
+                external: true
                 onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/5988514431897')
             }
         }

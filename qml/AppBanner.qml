@@ -259,6 +259,7 @@ Collapsible {
                     font.pixelSize: 14
                     text: qsTrId('id_learn_more')
                     textColor: '#000'
+                    external: true
                     onClicked: Qt.openUrlExternally(notification.alert.link)
                 }
                 CloseButton {

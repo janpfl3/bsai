@@ -89,6 +89,7 @@ Dialog {
             LinkButton {
                 Layout.alignment: Qt.AlignCenter
                 text: qsTrId('id_learn_more')
+                external: true
                 onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/8712301763737-What-is-a-BIP39-passphrase')
             }
         }

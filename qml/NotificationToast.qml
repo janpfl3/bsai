@@ -345,7 +345,7 @@ ColumnLayout {
                     text: toast.notification.network.displayName
                     wrapMode: Label.Wrap
                 }
-                Label {
+                LinkLabel {
                     Layout.preferredWidth: 0
                     Layout.fillWidth: true
                     color: toast.textColor
@@ -354,7 +354,6 @@ ColumnLayout {
                     text: toast.notification.message
                     textFormat: Label.MarkdownText
                     wrapMode: Label.WrapAtWordBoundaryOrAnywhere
-                    onLinkActivated: Qt.openUrlExternally(link)
                 }
                 /*
                 RowLayout {
@@ -425,9 +424,6 @@ ColumnLayout {
                 black: true
                 onClicked: toast.slideOutAndDismiss()
             }
-        }
-        HoverHandler {
-            cursorShape: Qt.PointingHandCursor
         }
     }
 
@@ -665,6 +661,7 @@ ColumnLayout {
                 font.pixelSize: 12
                 text: qsTrId('id_learn_more')
                 textColor: toast.textColor
+                external: true
                 onClicked: Qt.openUrlExternally(toast.notification.alert.link)
             }
         }

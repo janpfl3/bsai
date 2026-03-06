@@ -36,9 +36,6 @@ ItemDelegate {
             velocity: 1
         }
     }
-    HoverHandler {
-        cursorShape: delegate.highlighted  ? Qt.ArrowCursor : Qt.PointingHandCursor
-    }
     width: ListView.view?.width ?? 0
     contentItem: ColumnLayout {
         spacing: 0

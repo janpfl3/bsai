@@ -61,7 +61,7 @@ StackViewPage {
         }
         VSpacer {
         }
-        Label {
+        LinkLabel {
             Layout.fillWidth: true
             Layout.preferredWidth: 0
             Layout.topMargin: 20
@@ -70,9 +70,7 @@ StackViewPage {
             font.weight: 400
             horizontalAlignment: Label.AlignHCenter
             text: `By continuing you agree to Blockstream's ${UtilJS.link('https://blockstream.com/green/terms/', 'Terms of Service')} and ${UtilJS.link('https://blockstream.com/green/privacy/', 'Privacy Policy')}`
-            textFormat: Text.RichText
             wrapMode: Label.Wrap
-            onLinkActivated: (link) => { Qt.openUrlExternally(link) }
         }
         Label {
             Layout.fillWidth: true
@@ -84,7 +82,7 @@ StackViewPage {
             text: 'Message frequency varies according to the number of 2FA SMS requests you make.'
             wrapMode: Label.Wrap
         }
-        Label {
+        LinkLabel {
             Layout.fillWidth: true
             Layout.preferredWidth: 0
             Layout.topMargin: 20
@@ -93,9 +91,7 @@ StackViewPage {
             font.weight: 400
             horizontalAlignment: Label.AlignHCenter
             text: `For help visit ${UtilJS.link('https://help.blockstream.com', 'help.blockstream.com')}`
-            textFormat: Text.RichText
             wrapMode: Label.Wrap
-            onLinkActivated: (link) => { Qt.openUrlExternally(link) }
         }
         Label {
             Layout.fillWidth: true

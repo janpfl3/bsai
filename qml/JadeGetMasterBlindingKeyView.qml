@@ -62,6 +62,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignCenter
         Layout.topMargin: 40
         text: qsTrId('id_learn_more')
+        external: true
         onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/4403675941017-What-are-the-implications-of-exporting-the-master-blinding-key')
     }
     VSpacer {

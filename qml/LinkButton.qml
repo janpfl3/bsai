@@ -3,8 +3,9 @@ import QtQuick.Controls
 
 AbstractButton {
     property color textColor: '#00BCFF'
+    property bool external: false
     HoverHandler {
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: self.external ? Qt.PointingHandCursor : Qt.ArrowCursor
     }
     id: self
     focusPolicy: Qt.StrongFocus

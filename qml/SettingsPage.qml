@@ -167,8 +167,5 @@ Page {
             wrapMode: Label.NoWrap
             elide: Label.ElideRight
         }
-        HoverHandler {
-            cursorShape: Qt.PointingHandCursor
-        }
     }
 }

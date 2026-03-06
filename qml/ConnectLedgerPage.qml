@@ -46,6 +46,7 @@ StackViewPage {
         Layout.alignment: Qt.AlignCenter
         Layout.topMargin: 20
         text: qsTrId('id_troubleshoot')
+        external: true
         onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/16789393282201-How-do-I-use-my-Ledger-Nano-S-or-X-with-Green#h_01GW4FRJXCRRRGC4QAX0HC02S2')
     }
 

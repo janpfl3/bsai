@@ -9,9 +9,6 @@ AbstractButton {
     property real radius: 8
     property real borderWidth: 1
     property bool busy: false
-    HoverHandler {
-        cursorShape: Qt.PointingHandCursor
-    }
     id: self
     focusPolicy: Qt.StrongFocus
     font.pixelSize: 16

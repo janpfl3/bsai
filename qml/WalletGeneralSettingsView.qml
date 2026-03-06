@@ -350,9 +350,6 @@ Pane {
                                 }
                             })
                         }
-                        HoverHandler {
-                            cursorShape: notification_button.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        }
                     }
                 }
             }
@@ -432,9 +429,6 @@ Pane {
                         id: support_timer
                         repeat: false
                         interval: 1000
-                    }
-                    HoverHandler {
-                        cursorShape: Qt.PointingHandCursor
                     }
                 }
             }

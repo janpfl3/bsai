@@ -35,6 +35,7 @@ StackViewPage {
             Layout.alignment: Qt.AlignCenter
             text: qsTrId('id_setup_guide')
             visible: self.device.state === JadeDevice.StateUninitialized
+            external: true
             onClicked: Qt.openUrlExternally('https://help.blockstream.com/hc/en-us/articles/19629901272345-Set-up-Jade')
         }
         CircleButton {

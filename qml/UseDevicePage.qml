@@ -159,6 +159,7 @@ StackViewPage {
         Layout.topMargin: 20
         font.underline: true
         text: qsTrId('id_dont_have_a_jade_check_our_store')
+        external: true
         onClicked: Qt.openUrlExternally('https://store.blockstream.com/')
     }
 }

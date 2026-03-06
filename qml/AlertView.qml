@@ -55,6 +55,7 @@ Loader {
                 font.bold: true
                 font.pixelSize: 14
                 text: qsTrId('id_learn_more')
+                external: true
                 onClicked: Qt.openUrlExternally(self.alert.link)
             }
             HSpacer {
