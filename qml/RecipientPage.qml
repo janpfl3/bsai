@@ -55,6 +55,10 @@ StackViewPage {
                 error = 'LnUrl not supported. Please paste an invoice with an amount.'
                 return null
             }
+            if (type === 'bip353') {
+                error = 'DNS Payment Instructions not supported. Please paste an invoice with an amount.'
+                return null
+            }
             if (type === 'address' || type === 'bip21') {
                 return send_page
             }

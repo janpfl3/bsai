@@ -122,6 +122,9 @@ void PaymentParser::setInput(const QString& input)
             if (payment->lnurl()) {
                 result.insert("lnurl", QString::fromStdString(*payment->lnurl()));
             }
+        } else if (payment->kind() == lwk::PaymentKind::kBip353) {
+            result.insert("valid", true);
+            result.insert("type", "bip353");
         } else {
             qDebug() << Q_FUNC_INFO << "unhandled kind" << int(payment->kind());
             result.insert("valid", false);
