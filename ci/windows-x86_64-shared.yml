@@ -123,6 +123,31 @@ windows-x86_64-shared:installer:
     - iscc bld/RelWithDebInfo/installer.iss
     - mv bld/RelWithDebInfo/Setup.exe .
 
+.windows:sign:
+  image:
+    name: $CI_REGISTRY_IMAGE/codesigntool:latest
+    pull_policy: always
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - k8s
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - unknown_failure
+      - stuck_or_timeout_failure
+  script:
+    - mkdir -p signed
+    - bash CodeSignTool.sh sign
+      -credential_id="$SSL_COM_CREDENTIAL_ID"
+      -username=$SSL_COM_USERNAME
+      -password="$SSL_COM_PASSWORD"
+      -totp_secret="$SSL_COM_TOTP_SECRET"
+      -output_dir_path=signed
+      -input_file_path="$INPUT_FILE"
+    - mv "signed/$INPUT_FILE" "$OUTPUT_FILE"
+
 windows-x86_64-shared:sign-installer:
   extends: .windows:sign
   stage: installer
