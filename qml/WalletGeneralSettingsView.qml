@@ -266,12 +266,10 @@ Pane {
             visible: !self.context.device
         }
 
-        // Notifications
         RowLayout {
             Layout.fillWidth: true
             spacing: 20
-
-            // Left: Label
+            visible: self.context.sessions.filter(session => !session.network.electrum).length > 0
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 1
@@ -292,8 +290,6 @@ Pane {
                     wrapMode: Label.Wrap
                 }
             }
-
-            // Right: Controls
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 1
