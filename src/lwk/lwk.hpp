@@ -159,44 +159,6 @@ struct Mnemonic
 
 
 namespace uniffi {
-    struct FfiConverterForeignStoreLink;
-} // namespace uniffi
-
-/**
- * A bridge that connects a [`ForeignStore`] to [`lwk_common::Store`].
- */
-struct ForeignStoreLink
-
-
-
-{
-    friend uniffi::FfiConverterForeignStoreLink;
-
-    ForeignStoreLink() = delete;
-
-    ForeignStoreLink(ForeignStoreLink &&) = delete;
-
-    ForeignStoreLink &operator=(const ForeignStoreLink &) = delete;
-    ForeignStoreLink &operator=(ForeignStoreLink &&) = delete;
-
-    ~ForeignStoreLink();
-    /**
-     * Create a new `ForeignStoreLink` from a foreign store implementation.
-     */
-    static std::shared_ptr<ForeignStoreLink> init(const std::shared_ptr<ForeignStore> &store);
-
-    private:
-    ForeignStoreLink(const ForeignStoreLink &);
-
-    ForeignStoreLink(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
-
-
-namespace uniffi {
     struct FfiConverterAddress;
 } // namespace uniffi
 
@@ -261,6 +223,77 @@ struct Address
     Address(const Address &);
 
     Address(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+namespace uniffi {
+    struct FfiConverterAnyClient;
+} // namespace uniffi
+
+struct AnyClient
+
+
+
+{
+    friend uniffi::FfiConverterAnyClient;
+
+    AnyClient() = delete;
+
+    AnyClient(AnyClient &&) = delete;
+
+    AnyClient &operator=(const AnyClient &) = delete;
+    AnyClient &operator=(AnyClient &&) = delete;
+
+    ~AnyClient();
+    static std::shared_ptr<AnyClient> from_electrum(const std::shared_ptr<ElectrumClient> &client);
+    static std::shared_ptr<AnyClient> from_esplora(const std::shared_ptr<EsploraClient> &client);
+
+    private:
+    AnyClient(const AnyClient &);
+
+    AnyClient(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+namespace uniffi {
+    struct FfiConverterForeignStoreLink;
+} // namespace uniffi
+
+/**
+ * A bridge that connects a [`ForeignStore`] to [`lwk_common::Store`].
+ */
+struct ForeignStoreLink
+
+
+
+{
+    friend uniffi::FfiConverterForeignStoreLink;
+
+    ForeignStoreLink() = delete;
+
+    ForeignStoreLink(ForeignStoreLink &&) = delete;
+
+    ForeignStoreLink &operator=(const ForeignStoreLink &) = delete;
+    ForeignStoreLink &operator=(ForeignStoreLink &&) = delete;
+
+    ~ForeignStoreLink();
+    /**
+     * Create a new `ForeignStoreLink` from a foreign store implementation.
+     */
+    static std::shared_ptr<ForeignStoreLink> init(const std::shared_ptr<ForeignStore> &store);
+
+    private:
+    ForeignStoreLink(const ForeignStoreLink &);
+
+    ForeignStoreLink(void *);
 
     void *_uniffi_internal_clone_pointer() const;
 
@@ -417,39 +450,6 @@ struct Network
     Network(const Network &);
 
     Network(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
-
-
-namespace uniffi {
-    struct FfiConverterAnyClient;
-} // namespace uniffi
-
-struct AnyClient
-
-
-
-{
-    friend uniffi::FfiConverterAnyClient;
-
-    AnyClient() = delete;
-
-    AnyClient(AnyClient &&) = delete;
-
-    AnyClient &operator=(const AnyClient &) = delete;
-    AnyClient &operator=(AnyClient &&) = delete;
-
-    ~AnyClient();
-    static std::shared_ptr<AnyClient> from_electrum(const std::shared_ptr<ElectrumClient> &client);
-    static std::shared_ptr<AnyClient> from_esplora(const std::shared_ptr<EsploraClient> &client);
-
-    private:
-    AnyClient(const AnyClient &);
-
-    AnyClient(void *);
 
     void *_uniffi_internal_clone_pointer() const;
 
@@ -946,8 +946,6 @@ namespace uniffi {
 
 /**
  * A blinding factor for asset commitments.
- *
- * See [`elements::confidential::AssetBlindingFactor`] for more details.
  */
 struct AssetBlindingFactor
 
@@ -965,15 +963,15 @@ struct AssetBlindingFactor
 
     ~AssetBlindingFactor();
     /**
+     * Create from bytes.
+     */
+    static std::shared_ptr<AssetBlindingFactor> from_bytes(const std::vector<uint8_t> &bytes);
+    /**
      * Creates from a hex string.
      */
-    static std::shared_ptr<AssetBlindingFactor> from_hex(const std::string &hex);
+    static std::shared_ptr<AssetBlindingFactor> from_string(const std::string &s);
     /**
-     * See [`elements::confidential::AssetBlindingFactor::from_slice`].
-     */
-    static std::shared_ptr<AssetBlindingFactor> from_slice(const std::vector<uint8_t> &bytes);
-    /**
-     * See [`elements::confidential::AssetBlindingFactor::zero`].
+     * Get a unblinded/zero asset blinding factor
      */
     static std::shared_ptr<AssetBlindingFactor> zero();
     /**
@@ -981,9 +979,9 @@ struct AssetBlindingFactor
      */
     std::vector<uint8_t> to_bytes();
     /**
-     * Returns the hex-encoded representation.
+     * Returns a string representation of the object, internally calls Rust's `Display` trait.
      */
-    std::string to_hex();
+    std::string to_string() const;
 
     private:
     AssetBlindingFactor(const AssetBlindingFactor &);
@@ -1518,19 +1516,43 @@ struct BoltzSession
      */
     std::string rescue_file();
     /**
-     * Filter the swap list to only include restorable BTC to LBTC swaps
+     * From the swaps returned by the boltz api via [`BoltzSession::swap_restore`]:
+     *
+     * - filter the BTC to LBTC swaps
+     * - add information from the session
+     * - return typed data
+     *
+     * The claim and refund addresses don't need to be the same used when creating the swap.
      */
     std::vector<std::string> restorable_btc_to_lbtc_swaps(const std::shared_ptr<SwapList> &swap_list, const std::shared_ptr<Address> &claim_address, const std::shared_ptr<BitcoinAddress> &refund_address);
     /**
-     * Filter the swap list to only include restorable LBTC to BTC swaps
+     * From the swaps returned by the boltz api via [`BoltzSession::swap_restore`]:
+     *
+     * - filter the LBTC to BTC swaps
+     * - add information from the session
+     * - return typed data
+     *
+     * The claim and refund addresses don't need to be the same used when creating the swap.
      */
     std::vector<std::string> restorable_lbtc_to_btc_swaps(const std::shared_ptr<SwapList> &swap_list, const std::shared_ptr<BitcoinAddress> &claim_address, const std::shared_ptr<Address> &refund_address);
     /**
-     * Filter the swap list to only include restorable reverse swaps
+     * From the swaps returned by the boltz api via [`BoltzSession::swap_restore`]:
+     *
+     * - filter the reverse swaps
+     * - add information from the session
+     * - return typed data
+     *
+     * The claim address doesn't need to be the same used when creating the swap.
      */
     std::vector<std::string> restorable_reverse_swaps(const std::shared_ptr<SwapList> &swap_list, const std::shared_ptr<Address> &claim_address);
     /**
-     * Filter the swap list to only include restorable submarine swaps
+     * From the swaps returned by the boltz api via [`BoltzSession::swap_restore`]:
+     *
+     * - filter the submarine swaps
+     * - add information from the session
+     * - return typed data
+     *
+     * The refund address doesn't need to be the same used when creating the swap.
      */
     std::vector<std::string> restorable_submarine_swaps(const std::shared_ptr<SwapList> &swap_list, const std::shared_ptr<Address> &refund_address);
     /**
@@ -2190,6 +2212,10 @@ struct LockupResponse
     std::optional<uint64_t> boltz_fee();
     std::string chain_from();
     std::string chain_to();
+    /**
+     * The txid of the claim transaction of the swap
+     */
+    std::optional<std::string> claim_txid();
     bool complete();
     uint64_t expected_amount();
     /**
@@ -2199,7 +2225,19 @@ struct LockupResponse
      */
     std::optional<uint64_t> fee();
     std::string lockup_address();
+    /**
+     * The txid of the lockup transaction of the swap
+     */
+    std::optional<std::string> lockup_txid();
     std::string serialize();
+    /**
+     * Optionally set the lockup transaction txid.
+     *
+     * This can be useful when the app creates and broadcasts the lockup transaction and wants to
+     * persist the txid immediately before websocket updates arrive from Boltz. It helps avoid a
+     * race where a fast retry flow could submit the lockup transaction twice.
+     */
+    void set_lockup_txid(const std::string &txid);
     std::string swap_id();
 
     private:
@@ -2690,11 +2728,23 @@ struct PreparePayResponse
      */
     std::optional<uint64_t> fee();
     /**
+     * The txid of the user lockup transaction of the swap.
+     */
+    std::optional<std::string> lockup_txid();
+    /**
      * Serialize the prepare pay response data to a json string
      *
      * This can be used to restore the prepare pay response after a crash
      */
     std::string serialize();
+    /**
+     * Optionally set the lockup transaction txid.
+     *
+     * This can be useful when the app creates and broadcasts the lockup transaction and wants to
+     * persist the txid immediately before websocket updates arrive from Boltz. It helps avoid a
+     * race where a fast retry flow could submit the lockup transaction twice.
+     */
+    void set_lockup_txid(const std::string &txid);
     std::string swap_id();
     std::string uri();
     std::shared_ptr<Address> uri_address();
@@ -3389,10 +3439,23 @@ struct Transaction
     /**
      * Construct a Transaction object from its hex representation.
      * To create the hex representation of a transaction use `to_string()`.
+     *
+     * Deprecated: use `from_string()` instead.
      */
     static std::shared_ptr<Transaction> init(const Hex &hex);
     /**
+     * Construct a Transaction object from its bytes.
+     */
+    static std::shared_ptr<Transaction> from_bytes(const std::vector<uint8_t> &bytes);
+    /**
+     * Construct a Transaction object from its canonical string representation.
+     * To create the string representation of a transaction use `to_string()`.
+     */
+    static std::shared_ptr<Transaction> from_string(const std::string &s);
+    /**
      * Return the consensus encoded bytes of the transaction.
+     *
+     * Deprecated: use `to_bytes()` instead.
      */
     std::vector<uint8_t> bytes();
     /**
@@ -3413,13 +3476,28 @@ struct Transaction
      */
     std::vector<std::shared_ptr<TxOut>> outputs();
     /**
+     * Return the consensus encoded bytes of the transaction.
+     */
+    std::vector<uint8_t> to_bytes();
+    /**
      * Return the transaction identifier.
      */
     std::shared_ptr<Txid> txid();
     /**
-     * Verify transaction amount proofs against UTXOs.
+     * Verify that the transaction has correctly calculated blinding factors and they CT
+     * verification equation holds.
      *
-     * See [`elements::Transaction::verify_tx_amt_proofs`].
+     * This is *NOT* a complete Transaction verification check
+     * It does *NOT* check whether input witness/script satisfies the script pubkey, or
+     * inputs are double-spent and other consensus checks.
+     *
+     * This method only checks if the `Transaction` verification equation for Confidential
+     * transactions holds. i.e Sum of inputs = Sum of outputs + fees.
+     *
+     * And the corresponding surjection/rangeproofs are correct.
+     * For checking of surjection proofs and amounts, spent_utxos parameter
+     * should contain information about the prevouts. Note that the order of
+     * spent_utxos should be consistent with transaction inputs.
      */
     void verify_tx_amt_proofs(const std::vector<std::shared_ptr<TxOut>> &utxos);
     /**
@@ -3970,8 +4048,6 @@ namespace uniffi {
 
 /**
  * A blinding factor for value commitments.
- *
- * See [`elements::confidential::ValueBlindingFactor`] for more details.
  */
 struct ValueBlindingFactor
 
@@ -3989,15 +4065,15 @@ struct ValueBlindingFactor
 
     ~ValueBlindingFactor();
     /**
+     * Create from bytes.
+     */
+    static std::shared_ptr<ValueBlindingFactor> from_bytes(const std::vector<uint8_t> &bytes);
+    /**
      * Creates from a hex string.
      */
-    static std::shared_ptr<ValueBlindingFactor> from_hex(const std::string &hex);
+    static std::shared_ptr<ValueBlindingFactor> from_string(const std::string &s);
     /**
-     * See [`elements::confidential::ValueBlindingFactor::from_slice`].
-     */
-    static std::shared_ptr<ValueBlindingFactor> from_slice(const std::vector<uint8_t> &bytes);
-    /**
-     * See [`elements::confidential::ValueBlindingFactor::zero`].
+     * Get a unblinded/zero value blinding factor
      */
     static std::shared_ptr<ValueBlindingFactor> zero();
     /**
@@ -4005,9 +4081,9 @@ struct ValueBlindingFactor
      */
     std::vector<uint8_t> to_bytes();
     /**
-     * Returns the hex-encoded representation.
+     * Returns a string representation of the object, internally calls Rust's `Display` trait.
      */
-    std::string to_hex();
+    std::string to_string() const;
 
     private:
     ValueBlindingFactor(const ValueBlindingFactor &);
@@ -4613,6 +4689,23 @@ protected:
         return 6;
     }
 };
+
+struct BoltzBackendHttpError: LwkError {
+    uint16_t status;
+    std::optional<std::string> error;
+
+    BoltzBackendHttpError() : LwkError("") {}
+    BoltzBackendHttpError(const std::string &what_arg) : LwkError(what_arg) {}
+
+    void throw_underlying() override {
+        throw *this;
+    }
+
+protected:
+    int32_t get_variant_idx() const override {
+        return 7;
+    }
+};
 } // namespace lwk_error
 
 
@@ -4800,6 +4893,13 @@ struct FfiConverterInt8 {
     static int8_t read(RustStream &);
     static void write(RustStream &, int8_t);
     static uint64_t allocation_size(int8_t);
+};
+struct FfiConverterUInt16 {
+    static uint16_t lift(uint16_t);
+    static uint16_t lower(uint16_t);
+    static uint16_t read(RustStream &);
+    static void write(RustStream &, uint16_t);
+    static uint64_t allocation_size(uint16_t);
 };
 struct FfiConverterUInt32 {
     static uint32_t lift(uint32_t);

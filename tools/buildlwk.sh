@@ -2,7 +2,7 @@
 set -eox pipefail
 
 REPO=https://github.com/Blockstream/lwk
-COMMIT=5b015d6548a2e5ce60c5fcaae449248447e4c02d
+COMMIT=a57e3e3660fa0aa306f2fedae9ed338f4e033c41
 
 mkdir -p build && cd build
 
@@ -31,3 +31,6 @@ else
     install -d $PREFIX/lib
     install ./target/release/liblwk.so $PREFIX/lib
 fi
+
+# cargo install uniffi-bindgen-cpp --git https://github.com/NordSecurity/uniffi-bindgen-cpp --tag v0.8.1+v0.29.4
+# uniffi-bindgen-cpp --library target/release/liblwk.dylib --out-dir ../../src/lwk
