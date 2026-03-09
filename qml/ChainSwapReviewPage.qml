@@ -56,6 +56,10 @@ StackViewPage {
         memo: note_text_area.text
         transaction: create_transaction_controller.transaction
         onTransactionCompleted: transaction => {
+            Analytics.recordEvent('swap_internal', AnalyticsJS.segmentationSwap(Settings, self.context, { 
+                from: UtilJS.swapNetworkType(self.sendAccount.network),
+                to: UtilJS.swapNetworkType(self.receiveAccount.network)
+            }))
             chain_swap_controller.commit()
             self.StackView.view.push(completed_page, { transaction })
         }

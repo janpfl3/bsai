@@ -102,7 +102,13 @@ StackViewPage {
             enabled: !confirm_button.busy && !self.error
             text: qsTrId('id_confirm')
             visible: self.invoice && !invoice_controller.swap
-            onClicked: invoice_controller.request()
+            onClicked: {
+                Analytics.recordEvent('swap_receive', AnalyticsJS.segmentationSwap(Settings, self.context, { 
+                    from: 'lightning', 
+                    to: 'liquid' 
+                }))
+                invoice_controller.request()
+            }
         }
     }
     contentItem: VFlickable {
@@ -175,6 +181,10 @@ StackViewPage {
                     text: 'Lightning'
                     checked: self.invoice
                     onClicked: {
+                        Analytics.recordEvent('swap_toggle', AnalyticsJS.segmentationSwap(Settings, self.context, { 
+                            from: 'lightning',
+                            to: 'liquid'
+                        }))
                         self.invoice = true
                         amount_field.visible = true
                         amount_field.clearText()

@@ -181,3 +181,11 @@ function segmentationWalletActive(Settings, context) {
     segmentation.accounts_types = Array.from(accounts_types).join(',')
     return segmentation
 }
+
+function segmentationSwap(Settings, context, { to, from } = {}) {
+    const segmentation = segmentationSession(Settings, context)
+    if (to) segmentation.to = to
+    if (from) segmentation.from = from
+    return segmentation
+}
+

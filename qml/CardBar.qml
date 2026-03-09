@@ -84,7 +84,10 @@ Pane {
             }
             TransactButton {
                 action.shortcut: 'Ctrl+W'
-                action.onTriggered: openSwapDrawer()
+                action.onTriggered: {
+                    Analytics.recordEvent('swap_entry', AnalyticsJS.segmentationSession(Settings, self.context))
+                    openSwapDrawer()
+                }
                 enabled: !self.context.watchonly && !self.context.wallet.login.device
                 icon.source: 'qrc:/000000/24/arrows-down-up.svg'
                 text: qsTrId('id_swap')

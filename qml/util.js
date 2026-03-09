@@ -381,3 +381,8 @@ function localizedLabel(label) {
     }
 }
 
+function swapNetworkType(network) {
+    if (network?.liquid) return 'liquid'
+    if (network?.mainnet) return 'mainnet'
+    return null
+}

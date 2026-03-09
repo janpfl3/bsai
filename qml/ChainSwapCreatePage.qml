@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "analytics.js" as AnalyticsJS
 import 'util.js' as UtilJS
 
 StackViewPage {
@@ -51,6 +52,11 @@ StackViewPage {
         id: fee_estimates
         session: send_field.account.session
         onSessionChanged: self.feeRate = Qt.binding(() => fee_estimates.fees[3] ?? 0)
+    }
+    AnalyticsView {
+        name: 'Swap'
+        active: true
+        segmentation: AnalyticsJS.segmentationSession(Settings, self.context)
     }
     id: self
     title: qsTrId('id_details')
@@ -193,6 +199,10 @@ StackViewPage {
         enabled: !self.error
         text: qsTrId('id_next')
         onClicked: {
+            Analytics.recordEvent('swap_initiate', AnalyticsJS.segmentationSwap(Settings, self.context, { 
+                from: UtilJS.swapNetworkType(send_field.account.network), 
+                to: UtilJS.swapNetworkType(receive_field.account.network)
+            }))
             self.StackView.view.push(chain_swap_review_page, {
                 feeRate: self.feeRate,
                 quote: controller.quote
