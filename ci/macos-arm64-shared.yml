@@ -1,4 +1,4 @@
-.macos-arm64-shared:
+.macos-arm64:
   extends:
     - .macos
   variables:
@@ -14,10 +14,10 @@
   tags:
     - macos-arm64
 
-macos-arm64-shared:depends-gdk:
+macos-arm64:depends-gdk:
   stage: depends
   extends:
-    - .macos-arm64-shared
+    - .macos-arm64
   script:
     - export LLVM_PATH="$BREW_PREFIX/opt/llvm@17"
     - export PATH="$LLVM_PATH/bin:$PATH"
@@ -31,10 +31,10 @@ macos-arm64-shared:depends-gdk:
     - tools/buildgdk.sh --static
   when: manual
 
-macos-arm64-shared:depends:
+macos-arm64:depends:
   stage: depends
   extends:
-    - .macos-arm64-shared
+    - .macos-arm64
   script:
     - tools/buildkdsingleapplication.sh
     - tools/buildlibserialport.sh --disable-shared
@@ -49,10 +49,10 @@ macos-arm64-shared:depends:
     - tools/buildlwk.sh
   when: manual
 
-macos-arm64-shared:build:
+macos-arm64:build:
   extends:
     - .build
-    - .macos-arm64-shared
+    - .macos-arm64
   after_script:
     - $HOME/qt-install/6.8.3/macos/bin/macdeployqt build/Blockstream.app -qmldir=qml
     - rm -rf build/Blockstream.app/Contents/MacOS/Blockstream.dSYM
@@ -64,7 +64,7 @@ macos-arm64-shared:build:
     paths:
       - macos-arm64-shared/Blockstream.app
 
-macos-arm64-shared:staple:
+macos-arm64:staple:
   extends:
     - .macos:staple
   artifacts:
@@ -74,7 +74,7 @@ macos-arm64-shared:staple:
     paths:
       - macos-arm64-shared/Blockstream.dmg
   needs:
-    - job: macos-arm64-shared:build
+    - job: macos-arm64:build
       optional: true
   script:
     - mv macos-arm64-shared/Blockstream.app Blockstream.app

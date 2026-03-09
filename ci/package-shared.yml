@@ -1,4 +1,4 @@
-package-shared:build:
+package:build:
   tags:
     - garelease
   stage: package
@@ -26,34 +26,34 @@ package-shared:build:
     - cd ..
     - tar czf package.tar.gz dist
   needs:
-    - linux-x86_64-shared:build-appimage
-    - macos-arm64-shared:staple
-    - macos-x86_64-shared:staple
-    - macos-universal-shared:staple
-    - windows-x86_64-shared:sign-installer
+    - linux-x86_64:build-appimage
+    - macos-arm64:staple
+    - macos-x86_64:staple
+    - macos-universal:staple
+    - windows-x86_64:sign-installer
 
-.publish-shared:
+.publish:
   tags:
     - ga
   stage: package
   when: manual
   needs:
-    - package-shared:build
+    - package:build
   image: glregistry.blockstream.io/blockstream/p/gcloud-docker:tf0.15.4
   script:
     - tar zxvf package.tar.gz
     - cd dist
     - ../tools/publish.sh
 
-package-shared:publish-rc:
+package:publish-rc:
   extends:
-    - .publish-shared
+    - .publish
   variables:
     CHANNEL: rc
 
-package-shared:publish-latest:
+package:publish-latest:
   extends:
-    - .publish-shared
+    - .publish
   variables:
     CHANNEL: latest
   only:

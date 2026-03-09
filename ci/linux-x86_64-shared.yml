@@ -1,20 +1,20 @@
-linux-x86_64-shared:build-image:
+linux-x86_64:build-image:
   extends: .docker_build
   variables:
     IMAGE: $CI_REGISTRY_IMAGE/linux-x86_64-shared
     DOCKER_FILE: ci/linux-x86_64-shared/Dockerfile
     DOCKER_BUILD_ARGS: --build-arg QT_INSTALLER_JWT_TOKEN=${QT_INSTALLER_JWT_TOKEN}
 
-.linux-x86_64-shared:
+.linux-x86_64:
   image: $CI_REGISTRY_IMAGE/linux-x86_64-shared@sha256:9439834e38f9eeb9d707d054d726674db1d0d46a30246bbecbb366a9c487c150
   extends:
     - .build
   tags:
     - cloud
 
-linux-x86_64-shared:build-appimage:
+linux-x86_64:build-appimage:
   extends:
-    - .linux-x86_64-shared
+    - .linux-x86_64
   before_script:
     - export PATH="/qt/6.8.3/gcc_64/bin:$PREFIX/bin/:$PATH"
     - export CMAKE_PREFIX_PATH="$PREFIX:$CMAKE_PREFIX_PATH"
