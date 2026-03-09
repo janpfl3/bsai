@@ -38,6 +38,8 @@ if $PLUGIN_QT; then
     curl -sL -o linuxdeploy-plugin-qt-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
     chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
 
+    export EXTRA_QT_MODULES="waylandcompositor"
+    export EXTRA_PLATFORM_PLUGINS="libqwayland-generic.so;libqwayland-egl.so"
     env QML_SOURCES_PATHS=$SOURCE_PATH/qml TARGET_APP_IMAGE=linuxdeploy-plugin-qt-x86_64.AppImage ./linuxdeploy-plugin-qt-x86_64.AppImage --appdir blockstream.AppDir
 fi
 

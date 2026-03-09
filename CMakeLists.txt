@@ -4,7 +4,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 project(blockstream VERSION 3.1.0 LANGUAGES CXX)
 
-option(GREEN_WAYLAND "Include Wayland support" OFF)
 option(ENABLE_SENTRY "Enable crash reports with sentry" OFF)
 
 set(APP_TARGET blockstream)
@@ -60,9 +59,7 @@ elseif (UNIX)
         set(FFMPEG_LIBRARIES /depends/linux-x86_64/plugins/multimedia/libffmpegmediaplugin.a ${AVDEVICE} ${AVFILTER} ${AVFORMAT} ${AVCODEC} ${POSTPROC} ${SWRESAMPLE} ${SWSCALE} ${AVUTIL} Xrandr Xrender)
         message(STATUS "FFMPEG_LIBRARIES: ${FFMPEG_LIBRARIES}")
     endif()
-    if (GREEN_WAYLAND)
-        find_package(Qt6 6.4 COMPONENTS WaylandClient REQUIRED)
-    endif()
+    find_package(Qt6 6.4 COMPONENTS WaylandClient REQUIRED)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -fstack-protector -Wl,--wrap=__divmoddi4 -Wl,--wrap=log2f")
 endif()
 
@@ -188,12 +185,8 @@ elseif (APPLE)
     set_target_properties(${APP_TARGET} PROPERTIES OUTPUT_NAME "Blockstream")
 elseif (UNIX)
     find_library(LIBLWK lwk REQUIRED)
-    target_link_libraries(${APP_TARGET} PRIVATE dl Xrender ${LIBLWK})
-    qt_import_plugins(${APP_TARGET} INCLUDE Qt6::QXcbIntegrationPlugin Qt6::QFFmpegMediaPlugin)
-    if (GREEN_WAYLAND)
-        target_link_libraries(${APP_TARGET} PRIVATE Qt6::WaylandClient Xrender)
-        qt_import_plugins(${APP_TARGET} INCLUDE Qt6::QWaylandIntegrationPlugin Qt6::QFFmpegMediaPlugin)
-    endif()
+    target_link_libraries(${APP_TARGET} PRIVATE dl Xrender ${LIBLWK} Qt6::WaylandClient)
+    qt_import_plugins(${APP_TARGET} INCLUDE Qt6::QXcbIntegrationPlugin Qt6::QWaylandIntegrationPlugin Qt6::QFFmpegMediaPlugin)
 endif()
 
 install(TARGETS ${APP_TARGET}
