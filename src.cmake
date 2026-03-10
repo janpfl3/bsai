@@ -12,6 +12,7 @@ SET(TARGET_SOURCES
 	src/command.cpp
         src/context.h src/context.cpp
         src/contextmodel.h src/contextmodel.cpp
+        src/limitmodel.h src/limitmodel.cpp
 	src/controllers/abstractcontroller.h src/controllers/abstractcontroller.cpp
 	src/controller.h src/controller.cpp
 	src/controllers/sessioncontroller.h src/controllers/sessioncontroller.cpp
