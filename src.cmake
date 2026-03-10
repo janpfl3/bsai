@@ -10,8 +10,8 @@ SET(TARGET_SOURCES
 	src/asset.cpp
 	src/clipboard.cpp
 	src/command.cpp
-        src/context.cpp
-        src/context.h
+        src/context.h src/context.cpp
+        src/contextmodel.h src/contextmodel.cpp
 	src/controllers/abstractcontroller.h src/controllers/abstractcontroller.cpp
 	src/controller.h src/controller.cpp
 	src/controllers/sessioncontroller.h src/controllers/sessioncontroller.cpp
