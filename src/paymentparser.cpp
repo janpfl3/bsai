@@ -7,13 +7,15 @@ namespace {
 
 void fill(QVariantMap& payment, std::shared_ptr<lwk::BitcoinAddress> address)
 {
-    payment.insert("network", "bitcoin");
+    const bool is_mainnet = address->is_mainnet();
+    payment.insert("network", is_mainnet ? "bitcoin" : "testnet");
     payment.insert("address", QString::fromStdString(address->to_string()));
 }
 
 void fill(QVariantMap& payment, std::shared_ptr<lwk::Address> address)
 {
-    payment.insert("network", "liquid");
+    const bool is_mainnet = address->network()->is_mainnet();
+    payment.insert("network", is_mainnet ? "liquid" : "testnet-liquid");
     payment.insert("address", QString::fromStdString(address->to_string()));
 }
 
