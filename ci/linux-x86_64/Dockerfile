@@ -1,5 +1,5 @@
 FROM ubuntu:jammy AS base0
-COPY ci/linux-x86_64-shared/setup.sh .
+COPY ci/linux-x86_64/setup.sh .
 RUN ./setup.sh
 ENV PREFIX=/depends/linux-x86_64
 ENV HOST=linux

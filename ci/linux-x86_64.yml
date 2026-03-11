@@ -1,12 +1,12 @@
 linux-x86_64:build-image:
   extends: .docker_build
   variables:
-    IMAGE: $CI_REGISTRY_IMAGE/linux-x86_64-shared
-    DOCKER_FILE: ci/linux-x86_64-shared/Dockerfile
+    IMAGE: $CI_REGISTRY_IMAGE/linux-x86_64
+    DOCKER_FILE: ci/linux-x86_64/Dockerfile
     DOCKER_BUILD_ARGS: --build-arg QT_INSTALLER_JWT_TOKEN=${QT_INSTALLER_JWT_TOKEN}
 
 .linux-x86_64:
-  image: $CI_REGISTRY_IMAGE/linux-x86_64-shared@sha256:9439834e38f9eeb9d707d054d726674db1d0d46a30246bbecbb366a9c487c150
+  image: $CI_REGISTRY_IMAGE/linux-x86_64@sha256:b1eb38d7a6db0a8d97ba8567968312c1a361d159d1e04a2cc54ac8d2667e0980
   extends:
     - .build
   tags:
@@ -21,10 +21,10 @@ linux-x86_64:build-appimage:
   after_script:
     - mv build/blockstream .
     - tools/appimage.sh --plugin-qt $CI_PROJECT_DIR
-    - mkdir linux-x86_64-shared
-    - mv Blockstream-x86_64.AppImage linux-x86_64-shared/
+    - mkdir linux-x86_64
+    - mv Blockstream-x86_64.AppImage linux-x86_64/
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_SHORT_SHA"
     expire_in: 1 week
     paths:
-      - linux-x86_64-shared/Blockstream-x86_64.AppImage
+      - linux-x86_64/Blockstream-x86_64.AppImage

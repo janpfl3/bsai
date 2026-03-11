@@ -18,8 +18,8 @@ package:build:
     - mv macos-arm64-shared/Blockstream.dmg dist/Blockstream-arm64.dmg
     - mv macos-x86_64-shared/Blockstream.dmg dist/Blockstream-x86_64.dmg
     - mv macos-universal-shared/Blockstream.dmg dist/Blockstream-universal.dmg
-    - chmod +x linux-x86_64-shared/Blockstream-x86_64.AppImage
-    - mv linux-x86_64-shared/Blockstream-x86_64.AppImage dist
+    - chmod +x linux-x86_64/Blockstream-x86_64.AppImage
+    - mv linux-x86_64/Blockstream-x86_64.AppImage dist
     - cd dist
     - /opt/process_release
     - cat SHA256SUMS.asc
