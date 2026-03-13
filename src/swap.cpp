@@ -11,6 +11,8 @@
 
 namespace {
 
+QThreadPool g_swap_thread_pool;
+
 template <typename T> QString swapId(const std::shared_ptr<T>& response)
 {
     return QString::fromStdString(response->swap_id());
@@ -37,7 +39,7 @@ void Swap::sync()
 {
     using Watcher = QFutureWatcher<Swap::Status>;
     const auto watcher = new Watcher(this);
-    watcher->setFuture(QtConcurrent::run([=, this] {
+    watcher->setFuture(QtConcurrent::run(&g_swap_thread_pool, [=, this] {
         try {
             auto state = advance();
             return statusFromState(state);
