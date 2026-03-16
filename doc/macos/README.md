@@ -1,12 +1,12 @@
 ## Building Blockstream on macOS
 
-**Quick start:** Run the automated build script from the repository root:
+**Quick start:** From the repository root, run the automated build script:
 
 ```bash
-./buildmacos.sh
+./doc/macos/build.sh
 ```
 
-The script checks prerequisites, builds dependencies, and compiles the app. If a step fails, run it again to resume. Use `./buildmacos.sh --restart` to start over.
+The script checks prerequisites, builds dependencies, and compiles the app. If a step fails, run it again to resume. Use `./doc/macos/build.sh --restart` to start over.
 
 ---
 
@@ -94,6 +94,8 @@ export CMAKE_PREFIX_PATH="$QT_ROOT${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 
 ### Build third‑party dependencies
 
+If you prefer to build dependencies manually instead of using `./doc/macos/build.sh`, run:
+
 ```bash
 rm -rf "$PREFIX"
 
@@ -107,6 +109,8 @@ tools/buildcountly.sh
 tools/buildzxing.sh
 tools/buildlibserialport.sh --disable-shared
 tools/buildkdsingleapplication.sh
+tools/buildlwk.sh
+tools/buildleveldb.sh
 ```
 
 All of these install into `$PREFIX`. This step is slow the first time, but can be reused for future builds.
@@ -147,3 +151,4 @@ You can run it directly with:
 ```bash
 open build/Blockstream.app
 ```
+

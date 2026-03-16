@@ -10,9 +10,9 @@ You can read more about Blockstream application [here](https://blockstream.com/a
 
 For build instructions, see:
 
-- [macOS](doc/build-macos.md)
-- [Linux](doc/build-linux.md)
-- [Windows](doc/build-windows.md)
+- [macOS](doc/macos/README.md)
+- [Linux](doc/linux/README.md)
+- [Windows](doc/windows/README.md)
 
 ## Application data directory
 

@@ -1,11 +1,11 @@
-# Building Blockstream Green for Windows
+## Building Blockstream Green for Windows
 
 **Important:** The Windows build is split into two phases. **You must build GDK (and libserialport) first on Linux with MinGW** — they are cross-compiled and cannot be built natively on Windows for this project. The rest of the build (application, Countly, ZXing, etc.) is done on Windows with MSVC and Qt.
 
 **Quick start:**
 
-1. **Phase 1 (Linux):** In WSL2 or a Linux environment, run `./build-win-dependencies.sh` from the repo root. Copy the artifacts to `C:\depends\windows-x86_64` on your Windows machine.
-2. **Phase 2 (Windows):** Open "x64 Native Tools Command Prompt for VS 2022", `cd` to the repo, and run `buildwindows.bat`.
+1. **Phase 1 (Linux):** In WSL2 or a Linux environment, run `./doc/windows/build-dependencies.sh` from the repo root. Copy the artifacts to `C:\depends\windows-x86_64` on your Windows machine.
+2. **Phase 2 (Windows):** Open "x64 Native Tools Command Prompt for VS 2022", `cd` to the repo, and run `doc\windows\build.bat`.
 
 Both scripts support resume on failure: run again to continue. Use `--restart` to start over.
 
@@ -195,17 +195,21 @@ source "$HOME/.cargo/env"
 
 ---
 
-### 1.4 Build GDK for Windows
+### 1.4 Build GDK and other dependencies for Windows
 
 Still in the **same bash shell**, from the **project root** (`green_qt`), with the variables above set:
 
-**1. Build GDK:**
+**1. Build dependencies:**
 
 ```bash
 ./tools/buildgdk.sh
+./tools/buildlwk.sh
+./tools/buildleveldb.sh
 ```
 
-This script clones the GDK repo, uses a Python venv, and runs GDK’s build with `--mingw-w64` (because `HOST=windows`). It can take several minutes. When it finishes, GDK is installed under `$PREFIX`; the DLL is also produced in the build tree.
+- `buildgdk.sh`: clones GDK, sets up a Python venv, and runs the GDK build with `--mingw-w64` (because `HOST=windows`). When it finishes, GDK is installed under `$PREFIX`; the DLL is also produced in the build tree.
+- `buildlwk.sh`: builds and installs LWK into the same `$PREFIX`.
+- `buildleveldb.sh`: builds and installs LevelDB into `$PREFIX`.
 
 **2. Copy the DLL and generate the `.def` file:**
 
@@ -341,6 +345,3 @@ copy C:\depends\windows-x86_64\bin\libserialport-0.dll bld\RelWithDebInfo\
 ```
 
 The executable and required DLLs will be in `bld\RelWithDebInfo\`.
-
-
-

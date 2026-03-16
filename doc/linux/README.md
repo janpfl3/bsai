@@ -3,10 +3,10 @@
 **Quick start:** Run the automated build script from the repository root:
 
 ```bash
-./buildlinux.sh
+./doc/linux/build.sh
 ```
 
-The script checks prerequisites, builds dependencies, and compiles the app. If a step fails, run it again to resume. Use `./buildlinux.sh --restart` to start over.
+The script checks prerequisites, builds dependencies, and compiles the app. If a step fails, run it again to resume. Use `./doc/linux/build.sh --restart` to start over.
 
 ---
 
@@ -88,6 +88,8 @@ You can reuse this layout for local builds.
 
 ### Build third‑party dependencies
 
+If you prefer to build dependencies manually instead of using `./doc/linux/build.sh`, run:
+
 ```bash
 rm -rf "$PREFIX"
 
@@ -101,6 +103,8 @@ tools/buildcountly.sh
 tools/buildzxing.sh
 tools/buildlibserialport.sh --disable-shared
 tools/buildkdsingleapplication.sh
+tools/buildlwk.sh
+tools/buildleveldb.sh
 ```
 
 All of these install into `$PREFIX`. This is the slow part; subsequent builds can reuse the same prefix.
@@ -141,5 +145,4 @@ Run it directly:
 export LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH"
 ./build/blockstream
 ```
-
 

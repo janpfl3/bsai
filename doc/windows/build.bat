@@ -72,7 +72,7 @@ if errorlevel 1 (
 REM Validate paths
 if not exist "%DEPENDS_PREFIX%\bin\libgreen_gdk.dll" (
     echo ERROR: Phase 1 artifacts not found at %DEPENDS_PREFIX%
-    echo Run build-win-dependencies.sh on Linux first, then copy artifacts to this location.
+    echo Run doc/windows/build-win-dependencies.sh on Linux first, then copy artifacts to this location.
     exit /b 1
 )
 
@@ -82,7 +82,7 @@ if not exist "%QT_ROOT%\bin\qt-cmake.bat" if not exist "%QT_ROOT%\bin\qt-cmake.e
     exit /b 1
 )
 
-cd /d "%~dp0"
+cd /d "%~dp0\..\.."
 
 REM --- Step 1: Create .lib from .def ---
 if %LAST_STEP% LSS 1 (
@@ -191,10 +191,10 @@ echo BUILD FAILED
 echo ==========================================
 echo.
 echo To resume from this step, run the script again:
-echo   buildwindows.bat
+echo   doc\windows\build.bat
 echo.
 echo To start over, run:
-echo   buildwindows.bat --restart
+echo   doc\windows\build.bat --restart
 echo.
 exit /b 1
 

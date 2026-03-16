@@ -4,15 +4,15 @@
 #
 # Prerequisites (install manually if missing):
 #   - Ubuntu 22.04+ or compatible distro
-#   - System packages (see doc/build-linux.md)
+#   - System packages (see doc/linux/README.md)
 #   - Rust: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #   - Qt 6.8.3: from https://www.qt.io/download-qt-installer
 #
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$ROOT_DIR"
 STATE_FILE=".build_state_linux"
 
 # Step definitions
@@ -44,10 +44,10 @@ fail() {
     echo "Error: $1"
     echo ""
     echo "To resume from this step, run the script again:"
-    echo "  ./buildlinux.sh"
+    echo "  ./doc/linux/build.sh"
     echo ""
     echo "To start over from the beginning, run:"
-    echo "  ./buildlinux.sh --restart"
+    echo "  ./doc/linux/build.sh --restart"
     echo ""
     echo "$CURRENT_STEP" > "$STATE_FILE.failed"
     exit 1
@@ -62,6 +62,19 @@ read_progress() {
         cat "$STATE_FILE"
     else
         echo "0"
+    fi
+}
+
+# Ensure Qt is available when resuming
+ensure_qt() {
+    if [[ -z "${QT_ROOT:-}" || ! -f "$QT_ROOT/bin/qmake" ]]; then
+        for q in "$HOME/Qt/6.8.3/gcc_64" "$HOME/Qt/6.8.2/gcc_64"; do
+            if [[ -d "$q" && -f "$q/bin/qmake" ]]; then
+                export QT_ROOT="$q"
+                return
+            fi
+        done
+        fail "Qt 6.8.3 not found. Set QT_ROOT or install Qt from https://www.qt.io/download-qt-installer"
     fi
 }
 
@@ -91,19 +104,6 @@ else
     fi
 fi
 
-# Ensure Qt is available when resuming
-ensure_qt() {
-    if [[ -z "${QT_ROOT:-}" || ! -f "$QT_ROOT/bin/qmake" ]]; then
-        for q in "$HOME/Qt/6.8.3/gcc_64" "$HOME/Qt/6.8.2/gcc_64"; do
-            if [[ -d "$q" && -f "$q/bin/qmake" ]]; then
-                export QT_ROOT="$q"
-                return
-            fi
-        done
-        fail "Qt 6.8.3 not found. Set QT_ROOT or install Qt from https://www.qt.io/download-qt-installer"
-    fi
-}
-
 # --- Step 1: Prerequisites ---
 CURRENT_STEP=$STEP_PREREQS
 if [[ "$LAST_STEP" -lt $STEP_PREREQS ]]; then
@@ -112,7 +112,7 @@ if [[ "$LAST_STEP" -lt $STEP_PREREQS ]]; then
 
     for cmd in cmake ninja git pkg-config; do
         if ! command -v "$cmd" &>/dev/null; then
-            fail "Missing $cmd. Install build dependencies (see doc/build-linux.md): sudo apt install build-essential cmake ninja-build git pkg-config ..."
+            fail "Missing $cmd. Install build dependencies (see doc/linux/README.md): sudo apt install build-essential cmake ninja-build git pkg-config ..."
         fi
     done
 

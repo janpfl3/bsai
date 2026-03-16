@@ -2,14 +2,14 @@
 #
 # Phase 1 of Windows build: Build GDK and libserialport on Linux (MinGW).
 # Run this in WSL2, Docker, or native Linux. Then copy artifacts to Windows
-# and run buildwindows.bat there.
+# and run doc/windows/build.bat there.
 #
-# Prerequisites: See doc/build-windows.md (MinGW, Rust, gendef, etc.)
+# Prerequisites: See doc/windows/README.md (MinGW, Rust, gendef, etc.)
 #
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$SCRIPT_DIR"
 STATE_FILE=".build_state_windows_phase1"
 
@@ -46,10 +46,10 @@ fail() {
     echo "Error: $1"
     echo ""
     echo "To resume from this step, run the script again:"
-    echo "  ./build-win-dependencies.sh"
+    echo "  ./doc/windows/build-win-dependencies.sh"
     echo ""
     echo "To start over from the beginning, run:"
-    echo "  ./build-win-dependencies.sh --restart"
+    echo "  ./doc/windows/build-win-dependencies.sh --restart"
     echo ""
     echo "$CURRENT_STEP" > "$STATE_FILE.failed"
     exit 1
@@ -236,6 +236,6 @@ echo "Next steps:"
 echo "  1. Copy the entire $PREFIX directory to your Windows machine"
 echo "     (e.g. to C:\\depends\\windows-x86_64)"
 echo "  2. On Windows, open 'x64 Native Tools Command Prompt for VS 2022'"
-echo "  3. cd to the repo and run: buildwindows.bat"
+echo "  3. cd to the repo and run: doc\\windows\\build.bat"
 echo ""
 
