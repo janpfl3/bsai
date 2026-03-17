@@ -50,7 +50,7 @@ VFlickable {
         }
         StepPane {
             title: 'Create or Restore'
-            image: JadeJS.image(self.device, 7)
+            image: UtilJS.jadeImage(self.device, 7)
             PrimaryButton {
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredWidth: 325
