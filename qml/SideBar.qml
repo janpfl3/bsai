@@ -312,7 +312,8 @@ Pane {
         action: Action {
             id: action
             shortcut: button.shortcut
-            onTriggered: self.currentView === SideBar.Wallet && self.currentOverviewPage.showView(button.view)
+            enabled: !!self.currentOverviewPage && self.currentView === SideBar.Wallet
+            onTriggered: self.currentOverviewPage?.showView(button.view)
         }
     }
 }
