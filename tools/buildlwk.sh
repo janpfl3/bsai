@@ -2,13 +2,12 @@
 set -eox pipefail
 
 REPO=https://github.com/Blockstream/lwk
-COMMIT=a57e3e3660fa0aa306f2fedae9ed338f4e033c41
+COMMIT=cdabb53914fed04c545ce24734daca6b5a0c8871
 
 mkdir -p build && cd build
 
-if [ ! -d lwk-src ]; then
-    git clone --recurse-submodules --quiet $REPO lwk-src
-fi
+rm -rf lwk-src
+git clone --recurse-submodules --quiet $REPO lwk-src
 
 cd lwk-src
 git rev-parse HEAD

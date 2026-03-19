@@ -87,6 +87,7 @@ struct WalletTx;
 struct WalletTxOut;
 struct WebHook;
 struct Wollet;
+struct WolletBuilder;
 struct WolletDescriptor;
 struct BoltzSessionBuilder;
 struct EsploraClientBuilder;
@@ -102,273 +103,6 @@ enum class Singlesig;
 enum class SwapAsset;
 typedef std::string AssetId;
 typedef std::string Hex;
-
-
-namespace uniffi {
-    struct FfiConverterMnemonic;
-} // namespace uniffi
-
-/**
- * Wrapper over [`bip39::Mnemonic`]
- */
-struct Mnemonic
-
-
-
-{
-    friend uniffi::FfiConverterMnemonic;
-
-    Mnemonic() = delete;
-
-    Mnemonic(Mnemonic &&) = delete;
-
-    Mnemonic &operator=(const Mnemonic &) = delete;
-    Mnemonic &operator=(Mnemonic &&) = delete;
-
-    ~Mnemonic();
-    /**
-     * Construct a Mnemonic type
-     */
-    static std::shared_ptr<Mnemonic> init(const std::string &s);
-    /**
-     * Creates a Mnemonic from entropy, at least 16 bytes are needed.
-     */
-    static std::shared_ptr<Mnemonic> from_entropy(const std::vector<uint8_t> &b);
-    /**
-     * Creates a random Mnemonic of given words (12,15,18,21,24)
-     */
-    static std::shared_ptr<Mnemonic> from_random(uint8_t word_count);
-    /**
-     * Get the number of words in this mnemonic
-     */
-    uint8_t word_count();
-    /**
-     * Returns a string representation of the object, internally calls Rust's `Display` trait.
-     */
-    std::string to_string() const;
-
-    private:
-    Mnemonic(const Mnemonic &);
-
-    Mnemonic(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
-
-
-namespace uniffi {
-    struct FfiConverterAddress;
-} // namespace uniffi
-
-/**
- * A Liquid address
- */
-struct Address
-
-
-
-{
-    friend uniffi::FfiConverterAddress;
-
-    Address() = delete;
-
-    Address(Address &&) = delete;
-
-    Address &operator=(const Address &) = delete;
-    Address &operator=(Address &&) = delete;
-
-    ~Address();
-    /**
-     * Construct an Address object
-     */
-    static std::shared_ptr<Address> init(const std::string &s);
-    /**
-     * Return true if the address is blinded.
-     */
-    bool is_blinded();
-    /**
-     * Returns the network of the address
-     */
-    std::shared_ptr<Network> network();
-    /**
-     * Returns a string of the QR code printable in a terminal environment
-     */
-    std::string qr_code_text();
-    /**
-     * Returns a string encoding an image in a uri
-     *
-     * The string can be open in the browser or be used as `src` field in `img` in HTML
-     *
-     * For max efficiency we suggest to pass `None` to `pixel_per_module`, get a very small image
-     * and use styling to scale up the image in the browser. eg
-     * `style="image-rendering: pixelated; border: 20px solid white;"`
-     */
-    std::string qr_code_uri(std::optional<uint8_t> pixel_per_module);
-    /**
-     * Return the script pubkey of the address.
-     */
-    std::shared_ptr<Script> script_pubkey();
-    /**
-     * Return the unconfidential address.
-     */
-    std::shared_ptr<Address> to_unconfidential();
-    /**
-     * Returns a string representation of the object, internally calls Rust's `Display` trait.
-     */
-    std::string to_string() const;
-
-    private:
-    Address(const Address &);
-
-    Address(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
-
-
-namespace uniffi {
-    struct FfiConverterAnyClient;
-} // namespace uniffi
-
-struct AnyClient
-
-
-
-{
-    friend uniffi::FfiConverterAnyClient;
-
-    AnyClient() = delete;
-
-    AnyClient(AnyClient &&) = delete;
-
-    AnyClient &operator=(const AnyClient &) = delete;
-    AnyClient &operator=(AnyClient &&) = delete;
-
-    ~AnyClient();
-    static std::shared_ptr<AnyClient> from_electrum(const std::shared_ptr<ElectrumClient> &client);
-    static std::shared_ptr<AnyClient> from_esplora(const std::shared_ptr<EsploraClient> &client);
-
-    private:
-    AnyClient(const AnyClient &);
-
-    AnyClient(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
-
-
-namespace uniffi {
-    struct FfiConverterForeignStoreLink;
-} // namespace uniffi
-
-/**
- * A bridge that connects a [`ForeignStore`] to [`lwk_common::Store`].
- */
-struct ForeignStoreLink
-
-
-
-{
-    friend uniffi::FfiConverterForeignStoreLink;
-
-    ForeignStoreLink() = delete;
-
-    ForeignStoreLink(ForeignStoreLink &&) = delete;
-
-    ForeignStoreLink &operator=(const ForeignStoreLink &) = delete;
-    ForeignStoreLink &operator=(ForeignStoreLink &&) = delete;
-
-    ~ForeignStoreLink();
-    /**
-     * Create a new `ForeignStoreLink` from a foreign store implementation.
-     */
-    static std::shared_ptr<ForeignStoreLink> init(const std::shared_ptr<ForeignStore> &store);
-
-    private:
-    ForeignStoreLink(const ForeignStoreLink &);
-
-    ForeignStoreLink(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
-
-
-
-
-/**
- * An exported trait for handling logging messages.
- *
- * Implement this trait to receive and handle logging messages from the lightning session.
- */
-struct Logging {
-    virtual ~Logging() {}
-    /**
-     * Log a message with the given level
-     */
-    virtual
-    void log(const LogLevel &level, const std::string &message) = 0;
-};
-
-namespace uniffi {
-    struct UniffiCallbackInterfaceLogging {
-        static void log(uint64_t uniffi_handle,RustBuffer level,RustBuffer message,void * uniffi_out_return,RustCallStatus *out_status);
-
-        static void uniffi_free(uint64_t uniffi_handle);
-        static void init();
-    private:
-        static inline UniffiVTableCallbackInterfaceLogging vtable = UniffiVTableCallbackInterfaceLogging {
-            .log = reinterpret_cast<void *>(&log),
-            .uniffi_free = reinterpret_cast<void *>(&uniffi_free)
-        };
-    };
-}
-
-namespace uniffi {
-    struct FfiConverterLogging;
-} // namespace uniffi
-
-/**
- * An exported trait for handling logging messages.
- *
- * Implement this trait to receive and handle logging messages from the lightning session.
- */
-struct LoggingImpl
-
- : public Logging 
-
-{
-    friend uniffi::FfiConverterLogging;
-
-    LoggingImpl() = delete;
-
-    LoggingImpl(LoggingImpl &&) = delete;
-
-    LoggingImpl &operator=(const LoggingImpl &) = delete;
-    LoggingImpl &operator=(LoggingImpl &&) = delete;
-
-    ~LoggingImpl();
-    /**
-     * Log a message with the given level
-     */
-    void log(const LogLevel &level, const std::string &message);
-
-    private:
-    LoggingImpl(const LoggingImpl &);
-
-    LoggingImpl(void *);
-
-    void *_uniffi_internal_clone_pointer() const;
-
-    void *instance = nullptr;
-};
 
 
 namespace uniffi {
@@ -457,6 +191,298 @@ struct Network
 };
 
 
+namespace uniffi {
+    struct FfiConverterMnemonic;
+} // namespace uniffi
+
+/**
+ * Wrapper over [`bip39::Mnemonic`]
+ */
+struct Mnemonic
+
+
+
+{
+    friend uniffi::FfiConverterMnemonic;
+
+    Mnemonic() = delete;
+
+    Mnemonic(Mnemonic &&) = delete;
+
+    Mnemonic &operator=(const Mnemonic &) = delete;
+    Mnemonic &operator=(Mnemonic &&) = delete;
+
+    ~Mnemonic();
+    /**
+     * Construct a Mnemonic type
+     */
+    static std::shared_ptr<Mnemonic> init(const std::string &s);
+    /**
+     * Creates a Mnemonic from entropy, at least 16 bytes are needed.
+     */
+    static std::shared_ptr<Mnemonic> from_entropy(const std::vector<uint8_t> &b);
+    /**
+     * Creates a random Mnemonic of given words (12,15,18,21,24)
+     */
+    static std::shared_ptr<Mnemonic> from_random(uint8_t word_count);
+    /**
+     * Get the number of words in this mnemonic
+     */
+    uint8_t word_count();
+    /**
+     * Returns a string representation of the object, internally calls Rust's `Display` trait.
+     */
+    std::string to_string() const;
+
+    private:
+    Mnemonic(const Mnemonic &);
+
+    Mnemonic(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+
+
+/**
+ * An exported trait for handling logging messages.
+ *
+ * Implement this trait to receive and handle logging messages from the lightning session.
+ */
+struct Logging {
+    virtual ~Logging() {}
+    /**
+     * Log a message with the given level
+     */
+    virtual
+    void log(const LogLevel &level, const std::string &message) = 0;
+};
+
+namespace uniffi {
+    struct UniffiCallbackInterfaceLogging {
+        static void log(uint64_t uniffi_handle,RustBuffer level,RustBuffer message,void * uniffi_out_return,RustCallStatus *out_status);
+
+        static void uniffi_free(uint64_t uniffi_handle);
+        static void init();
+    private:
+        static inline UniffiVTableCallbackInterfaceLogging vtable = UniffiVTableCallbackInterfaceLogging {
+            .log = reinterpret_cast<void *>(&log),
+            .uniffi_free = reinterpret_cast<void *>(&uniffi_free)
+        };
+    };
+}
+
+namespace uniffi {
+    struct FfiConverterLogging;
+} // namespace uniffi
+
+/**
+ * An exported trait for handling logging messages.
+ *
+ * Implement this trait to receive and handle logging messages from the lightning session.
+ */
+struct LoggingImpl
+
+ : public Logging 
+
+{
+    friend uniffi::FfiConverterLogging;
+
+    LoggingImpl() = delete;
+
+    LoggingImpl(LoggingImpl &&) = delete;
+
+    LoggingImpl &operator=(const LoggingImpl &) = delete;
+    LoggingImpl &operator=(LoggingImpl &&) = delete;
+
+    ~LoggingImpl();
+    /**
+     * Log a message with the given level
+     */
+    void log(const LogLevel &level, const std::string &message);
+
+    private:
+    LoggingImpl(const LoggingImpl &);
+
+    LoggingImpl(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+namespace uniffi {
+    struct FfiConverterAddress;
+} // namespace uniffi
+
+/**
+ * A Liquid address
+ */
+struct Address
+
+
+
+{
+    friend uniffi::FfiConverterAddress;
+
+    Address() = delete;
+
+    Address(Address &&) = delete;
+
+    Address &operator=(const Address &) = delete;
+    Address &operator=(Address &&) = delete;
+
+    ~Address();
+    /**
+     * Construct an Address object
+     */
+    static std::shared_ptr<Address> init(const std::string &s);
+    /**
+     * Return true if the address is blinded.
+     */
+    bool is_blinded();
+    /**
+     * Returns the network of the address
+     */
+    std::shared_ptr<Network> network();
+    /**
+     * Returns a string of the QR code printable in a terminal environment
+     */
+    std::string qr_code_text();
+    /**
+     * Returns a string encoding an image in a uri
+     *
+     * The string can be open in the browser or be used as `src` field in `img` in HTML
+     *
+     * For max efficiency we suggest to pass `None` to `pixel_per_module`, get a very small image
+     * and use styling to scale up the image in the browser. eg
+     * `style="image-rendering: pixelated; border: 20px solid white;"`
+     */
+    std::string qr_code_uri(std::optional<uint8_t> pixel_per_module);
+    /**
+     * Return the script pubkey of the address.
+     */
+    std::shared_ptr<Script> script_pubkey();
+    /**
+     * Return the unconfidential address.
+     */
+    std::shared_ptr<Address> to_unconfidential();
+    /**
+     * Returns a string representation of the object, internally calls Rust's `Display` trait.
+     */
+    std::string to_string() const;
+
+    private:
+    Address(const Address &);
+
+    Address(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+namespace uniffi {
+    struct FfiConverterForeignStoreLink;
+} // namespace uniffi
+
+/**
+ * A bridge that connects a [`ForeignStore`] to [`lwk_common::Store`].
+ */
+struct ForeignStoreLink
+
+
+
+{
+    friend uniffi::FfiConverterForeignStoreLink;
+
+    ForeignStoreLink() = delete;
+
+    ForeignStoreLink(ForeignStoreLink &&) = delete;
+
+    ForeignStoreLink &operator=(const ForeignStoreLink &) = delete;
+    ForeignStoreLink &operator=(ForeignStoreLink &&) = delete;
+
+    ~ForeignStoreLink();
+    /**
+     * Create a new `ForeignStoreLink` from a foreign store implementation.
+     */
+    static std::shared_ptr<ForeignStoreLink> init(const std::shared_ptr<ForeignStore> &store);
+
+    private:
+    ForeignStoreLink(const ForeignStoreLink &);
+
+    ForeignStoreLink(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+namespace uniffi {
+    struct FfiConverterAnyClient;
+} // namespace uniffi
+
+struct AnyClient
+
+
+
+{
+    friend uniffi::FfiConverterAnyClient;
+
+    AnyClient() = delete;
+
+    AnyClient(AnyClient &&) = delete;
+
+    AnyClient &operator=(const AnyClient &) = delete;
+    AnyClient &operator=(AnyClient &&) = delete;
+
+    ~AnyClient();
+    static std::shared_ptr<AnyClient> from_electrum(const std::shared_ptr<ElectrumClient> &client);
+    static std::shared_ptr<AnyClient> from_esplora(const std::shared_ptr<EsploraClient> &client);
+
+    private:
+    AnyClient(const AnyClient &);
+
+    AnyClient(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+/**
+ * A builder for the `BoltzSession`
+ */
+struct BoltzSessionBuilder {
+    std::shared_ptr<Network> network;
+    std::shared_ptr<AnyClient> client;
+    std::optional<uint64_t> timeout = std::nullopt;
+    std::shared_ptr<Mnemonic> mnemonic = nullptr;
+    std::shared_ptr<Logging> logging = nullptr;
+    bool polling = false;
+    std::optional<uint64_t> timeout_advance = std::nullopt;
+    std::optional<uint32_t> next_index_to_use = std::nullopt;
+    std::optional<std::string> referral_id = std::nullopt;
+    std::optional<std::string> bitcoin_electrum_client_url = std::nullopt;
+    bool random_preimages = false;
+    /**
+     * Optional store for persisting swap data
+     *
+     * When set, swap data will be automatically persisted to the store after creation
+     * and on each state change. This enables automatic restoration of pending swaps.
+     */
+    std::shared_ptr<ForeignStoreLink> store = nullptr;
+};
+
+
 /**
  * A builder for the `EsploraClient`
  */
@@ -486,31 +512,6 @@ struct LiquidBip21 {
      * The amount in satoshis
      */
     std::optional<uint64_t> satoshi;
-};
-
-
-/**
- * A builder for the `BoltzSession`
- */
-struct BoltzSessionBuilder {
-    std::shared_ptr<Network> network;
-    std::shared_ptr<AnyClient> client;
-    std::optional<uint64_t> timeout = std::nullopt;
-    std::shared_ptr<Mnemonic> mnemonic = nullptr;
-    std::shared_ptr<Logging> logging = nullptr;
-    bool polling = false;
-    std::optional<uint64_t> timeout_advance = std::nullopt;
-    std::optional<uint32_t> next_index_to_use = std::nullopt;
-    std::optional<std::string> referral_id = std::nullopt;
-    std::optional<std::string> bitcoin_electrum_client_url = std::nullopt;
-    bool random_preimages = false;
-    /**
-     * Optional store for persisting swap data
-     *
-     * When set, swap data will be automatically persisted to the store after creation
-     * and on each state change. This enables automatic restoration of pending swaps.
-     */
-    std::shared_ptr<ForeignStoreLink> store = nullptr;
 };
 
 
@@ -2046,6 +2047,10 @@ struct InvoiceResponse
      */
     std::optional<uint64_t> fee();
     /**
+     * The txid of the lockup transaction of the swap (made by Boltz)
+     */
+    std::optional<std::string> lockup_txid();
+    /**
      * Serialize the prepare pay response data to a json string
      *
      * This can be used to restore the prepare pay response after a crash
@@ -2212,6 +2217,7 @@ struct LockupResponse
     std::optional<uint64_t> boltz_fee();
     std::string chain_from();
     std::string chain_to();
+    std::string claim_address();
     /**
      * The txid of the claim transaction of the swap
      */
@@ -2229,6 +2235,10 @@ struct LockupResponse
      * The txid of the lockup transaction of the swap
      */
     std::optional<std::string> lockup_txid();
+    /**
+     * The txid of the refund transaction of the swap
+     */
+    std::optional<std::string> refund_txid();
     std::string serialize();
     /**
      * Optionally set the lockup transaction txid.
@@ -2239,6 +2249,10 @@ struct LockupResponse
      */
     void set_lockup_txid(const std::string &txid);
     std::string swap_id();
+    /**
+     * The BIP21 URI for the lockup address, if provided by Boltz
+     */
+    std::optional<std::string> uri();
 
     private:
     LockupResponse(const LockupResponse &);
@@ -2731,6 +2745,10 @@ struct PreparePayResponse
      * The txid of the user lockup transaction of the swap.
      */
     std::optional<std::string> lockup_txid();
+    /**
+     * The txid of the refund transaction of the swap
+     */
+    std::optional<std::string> refund_txid();
     /**
      * Serialize the prepare pay response data to a json string
      *
@@ -4427,6 +4445,58 @@ struct Wollet
 
 
 namespace uniffi {
+    struct FfiConverterWolletBuilder;
+} // namespace uniffi
+
+/**
+ * A builder for constructing a [`Wollet`].
+ */
+struct WolletBuilder
+
+
+
+{
+    friend uniffi::FfiConverterWolletBuilder;
+
+    WolletBuilder() = delete;
+
+    WolletBuilder(WolletBuilder &&) = delete;
+
+    WolletBuilder &operator=(const WolletBuilder &) = delete;
+    WolletBuilder &operator=(WolletBuilder &&) = delete;
+
+    ~WolletBuilder();
+    /**
+     * Create a builder for a watch-only wallet.
+     */
+    static std::shared_ptr<WolletBuilder> init(const std::shared_ptr<Network> &network, const std::shared_ptr<WolletDescriptor> &descriptor);
+    /**
+     * Build the wallet from this builder.
+     */
+    std::shared_ptr<Wollet> build();
+    /**
+     * Persist wallet updates in the legacy encrypted filesystem store.
+     */
+    void with_legacy_fs_store(const std::string &datadir);
+    /**
+     * Set the threshold used to merge persisted updates during build.
+     *
+     * `None` disables merging (default behavior).
+     */
+    void with_merge_threshold(std::optional<uint32_t> merge_threshold);
+
+    private:
+    WolletBuilder(const WolletBuilder &);
+
+    WolletBuilder(void *);
+
+    void *_uniffi_internal_clone_pointer() const;
+
+    void *instance = nullptr;
+};
+
+
+namespace uniffi {
     struct FfiConverterWolletDescriptor;
 } // namespace uniffi
 
@@ -5623,6 +5693,16 @@ struct FfiConverterWollet {
     static std::shared_ptr<Wollet> read(RustStream &);
     static void write(RustStream &, const std::shared_ptr<Wollet> &);
     static uint64_t allocation_size(const std::shared_ptr<Wollet> &);
+private:
+};
+
+
+struct FfiConverterWolletBuilder {
+    static std::shared_ptr<WolletBuilder> lift(void *);
+    static void *lower(const std::shared_ptr<WolletBuilder> &);
+    static std::shared_ptr<WolletBuilder> read(RustStream &);
+    static void write(RustStream &, const std::shared_ptr<WolletBuilder> &);
+    static uint64_t allocation_size(const std::shared_ptr<WolletBuilder> &);
 private:
 };
 

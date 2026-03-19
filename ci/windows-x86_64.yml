@@ -5,7 +5,7 @@ windows-x86_64:build-gdk:
     DOCKER_FILE: ci/windows-x86_64/Dockerfile
 
 windows-x86_64:share-gdk:
-  image: $CI_REGISTRY_IMAGE/windows-x86_64@sha256:4def5a69998b94b22be4a94f0934eecc822e55e7a9e3b0aa6ec8ec3f45b9f3cf
+  image: $CI_REGISTRY_IMAGE/windows-x86_64@sha256:a98701516186777369b72dac450b5f31d10bb948867e24e3cebe0e234f7f32a3
   script:
     - cp -R /depends depends
   stage: depends

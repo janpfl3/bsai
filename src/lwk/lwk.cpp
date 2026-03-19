@@ -351,6 +351,9 @@ void ensure_initialized() {
     if (uniffi_lwk_checksum_method_invoiceresponse_fee() != 49159) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
+    if (uniffi_lwk_checksum_method_invoiceresponse_lockup_txid() != 35108) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
     if (uniffi_lwk_checksum_method_invoiceresponse_serialize() != 38841) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
@@ -402,6 +405,9 @@ void ensure_initialized() {
     if (uniffi_lwk_checksum_method_lockupresponse_chain_to() != 10065) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
+    if (uniffi_lwk_checksum_method_lockupresponse_claim_address() != 49213) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
     if (uniffi_lwk_checksum_method_lockupresponse_claim_txid() != 18687) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
@@ -420,6 +426,9 @@ void ensure_initialized() {
     if (uniffi_lwk_checksum_method_lockupresponse_lockup_txid() != 41392) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
+    if (uniffi_lwk_checksum_method_lockupresponse_refund_txid() != 51703) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
     if (uniffi_lwk_checksum_method_lockupresponse_serialize() != 43231) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
@@ -427,6 +436,9 @@ void ensure_initialized() {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
     if (uniffi_lwk_checksum_method_lockupresponse_swap_id() != 36526) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
+    if (uniffi_lwk_checksum_method_lockupresponse_uri() != 38808) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
     if (uniffi_lwk_checksum_method_logging_log() != 50033) {
@@ -562,6 +574,9 @@ void ensure_initialized() {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
     if (uniffi_lwk_checksum_method_preparepayresponse_lockup_txid() != 24205) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
+    if (uniffi_lwk_checksum_method_preparepayresponse_refund_txid() != 35630) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
     if (uniffi_lwk_checksum_method_preparepayresponse_serialize() != 33437) {
@@ -996,6 +1011,15 @@ void ensure_initialized() {
     if (uniffi_lwk_checksum_method_wollet_wait_for_tx() != 47828) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
+    if (uniffi_lwk_checksum_method_wolletbuilder_build() != 21047) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
+    if (uniffi_lwk_checksum_method_wolletbuilder_with_legacy_fs_store() != 35203) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
+    if (uniffi_lwk_checksum_method_wolletbuilder_with_merge_threshold() != 37282) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
     if (uniffi_lwk_checksum_method_wolletdescriptor_derive_blinding_key() != 27121) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
@@ -1219,6 +1243,9 @@ void ensure_initialized() {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
     if (uniffi_lwk_checksum_constructor_wollet_with_custom_store() != 9255) {
+        throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
+    }
+    if (uniffi_lwk_checksum_constructor_wolletbuilder_new() != 41459) {
         throw std::runtime_error("UniFFI API checksum mismatch: try cleaning and rebuilding your project");
     }
     if (uniffi_lwk_checksum_constructor_wolletdescriptor_new() != 61281) {
@@ -3537,6 +3564,13 @@ std::optional<uint64_t> InvoiceResponse::fee() {
         uniffi::FfiConverterLwkError::lift,
         ptr));
 }
+std::optional<std::string> InvoiceResponse::lockup_txid() {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    return uniffi::FfiConverterOptionalString::lift(uniffi::rust_call(
+        uniffi_lwk_fn_method_invoiceresponse_lockup_txid,
+        uniffi::FfiConverterLwkError::lift,
+        ptr));
+}
 std::string InvoiceResponse::serialize() {
     auto ptr = this->_uniffi_internal_clone_pointer();
     return uniffi::FfiConverterString::lift(uniffi::rust_call(
@@ -3763,6 +3797,13 @@ std::string LockupResponse::chain_to() {
         uniffi::FfiConverterLwkError::lift,
         ptr));
 }
+std::string LockupResponse::claim_address() {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    return uniffi::FfiConverterString::lift(uniffi::rust_call(
+        uniffi_lwk_fn_method_lockupresponse_claim_address,
+        uniffi::FfiConverterLwkError::lift,
+        ptr));
+}
 std::optional<std::string> LockupResponse::claim_txid() {
     auto ptr = this->_uniffi_internal_clone_pointer();
     return uniffi::FfiConverterOptionalString::lift(uniffi::rust_call(
@@ -3805,6 +3846,13 @@ std::optional<std::string> LockupResponse::lockup_txid() {
         uniffi::FfiConverterLwkError::lift,
         ptr));
 }
+std::optional<std::string> LockupResponse::refund_txid() {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    return uniffi::FfiConverterOptionalString::lift(uniffi::rust_call(
+        uniffi_lwk_fn_method_lockupresponse_refund_txid,
+        uniffi::FfiConverterLwkError::lift,
+        ptr));
+}
 std::string LockupResponse::serialize() {
     auto ptr = this->_uniffi_internal_clone_pointer();
     return uniffi::FfiConverterString::lift(uniffi::rust_call(
@@ -3823,6 +3871,13 @@ std::string LockupResponse::swap_id() {
     auto ptr = this->_uniffi_internal_clone_pointer();
     return uniffi::FfiConverterString::lift(uniffi::rust_call(
         uniffi_lwk_fn_method_lockupresponse_swap_id,
+        uniffi::FfiConverterLwkError::lift,
+        ptr));
+}
+std::optional<std::string> LockupResponse::uri() {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    return uniffi::FfiConverterOptionalString::lift(uniffi::rust_call(
+        uniffi_lwk_fn_method_lockupresponse_uri,
         uniffi::FfiConverterLwkError::lift,
         ptr));
 }
@@ -4686,6 +4741,13 @@ std::optional<std::string> PreparePayResponse::lockup_txid() {
     auto ptr = this->_uniffi_internal_clone_pointer();
     return uniffi::FfiConverterOptionalString::lift(uniffi::rust_call(
         uniffi_lwk_fn_method_preparepayresponse_lockup_txid,
+        uniffi::FfiConverterLwkError::lift,
+        ptr));
+}
+std::optional<std::string> PreparePayResponse::refund_txid() {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    return uniffi::FfiConverterOptionalString::lift(uniffi::rust_call(
+        uniffi_lwk_fn_method_preparepayresponse_refund_txid,
         uniffi::FfiConverterLwkError::lift,
         ptr));
 }
@@ -6753,6 +6815,66 @@ void *Wollet::_uniffi_internal_clone_pointer() const {
 
 
 
+WolletBuilder::WolletBuilder(void *ptr): instance(ptr) {}
+
+WolletBuilder::WolletBuilder(const WolletBuilder &other) : instance(nullptr) {
+    if (other.instance) {
+        instance = other._uniffi_internal_clone_pointer();
+    }
+}
+
+
+
+
+std::shared_ptr<WolletBuilder> WolletBuilder::init(const std::shared_ptr<Network> &network, const std::shared_ptr<WolletDescriptor> &descriptor) {
+    return std::shared_ptr<WolletBuilder>(
+        new WolletBuilder(uniffi::rust_call(
+        uniffi_lwk_fn_constructor_wolletbuilder_new,
+        nullptr, uniffi::FfiConverterNetwork::lower(network), uniffi::FfiConverterWolletDescriptor::lower(descriptor)))
+    );
+}
+
+std::shared_ptr<Wollet> WolletBuilder::build() {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    return uniffi::FfiConverterWollet::lift(uniffi::rust_call(
+        uniffi_lwk_fn_method_wolletbuilder_build,
+        uniffi::FfiConverterLwkError::lift,
+        ptr));
+}
+void WolletBuilder::with_legacy_fs_store(const std::string &datadir) {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    uniffi::rust_call(
+        uniffi_lwk_fn_method_wolletbuilder_with_legacy_fs_store,
+        uniffi::FfiConverterLwkError::lift,
+        ptr, uniffi::FfiConverterString::lower(datadir));
+}
+void WolletBuilder::with_merge_threshold(std::optional<uint32_t> merge_threshold) {
+    auto ptr = this->_uniffi_internal_clone_pointer();
+    uniffi::rust_call(
+        uniffi_lwk_fn_method_wolletbuilder_with_merge_threshold,
+        uniffi::FfiConverterLwkError::lift,
+        ptr, uniffi::FfiConverterOptionalUInt32::lower(merge_threshold));
+}
+
+WolletBuilder::~WolletBuilder() {
+    uniffi::rust_call(
+        uniffi_lwk_fn_free_wolletbuilder,
+        nullptr,
+        this->instance
+    );
+}
+
+void *WolletBuilder::_uniffi_internal_clone_pointer() const {
+    return uniffi::rust_call(
+        uniffi_lwk_fn_clone_wolletbuilder,
+        nullptr,
+        this->instance
+    );
+}
+
+
+
+
 WolletDescriptor::WolletDescriptor(void *ptr): instance(ptr) {}
 
 WolletDescriptor::WolletDescriptor(const WolletDescriptor &other) : instance(nullptr) {
@@ -8577,6 +8699,31 @@ void FfiConverterWollet::write(RustStream &stream, const std::shared_ptr<Wollet>
 }
 
 uint64_t FfiConverterWollet::allocation_size(const std::shared_ptr<Wollet> &) {
+    return 8;
+}
+
+
+
+std::shared_ptr<WolletBuilder> FfiConverterWolletBuilder::lift(void *ptr) {
+    return std::shared_ptr<WolletBuilder>(new WolletBuilder(ptr));
+}
+
+void *FfiConverterWolletBuilder::lower(const std::shared_ptr<WolletBuilder> &obj) {
+    return reinterpret_cast<WolletBuilder*>(obj.get())->_uniffi_internal_clone_pointer();
+}
+
+std::shared_ptr<WolletBuilder> FfiConverterWolletBuilder::read(RustStream &stream) {
+    std::uintptr_t ptr;
+    stream >> ptr;
+
+    return FfiConverterWolletBuilder::lift(reinterpret_cast<void *>(ptr));
+}
+
+void FfiConverterWolletBuilder::write(RustStream &stream, const std::shared_ptr<WolletBuilder> &obj) {
+    stream << reinterpret_cast<std::uintptr_t>(FfiConverterWolletBuilder::lower(obj));
+}
+
+uint64_t FfiConverterWolletBuilder::allocation_size(const std::shared_ptr<WolletBuilder> &) {
     return 8;
 }
 
