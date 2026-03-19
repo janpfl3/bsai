@@ -194,7 +194,7 @@ void TransactionModel::exportToFile()
 
         const auto row_count = rowCount();
         for (int row = 0; row < row_count; ++row) {
-            const auto transaction = index(row, 0).data(Qt::UserRole).value<Transaction*>();
+            const auto transaction = index(row, 0).data(Qt::UserRole).value<AccountTransaction*>();
             const auto network = transaction->account()->network();
             const auto data = transaction->data();
             const auto block_height = data.value("block_height").toInt();
@@ -277,7 +277,7 @@ bool TransactionModel::filterAcceptsRow(int source_row, const QModelIndex &sourc
 {
     auto context_transaction = sourceModel()->index(source_row, 0, source_parent).data(Qt::UserRole).value<ContextTransaction*>();
 
-    if (const auto transaction = qobject_cast<Transaction*>(context_transaction)) {
+    if (const auto transaction = qobject_cast<AccountTransaction*>(context_transaction)) {
         if (!transaction->data().contains("satoshi")) return false;
         if (!transaction->data().contains("type")) return false;
 
@@ -288,7 +288,7 @@ bool TransactionModel::filterAcceptsRow(int source_row, const QModelIndex &sourc
     return ContextModel::filterAcceptsRow(source_row, source_parent);
 }
 
-bool TransactionModel::filterAccountsAcceptsTransaction(Transaction* transaction) const
+bool TransactionModel::filterAccountsAcceptsTransaction(AccountTransaction* transaction) const
 {
     if (m_filter_accounts.isEmpty()) return true;
 
@@ -299,7 +299,7 @@ bool TransactionModel::filterAccountsAcceptsTransaction(Transaction* transaction
     return false;
 }
 
-bool TransactionModel::filterAssetsAcceptsTransaction(Transaction* transaction) const
+bool TransactionModel::filterAssetsAcceptsTransaction(AccountTransaction* transaction) const
 {
     if (m_filter_assets.isEmpty()) return true;
 
@@ -310,7 +310,7 @@ bool TransactionModel::filterAssetsAcceptsTransaction(Transaction* transaction) 
     return false;
 }
 
-bool TransactionModel::filterTextAcceptsTransaction(Transaction* transaction) const
+bool TransactionModel::filterTextAcceptsTransaction(AccountTransaction* transaction) const
 {
     if (m_filter_text.isEmpty()) {
         return true;

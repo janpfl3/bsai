@@ -62,7 +62,7 @@ void CreateTransactionController::setAsset(Asset* asset)
     invalidate();
 }
 
-void CreateTransactionController::setPreviousTransaction(Transaction* previous_transaction)
+void CreateTransactionController::setPreviousTransaction(AccountTransaction* previous_transaction)
 {
     if (m_previous_transaction == previous_transaction) return;
     m_previous_transaction = previous_transaction;

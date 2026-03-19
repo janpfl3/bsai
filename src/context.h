@@ -186,7 +186,7 @@ public:
     QMultiMap<QString, ContextTransaction*> m_transaction_map;
     QStandardItemModel* const m_transaction_model;
     void addTransaction(ContextTransaction* transaction);
-    void removeTransaction(Transaction* transaction);
+    void removeTransaction(ContextTransaction* transaction);
     QStandardItemModel* transactionModel() const { return m_transaction_model; }
 
     QMap<Address*, QStandardItem*> m_address_item;

@@ -3,6 +3,7 @@
 
 class Address;
 class Account;
+class AccountTransaction;
 class Asset;
 class AssetManager;
 class ChainTransaction;

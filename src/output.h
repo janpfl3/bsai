@@ -6,10 +6,10 @@
 #include <QQmlEngine>
 
 class Account;
+class AccountTransaction;
 class Asset;
 class Context;
 class Session;
-class Transaction;
 
 class Output : public QObject
 {
@@ -45,8 +45,8 @@ public:
     QString addressType() const { return m_address_type; }
     bool expired() const { return m_expired; }
     void setExpired(bool expired);
-    Transaction* spendingTransaction() const { return m_spending_transaction; }
-    void setSpendingTransaction(Transaction* transaction);
+    AccountTransaction* spendingTransaction() const { return m_spending_transaction; }
+    void setSpendingTransaction(AccountTransaction* transaction);
 signals:
     void dataChanged();
     void assetChanged();
@@ -82,7 +82,7 @@ public:
     bool m_can_be_locked{false};
     QString m_address_type;
     bool m_expired{false};
-    Transaction* m_spending_transaction{nullptr};
+    AccountTransaction* m_spending_transaction{nullptr};
 };
 
 #endif // GREEN_OUTPUT_H

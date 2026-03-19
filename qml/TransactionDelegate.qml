@@ -9,9 +9,9 @@ import "analytics.js" as AnalyticsJS
 import "util.js" as UtilJS
 
 ItemDelegate {
-    signal transactionClicked(Transaction transaction)
+    signal transactionClicked(AccountTransaction transaction)
     required property Context context
-    required property Transaction transaction
+    required property AccountTransaction transaction
     property int confirmations: transactionConfirmations(transaction)
 
     onClicked: self.transactionClicked(transaction)

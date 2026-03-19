@@ -83,7 +83,7 @@ void Output::setExpired(bool expired)
     updateNotifications();
 }
 
-void Output::setSpendingTransaction(Transaction* transaction)
+void Output::setSpendingTransaction(AccountTransaction* transaction)
 {
     if (m_spending_transaction == transaction) return;
     m_spending_transaction = transaction;

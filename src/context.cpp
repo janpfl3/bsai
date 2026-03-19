@@ -733,7 +733,7 @@ void Context::addTransaction(ContextTransaction* transaction)
     item->setData(QVariant::fromValue(transaction->timestamp()), Qt::UserRole + 1);
 }
 
-void Context::removeTransaction(Transaction* transaction)
+void Context::removeTransaction(ContextTransaction* transaction)
 {
     auto item = m_transaction_item.take(transaction);
 

@@ -8,7 +8,7 @@ import "util.js" as UtilJS
 
 ColumnLayout {
     required property Context context
-    required property Transaction transaction
+    required property AccountTransaction transaction
     id: self
     spacing: 1
     Repeater {

@@ -107,12 +107,12 @@ void Account::setHidden(bool hidden)
     emit hiddenChanged();
 }
 
-Transaction* Account::getTransaction(const QString& hash)
+AccountTransaction* Account::getTransaction(const QString& hash)
 {
     return m_transactions_by_hash.value(hash);
 }
 
-Transaction* Account::getOrCreateTransaction(const QJsonObject& data)
+AccountTransaction* Account::getOrCreateTransaction(const QJsonObject& data)
 {
     auto hash = data.value("txhash").toString();
 
@@ -120,7 +120,7 @@ Transaction* Account::getOrCreateTransaction(const QJsonObject& data)
     if (!transaction) {
         auto chain_transaction = m_context->getOrCreateChainTransaction(hash);
 
-        transaction = new Transaction(chain_transaction, this);
+        transaction = new AccountTransaction(chain_transaction, this);
         m_transactions_by_hash.insert(hash, transaction);
     }
     transaction->updateFromData(data);
@@ -165,7 +165,7 @@ Address* Account::getOrCreateAddress(const QJsonObject& data)
     return address;
 }
 
-Transaction *Account::getTransactionByTxHash(const QString &id) const
+AccountTransaction *Account::getTransactionByTxHash(const QString &id) const
 {
     return m_transactions_by_hash.value(id);
 }

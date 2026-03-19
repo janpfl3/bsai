@@ -10,7 +10,7 @@ import "analytics.js" as AnalyticsJS
 import "util.js" as UtilJS
 
 Page {
-    signal transactionClicked(Transaction transaction)
+    signal transactionClicked(AccountTransaction transaction)
     signal addressClicked(Address transaction)
     required property Context context
     readonly property ContextModel currentModel: (stack_layout.children[stack_layout.currentIndex] as ListPage).model

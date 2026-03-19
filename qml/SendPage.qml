@@ -13,7 +13,7 @@ StackViewPage {
     property bool readonly
     property Asset asset
     property url url
-    property Transaction transaction
+    property AccountTransaction transaction
     property var available: {
         if (controller.coins.length > 0) {
             let satoshi = 0

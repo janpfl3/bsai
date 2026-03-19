@@ -11,7 +11,7 @@ StackViewPage {
     required property Account account
     required property string unit
     required property int size
-    required property Transaction previousTransaction
+    required property AccountTransaction previousTransaction
     property bool custom: false
     readonly property real minimumFeeRate: estimates.fees[0] + (self.previousTransaction?.data?.fee_rate ?? 0)
     id: self

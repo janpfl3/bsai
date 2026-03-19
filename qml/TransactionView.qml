@@ -9,7 +9,7 @@ import "analytics.js" as AnalyticsJS
 import "util.js" as UtilJS
 
 StackViewPage {
-    required property Transaction transaction
+    required property AccountTransaction transaction
     readonly property Context context: self.transaction.account.context
     property bool note: self.transaction.memo !== ''
     readonly property Network network: self.transaction.account.network

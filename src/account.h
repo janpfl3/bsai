@@ -66,12 +66,12 @@ public:
     bool isEmpty() const;
     void setBalanceData(const QJsonObject& data);
     void updateBalance();
-    Transaction* getTransaction(const QString& hash);
-    Transaction* getOrCreateTransaction(const QJsonObject& data);
+    AccountTransaction* getTransaction(const QString& hash);
+    AccountTransaction* getOrCreateTransaction(const QJsonObject& data);
     Output* getOutput(const QJsonObject& data) const;
     Output* getOrCreateOutput(const QJsonObject &data);
     Q_INVOKABLE Address *getOrCreateAddress(const QJsonObject &data);
-    Q_INVOKABLE Transaction* getTransactionByTxHash(const QString &id) const;
+    Q_INVOKABLE AccountTransaction* getTransactionByTxHash(const QString &id) const;
     void beginFetchTransactions();
     void touchTransaction(const QString& hash);
     void endFetchTransactions();
@@ -96,7 +96,7 @@ private:
     QJsonObject m_json;
     QString m_name;
     bool m_hidden{false};
-    QMap<QString, Transaction*> m_transactions_by_hash;
+    QMap<QString, AccountTransaction*> m_transactions_by_hash;
     QMap<QPair<QString, int>, Output*> m_outputs_by_hash;
     int m_load_balance_timer_id{-1};
     friend class Wallet;

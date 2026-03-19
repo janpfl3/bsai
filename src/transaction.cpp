@@ -12,71 +12,71 @@
 
 namespace  {
 
-Transaction::Type ParseType(const QString& type)
+AccountTransaction::Type ParseType(const QString& type)
 {
-    if (type == QStringLiteral("incoming")) return Transaction::Type::Incoming;
-    if (type == QStringLiteral("outgoing")) return Transaction::Type::Outgoing;
-    if (type == QStringLiteral("redeposit")) return Transaction::Type::Redeposit;
-    if (type == QStringLiteral("mixed")) return Transaction::Type::Mixed;
-    if (type == QStringLiteral("not unblindable")) return Transaction::Type::NotUnblindable;
-    return Transaction::Type::Unknown;
+    if (type == QStringLiteral("incoming")) return AccountTransaction::Type::Incoming;
+    if (type == QStringLiteral("outgoing")) return AccountTransaction::Type::Outgoing;
+    if (type == QStringLiteral("redeposit")) return AccountTransaction::Type::Redeposit;
+    if (type == QStringLiteral("mixed")) return AccountTransaction::Type::Mixed;
+    if (type == QStringLiteral("not unblindable")) return AccountTransaction::Type::NotUnblindable;
+    return AccountTransaction::Type::Unknown;
 }
 
 } // namespace
 
-Transaction::Transaction(ChainTransaction* chain_transaction, Account* account)
+AccountTransaction::AccountTransaction(ChainTransaction* chain_transaction, Account* account)
     : ContextTransaction(chain_transaction->id(), account->context())
     , m_chain_transaction(chain_transaction)
     , m_account(account)
 {
 }
 
-Transaction::~Transaction()
+AccountTransaction::~AccountTransaction()
 {
 }
 
-QDateTime Transaction::timestamp() const
+QDateTime AccountTransaction::timestamp() const
 {
     const auto created_at_ts = m_data.value("created_at_ts");
     const auto timestamp = created_at_ts.isNull() ? QDateTime::currentDateTime() : QDateTime::fromMSecsSinceEpoch(created_at_ts.toInteger() / 1000);
     return timestamp;
 }
 
-bool Transaction::isUnconfirmed() const
+bool AccountTransaction::isUnconfirmed() const
 {
     return m_data.value("block_height").toInt(0) == 0;
 }
 
-Account *Transaction::account() const
+Account* AccountTransaction::account() const
 {
     return m_account;
 }
 
-QJsonObject Transaction::data() const
+QJsonObject AccountTransaction::data() const
 {
     return m_data;
 }
 
-QUrl Transaction::url() const
+QUrl AccountTransaction::url() const
 {
     const auto tx_explorer_url = m_account->network()->data().value("tx_explorer_url").toString();
     const auto txhash = m_data.value("txhash").toString();
     return { tx_explorer_url + txhash };
 }
 
-bool Transaction::hasAsset(Asset* asset) const
+bool AccountTransaction::hasAsset(Asset* asset) const
 {
     return m_data.value("satoshi").toObject().contains(asset->id());
 }
 
-void Transaction::setPayment(Payment* payment)
+void AccountTransaction::setPayment(Payment* payment)
 {
     if (m_payment == payment) return;
     m_payment = payment;
     emit paymentChanged();
 }
 
-QJsonObject Transaction::destination() const
+QJsonObject AccountTransaction::destination() const
 {
     const auto outputs = m_data.value("outputs").toArray();
     for (int i = 0; i < outputs.size(); i++) {
@@ -94,7 +94,7 @@ QJsonObject Transaction::destination() const
     return {};
 }
 
-void Transaction::updateFromData(const QJsonObject& data)
+void AccountTransaction::updateFromData(const QJsonObject& data)
 {
     if (m_data == data) return;
     m_data = data;
@@ -113,17 +113,17 @@ void Transaction::updateFromData(const QJsonObject& data)
     }
 }
 
-void Transaction::openInExplorer() const
+void AccountTransaction::openInExplorer() const
 {
     m_account->network()->openTransactionInExplorer(m_data.value("txhash").toString());
 }
 
-QString Transaction::link()
+QString AccountTransaction::link()
 {
     return m_account->network()->explorerUrl() + m_data.value("txhash").toString();
 }
 
-QString Transaction::unblindedLink()
+QString AccountTransaction::unblindedLink()
 {
     const auto network = m_account->network();
     Q_ASSERT(network->isLiquid());
@@ -154,7 +154,7 @@ QString Transaction::unblindedLink()
     return QString("%1%2#blinded=%3").arg(tx_explorer_url, m_data.value("txhash").toString(), args.join(','));
 }
 
-void Transaction::updateMemo(const QString& memo)
+void AccountTransaction::updateMemo(const QString& memo)
 {
     if (memo.length() > 1024) return;
     if (m_memo == memo) return;
@@ -167,14 +167,14 @@ void Transaction::updateMemo(const QString& memo)
     setMemo(memo);
 }
 
-void Transaction::setType(Transaction::Type type)
+void AccountTransaction::setType(AccountTransaction::Type type)
 {
     if (m_type == type) return;
     m_type = type;
     emit typeChanged();
 }
 
-void Transaction::setMemo(const QString& memo)
+void AccountTransaction::setMemo(const QString& memo)
 {
     if (m_memo == memo) return;
     m_memo = memo;

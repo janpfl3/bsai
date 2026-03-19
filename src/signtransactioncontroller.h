@@ -27,7 +27,7 @@ signals:
     void transactionChanged();
     void memoChanged();
     void failed(const QString& error);
-    void transactionCompleted(Transaction* transaction);
+    void transactionCompleted(AccountTransaction* transaction);
 private:
     Account* m_account{nullptr};
     QJsonObject m_transaction;

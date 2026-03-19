@@ -70,9 +70,9 @@ protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
     void update(Context* context) override;
 private:
-    bool filterAccountsAcceptsTransaction(Transaction* transaction) const;
-    bool filterAssetsAcceptsTransaction(Transaction* transaction) const;
-    bool filterTextAcceptsTransaction(Transaction* transaction) const;
+    bool filterAccountsAcceptsTransaction(AccountTransaction* transaction) const;
+    bool filterAssetsAcceptsTransaction(AccountTransaction* transaction) const;
+    bool filterTextAcceptsTransaction(AccountTransaction* transaction) const;
 };
 
 class AddressModel : public ContextModel

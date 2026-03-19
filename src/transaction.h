@@ -29,7 +29,7 @@ private:
     Swap* m_swap{nullptr};
 };
 
-class Transaction : public ContextTransaction
+class AccountTransaction : public ContextTransaction
 {
     Q_OBJECT
     Q_PROPERTY(ChainTransaction* chainTransaction READ chainTransaction CONSTANT)
@@ -53,8 +53,8 @@ public:
     };
     Q_ENUM(Type)
 
-    explicit Transaction(ChainTransaction* chain_transaction, Account* account);
-    virtual ~Transaction();
+    explicit AccountTransaction(ChainTransaction* chain_transaction, Account* account);
+    virtual ~AccountTransaction();
 
     ChainTransaction* chainTransaction() const { return m_chain_transaction; }
     Type type() const { return m_type; }

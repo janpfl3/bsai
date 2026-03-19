@@ -5,7 +5,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 StackViewPage {
-    required property Transaction transaction
+    required property AccountTransaction transaction
     id: self
     leftItem: Item {
     }

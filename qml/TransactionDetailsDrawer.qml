@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Controls
 
 WalletDrawer {
-    required property Transaction transaction
+    required property AccountTransaction transaction
     id: self
     contentItem: GStackView {
         initialItem: TransactionView {

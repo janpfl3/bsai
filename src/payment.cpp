@@ -36,12 +36,12 @@ void Payment::refresh()
     }
 
     const auto blockchain_transaction_id = crypto_details.value("blockchainTransactionId").toString();
-    Transaction* transaction{nullptr};
+    AccountTransaction* transaction{nullptr};
 
     if (!blockchain_transaction_id.isEmpty()) {
         const auto transactions = m_context->getTransaction(blockchain_transaction_id);
         for (const auto t : transactions) {
-            transaction = qobject_cast<Transaction*>(t);
+            transaction = qobject_cast<AccountTransaction*>(t);
             if (transaction) {
                 break;
             }
