@@ -11,10 +11,28 @@
 Q_MOC_INCLUDE("account.h")
 Q_MOC_INCLUDE("asset.h")
 Q_MOC_INCLUDE("payment.h")
+Q_MOC_INCLUDE("swap.h")
+
+class ChainTransaction : public ContextTransaction
+{
+    Q_OBJECT
+    Q_PROPERTY(Swap* swap READ swap NOTIFY swapChanged)
+    QML_ELEMENT
+    QML_UNCREATABLE("")
+public:
+    ChainTransaction(const QString& id, Context* context);
+    Swap* swap() const { return m_swap; }
+    void setSwap(Swap* swap);
+signals:
+    void swapChanged();
+private:
+    Swap* m_swap{nullptr};
+};
 
 class Transaction : public ContextTransaction
 {
     Q_OBJECT
+    Q_PROPERTY(ChainTransaction* chainTransaction READ chainTransaction CONSTANT)
     Q_PROPERTY(Account* account READ account CONSTANT)
     Q_PROPERTY(Type type READ type NOTIFY typeChanged)
     Q_PROPERTY(QJsonObject data READ data NOTIFY dataChanged)
@@ -35,9 +53,10 @@ public:
     };
     Q_ENUM(Type)
 
-    explicit Transaction(const QString& hash, Account* account);
+    explicit Transaction(ChainTransaction* chain_transaction, Account* account);
     virtual ~Transaction();
 
+    ChainTransaction* chainTransaction() const { return m_chain_transaction; }
     Type type() const { return m_type; }
     QString hash() const { return id(); }
     QString memo() const { return m_memo; }
@@ -72,11 +91,11 @@ signals:
     void dataChanged();
     void memoChanged();
     void paymentChanged();
-
 private:
     void setType(Type type);
     void setMemo(const QString& memo);
 private:
+    ChainTransaction* const m_chain_transaction;
     Account* const m_account;
     Type m_type{Type::Unknown};
     QJsonObject m_data;

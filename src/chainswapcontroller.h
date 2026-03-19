@@ -29,7 +29,7 @@ public:
     bool isBusy() const;
     ChainSwap* swap() const;
 public slots:
-    void commit();
+    void setLockupTransaction(ChainTransaction* transaction);
 signals:
     void amountChanged();
     void refundAddressChanged();

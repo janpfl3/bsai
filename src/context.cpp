@@ -331,6 +331,16 @@ Account* Context::getAccountByPointer(Network* network, int pointer) const
     return m_accounts_by_pointer.value({ network, pointer });
 }
 
+ChainTransaction* Context::getOrCreateChainTransaction(const QString &hash)
+{
+    auto chain_transaction = m_chain_transactions.value(hash);
+    if (!chain_transaction) {
+        chain_transaction = new ChainTransaction(hash, this);
+        m_chain_transactions.insert(hash, chain_transaction);
+    }
+    return chain_transaction;
+}
+
 QList<ContextTransaction*> Context::getTransaction(const QString &hash) const
 {
     return m_transaction_map.values(hash);

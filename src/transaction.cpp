@@ -24,8 +24,9 @@ Transaction::Type ParseType(const QString& type)
 
 } // namespace
 
-Transaction::Transaction(const QString& hash, Account* account)
-    : ContextTransaction(hash, account->context())
+Transaction::Transaction(ChainTransaction* chain_transaction, Account* account)
+    : ContextTransaction(chain_transaction->id(), account->context())
+    , m_chain_transaction(chain_transaction)
     , m_account(account)
 {
 }
@@ -178,4 +179,16 @@ void Transaction::setMemo(const QString& memo)
     if (m_memo == memo) return;
     m_memo = memo;
     emit memoChanged();
+}
+
+ChainTransaction::ChainTransaction(const QString &id, Context* context)
+    : ContextTransaction(id, context)
+{
+}
+
+void ChainTransaction::setSwap(Swap* swap)
+{
+    if (m_swap == swap) return;
+    m_swap = swap;
+    emit swapChanged();
 }

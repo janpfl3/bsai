@@ -5,6 +5,7 @@ class Address;
 class Account;
 class Asset;
 class AssetManager;
+class ChainTransaction;
 class Context;
 class Controller;
 class Device;

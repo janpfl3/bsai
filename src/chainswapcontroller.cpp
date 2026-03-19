@@ -21,7 +21,6 @@ public:
     QString amount;
     bool busy{false};
     ChainSwap* swap{nullptr};
-    bool commited{false};
 };
 
 ChainSwapController::ChainSwapController(QObject* parent)
@@ -33,7 +32,7 @@ ChainSwapController::ChainSwapController(QObject* parent)
 
 ChainSwapController::~ChainSwapController()
 {
-    if (!d->commited && d->swap) {
+    if (d->swap && !d->swap->lockupTransaction()) {
         context()->removeSwap(d->swap);
         d->swap->deleteLater();
     }
@@ -58,9 +57,11 @@ ChainSwap *ChainSwapController::swap() const
     return d->swap;
 }
 
-void ChainSwapController::commit()
+void ChainSwapController::setLockupTransaction(ChainTransaction* transaction)
 {
-    d->commited = true;
+    if (d->swap) {
+        d->swap->setLockupTransaction(transaction);
+    }
 }
 
 Address* ChainSwapController::refundAddress() const

@@ -21,6 +21,7 @@ Q_MOC_INCLUDE("wallet.h")
 class ContextTransaction : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString id READ id CONSTANT)
     QML_ELEMENT
     QML_UNCREATABLE("")
 public:
@@ -98,6 +99,7 @@ public:
     Q_INVOKABLE Account* getOrCreateAccount(Network* network, quint32 pointer);
     Account* getOrCreateAccount(Network* network, const QJsonObject& data);
     Account* getAccountByPointer(Network* network, int pointer) const;
+    ChainTransaction* getOrCreateChainTransaction(const QString& hash);
     QList<ContextTransaction*> getTransaction(const QString& hash) const;
     Address* getOrCreateAddress(const QString& address);
     Payment* getOrCreatePayment(const QString& id);
@@ -179,6 +181,7 @@ public:
 
     QJsonObject m_hw_device;
 
+    QMap<QString, ChainTransaction*> m_chain_transactions;
     QMap<ContextTransaction*, QStandardItem*> m_transaction_item;
     QMultiMap<QString, ContextTransaction*> m_transaction_map;
     QStandardItemModel* const m_transaction_model;

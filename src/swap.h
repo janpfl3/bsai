@@ -67,6 +67,7 @@ private:
     QString m_invoice;
     QString m_address;
     uint64_t m_amount;
+    ChainTransaction* m_lockup_transaction{nullptr};
 };
 
 class ChainSwap : public Swap
@@ -77,10 +78,15 @@ class ChainSwap : public Swap
 public:
     ChainSwap(std::shared_ptr<lwk::LockupResponse> lockup_response, Context* context);
     QVariantMap data() const override;
+    ChainTransaction* lockupTransaction() const { return m_lockup_transaction; }
+    void setLockupTransaction(ChainTransaction* lockup_transaction);
+signals:
+    void lockupTransactionChanged();
 protected:
     lwk::PaymentState advance() override;
 private:
     std::shared_ptr<lwk::LockupResponse> m_lockup_response;
+    ChainTransaction* m_lockup_transaction{nullptr};
 };
 
 #endif // BLOCKSTREAM_SWAP_H

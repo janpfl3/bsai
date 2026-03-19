@@ -1,3 +1,4 @@
+#include "transaction.h"
 #include "swap.h"
 
 #include <memory>
@@ -65,7 +66,7 @@ void Swap::setStatus(Status status)
     emit statusChanged();
 }
 
-ReverseSwap::ReverseSwap(std::shared_ptr<lwk::InvoiceResponse> invoice_response, Context *context)
+ReverseSwap::ReverseSwap(std::shared_ptr<lwk::InvoiceResponse> invoice_response, Context* context)
     : Swap(swapId(invoice_response), context)
     , m_invoice_response(invoice_response)
 {
@@ -152,6 +153,16 @@ QVariantMap ChainSwap::data() const
     } catch (...) {
         return {};
     }
+}
+
+void ChainSwap::setLockupTransaction(ChainTransaction* lockup_transaction)
+{
+    if (m_lockup_transaction == lockup_transaction) return;
+    if (lockup_transaction) {
+        m_lockup_response->set_lockup_txid(lockup_transaction->id().toStdString());
+    }
+    m_lockup_transaction = lockup_transaction;
+    emit lockupTransactionChanged();
 }
 
 lwk::PaymentState ChainSwap::advance()
