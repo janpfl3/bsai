@@ -2,6 +2,7 @@
 #define GREEN_CONVERT_H
 
 #include <QObject>
+#include <QPointer>
 #include <QtQml>
 
 #include "green.h"
@@ -46,6 +47,7 @@ public:
 
 private:
     bool isLiquidAsset() const;
+    Session* assetSession() const;
 signals:
     void contextChanged();
     void accountChanged();
@@ -58,7 +60,7 @@ signals:
     void outputChanged();
     void debugChanged();
 private:
-    void setSession(Session* session);
+    void connectToSessionSignals();
     void invalidate();
     void update();
     bool mainnet() const;
@@ -73,6 +75,7 @@ private:
     QJsonObject m_result;
     int m_timer_id{-1};
     bool m_debug{false};
+    QPointer<Session> m_connected_session;
 };
 
 #endif // GREEN_CONVERT_H

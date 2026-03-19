@@ -7,16 +7,35 @@ import "util.js" as UtilJS
 
 TTextField {
     signal cleared
+
+    required property Session session
+    required property Convert convert
+
     property bool fiat: false
     property bool dynamic: true
-    required property Session session
     property string unit: self.session?.unit ?? ''
     property bool embed: false
-    readonly property var units: ['BTC', 'sats', 'mBTC', '\u00B5BTC']
-    required property Convert convert
+    property real spacing: 4
+
+    readonly property var unitOptions: {
+        const labelPrefix = self.session?.network.liquid ? 'L' : ''
+        const btcOptions = ['BTC', 'mBTC', '\u00B5BTC', 'sats']
+            .map(value => ({ value, label: labelPrefix + value }))
+
+        const convertUnit = self.convert.output.unit || self.unit
+        if (!convertUnit) return btcOptions
+
+        const isBtcUnit = !!btcOptions.find(option =>
+            option.value === convertUnit || option.label === convertUnit
+        )
+        
+        // Show only asset unit for non-Bitcoin assets, show all units for Bitcoin
+        return isBtcUnit ? btcOptions : [{ value: convertUnit, label: convertUnit }]
+    }
+
     property alias leftItem: left_loader.sourceComponent
     property alias thirdLabel: third_label.text
-    property real spacing: 4
+    
     function setUnit(unit) {
         self.fiat = false
         self.unit = unit
@@ -28,6 +47,7 @@ TTextField {
             self.text = ''
         }
     }
+
     function setFiat() {
         self.fiat = true
         if (self.text.length > 0) {
@@ -37,6 +57,7 @@ TTextField {
             self.text = ''
         }
     }
+
     function toggleFiat() {
         if (self.fiat) {
             self.setUnit(self.unit)
@@ -44,9 +65,11 @@ TTextField {
             setFiat()
         }
     }
+
     function setText(value) {
         self.convert.input = value.length === 0 ? {} : self.fiat ? { fiat: value } : { text: value }
     }
+
     function clearText() {
         self.clear()
         self.setText('')
@@ -187,13 +210,14 @@ TTextField {
                 }
             }
             Repeater {
-                model: self.units
+                model: self.unitOptions
                 delegate: GMenu.Item {
+                    required property var modelData
                     hideIcon: true
-                    text: (self.session?.network.liquid ? 'L' : '') + modelData
+                    text: modelData.label
                     onClicked: {
                         unit_menu.close()
-                        self.setUnit(modelData)
+                        self.setUnit(modelData.value)
                     }
                 }
             }

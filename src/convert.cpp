@@ -55,7 +55,9 @@ void Convert::setContext(Context* context)
     m_context = context;
     emit contextChanged();
     invalidate();
-    if (m_context) setSession(m_context->primarySession());
+    if (m_context) {
+        connectToSessionSignals();
+    }
 }
 
 void Convert::setAccount(Account* account)
@@ -83,8 +85,18 @@ void Convert::clearInput()
     emit inputCleared();
 }
 
-void Convert::setSession(Session* session)
+void Convert::connectToSessionSignals()
 {
+    auto session = assetSession();
+
+    // Disconnect from old session if different
+    if (m_connected_session && session != m_connected_session) {
+        disconnect(m_connected_session, nullptr, this, nullptr);
+    }
+
+    if (!session || session == m_connected_session) return;
+
+    m_connected_session = session;
     connect(session, &Session::settingsChanged, this, [=, this] {
         emit fiatChanged();
         invalidate();
@@ -101,6 +113,7 @@ void Convert::setAsset(Asset* asset)
     m_asset = asset;
     emit assetChanged();
     invalidate();
+    if (m_asset) connectToSessionSignals();
 }
 
 void Convert::setUnit(const QString& unit)
@@ -135,7 +148,7 @@ void Convert::setResult(const QJsonObject& result)
 
 QVariantMap Convert::fiat() const
 {
-    if (!isLiquidAsset() && m_result.contains("fiat") && m_result.contains("fiat_currency")) {
+    if (m_result.contains("fiat") && !m_result.value("fiat").isNull() && m_result.contains("fiat_currency")) {
         const auto currency = mainnet() ? m_result.value("fiat_currency").toString() : "FIAT";
         const auto amount = number_to_string(QLocale::system(), m_result.value("fiat").toString(), 2);
         return {
@@ -247,6 +260,20 @@ bool Convert::isLiquidAsset() const
   return false;
 }
 
+Session* Convert::assetSession() const
+{
+    if (!m_context) return nullptr;
+
+    const bool needsLiquid = isLiquidAsset();
+    for (auto session : m_context->getSessions()) {
+        if (session->network()->isLiquid() == needsLiquid) {
+            return session;
+        }
+    }
+
+    return m_context->primarySession();
+}
+
 void Convert::invalidate()
 {
     if (m_timer_id != -1) killTimer(m_timer_id);
@@ -311,9 +338,24 @@ void Convert::update()
         details["satoshi"] = 0;
     }
 
+    // We need primary session to get user currency
+    auto primary_session = m_context ? m_context->primarySession() : nullptr;
+    if (primary_session && !details.contains("fiat_currency")) {
+        const auto settings = primary_session->settings();
+        const auto pricing = settings.value("pricing").toObject();
+        const auto currency = mainnet() ? pricing.value("currency").toString() : "FIAT";
+        details.insert("fiat_currency", currency);
+    }
+
+    const auto session = assetSession();
+    if (!session) {
+        qWarning() << Q_FUNC_INFO << "No session found for asset:" << (m_asset ? m_asset->id() : "null");
+        setResult({});
+        return;
+    }
+
     using Watcher = QFutureWatcher<QJsonObject>;
     const auto watcher = new Watcher(this);
-    const auto session = m_context->primarySession();
     watcher->setFuture(QtConcurrent::run([=, this] {
         GA_json* output;
         const int rc = GA_convert_amount(session->m_session, Json::fromObject(details).get(), &output);
