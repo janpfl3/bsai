@@ -704,6 +704,10 @@ Můžete si vybrat oblíbenou metodu 2FA z aplikace autentizátoru, e-mailu, SMS
         <translation>Bitcoin a Liquid</translation>
     </message>
     <message>
+        <source>id_bitcoin_balance</source>
+        <translation>Bitcoin Balance</translation>
+    </message>
+    <message>
         <source>id_bitcoin_denomination</source>
         <translation>Nominální hodnota bitcoinu</translation>
     </message>
@@ -783,6 +787,10 @@ Jednoduše a bezpečně</translation>
     <message>
         <source>id_btchip_is_not_set_up_please_set</source>
         <translation>BTChip není nastaven. Chcete-li ho používat, nastavte ho pomocí stolního klienta.</translation>
+    </message>
+    <message>
+        <source>id_buy</source>
+        <translation>Buy</translation>
     </message>
     <message>
         <source>id_by_continuing_you_agree_to</source>
@@ -1189,6 +1197,10 @@ Jednoduše a bezpečně</translation>
         <translation>Připojte svůj Ledger a použijte jej s Green peněženkou</translation>
     </message>
     <message>
+        <source>id_connected</source>
+        <translation>Connected</translation>
+    </message>
+    <message>
         <source>id_connected_to_jade</source>
         <translation>Připojeno k Jade</translation>
     </message>
@@ -1593,6 +1605,10 @@ Nezapomeňte, že tuto peněženku můžete obnovit pouze s vaší frází pro o
     <message>
         <source>id_disconnect</source>
         <translation>Odpojit</translation>
+    </message>
+    <message>
+        <source>id_disconnected</source>
+        <translation>Disconnected</translation>
     </message>
     <message>
         <source>id_display_values_in_s_and</source>
@@ -3256,6 +3272,10 @@ Nedělejte si starosti s žádnými novými zálohami, vaše stávající záloh
         <translation>měsíce</translation>
     </message>
     <message>
+        <source>id_more</source>
+        <translation>More</translation>
+    </message>
+    <message>
         <source>id_more_details</source>
         <translation>Více informací</translation>
     </message>
@@ -3354,6 +3374,10 @@ Nedělejte si starosti s žádnými novými zálohami, vaše stávající záloh
     <message>
         <source>id_new_fee</source>
         <translation>Nový poplatek</translation>
+    </message>
+    <message>
+        <source>id_new_firmware_available</source>
+        <translation>New Firmware Available</translation>
     </message>
     <message>
         <source>id_new_incoming_transaction_in</source>

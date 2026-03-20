@@ -19,6 +19,7 @@ AbstractButton {
     topPadding: 12
     bottomPadding: 12
     opacity: self.enabled ? 1 : 0.4
+    spacing: 10
     background: Item {
         Rectangle {
             anchors.fill: parent
@@ -38,7 +39,7 @@ AbstractButton {
         }
     }
     contentItem: RowLayout {
-        spacing: image.visible ? 10 : 0
+        spacing: image.visible ? self.spacing : 0
         HSpacer {
         }
         Image {

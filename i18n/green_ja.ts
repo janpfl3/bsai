@@ -704,6 +704,10 @@ You can choose your favourite 2FA method among an authenticator app, email, SMS 
         <translation>BitcoinとLiquid</translation>
     </message>
     <message>
+        <source>id_bitcoin_balance</source>
+        <translation>Bitcoin Balance</translation>
+    </message>
+    <message>
         <source>id_bitcoin_denomination</source>
         <translation>ビットコイン単位</translation>
     </message>
@@ -783,6 +787,10 @@ You can choose your favourite 2FA method among an authenticator app, email, SMS 
     <message>
         <source>id_btchip_is_not_set_up_please_set</source>
         <translation>BTChipが設定されていません。デスクトップ・クライアントを利用し設定を終えてからもう一度お試しください。</translation>
+    </message>
+    <message>
+        <source>id_buy</source>
+        <translation>Buy</translation>
     </message>
     <message>
         <source>id_by_continuing_you_agree_to</source>
@@ -1189,6 +1197,10 @@ You can choose your favourite 2FA method among an authenticator app, email, SMS 
         <translation>LedgerをGreenと接続して利用する</translation>
     </message>
     <message>
+        <source>id_connected</source>
+        <translation>Connected</translation>
+    </message>
+    <message>
         <source>id_connected_to_jade</source>
         <translation>Jadeに接続済み</translation>
     </message>
@@ -1593,6 +1605,10 @@ You can choose your favourite 2FA method among an authenticator app, email, SMS 
     <message>
         <source>id_disconnect</source>
         <translation>Disconnect</translation>
+    </message>
+    <message>
+        <source>id_disconnected</source>
+        <translation>Disconnected</translation>
     </message>
     <message>
         <source>id_display_values_in_s_and</source>
@@ -3257,6 +3273,10 @@ Don&apos;t worry about any new backups, your existing recovery phrase backup wil
         <translation>月</translation>
     </message>
     <message>
+        <source>id_more</source>
+        <translation>More</translation>
+    </message>
+    <message>
         <source>id_more_details</source>
         <translation>More Details</translation>
     </message>
@@ -3355,6 +3375,10 @@ Don&apos;t worry about any new backups, your existing recovery phrase backup wil
     <message>
         <source>id_new_fee</source>
         <translation>新しい手数料</translation>
+    </message>
+    <message>
+        <source>id_new_firmware_available</source>
+        <translation>New Firmware Available</translation>
     </message>
     <message>
         <source>id_new_incoming_transaction_in</source>

@@ -704,6 +704,10 @@ You can choose your favourite 2FA method among an authenticator app, email, SMS 
         <translation>Bitcoin en Liquid</translation>
     </message>
     <message>
+        <source>id_bitcoin_balance</source>
+        <translation>Bitcoin Balance</translation>
+    </message>
+    <message>
         <source>id_bitcoin_denomination</source>
         <translation>Bitcoin-waardevertoning</translation>
     </message>
@@ -783,6 +787,10 @@ Eenvoudig en veilig</translation>
     <message>
         <source>id_btchip_is_not_set_up_please_set</source>
         <translation>BTChip is niet ingesteld. Stel hem in met een desktop-client om hem te kunnen gebruiken.</translation>
+    </message>
+    <message>
+        <source>id_buy</source>
+        <translation>Buy</translation>
     </message>
     <message>
         <source>id_by_continuing_you_agree_to</source>
@@ -1189,6 +1197,10 @@ Eenvoudig en veilig</translation>
         <translation>Verbind je Ledger om hem in Green te gebruiken</translation>
     </message>
     <message>
+        <source>id_connected</source>
+        <translation>Connected</translation>
+    </message>
+    <message>
         <source>id_connected_to_jade</source>
         <translation>Verbonden met Jade</translation>
     </message>
@@ -1593,6 +1605,10 @@ Onthoud dat je deze wallet alleen kunt herstellen met zowel je herstelzin als je
     <message>
         <source>id_disconnect</source>
         <translation>Disconnect</translation>
+    </message>
+    <message>
+        <source>id_disconnected</source>
+        <translation>Disconnected</translation>
     </message>
     <message>
         <source>id_display_values_in_s_and</source>
@@ -2343,7 +2359,7 @@ Standard messages and data rates may apply.</translation>
     </message>
     <message>
         <source>id_hardware_wallet</source>
-        <translation>Hardware wallet</translation>
+        <translation>Hardware Wallet</translation>
     </message>
     <message>
         <source>id_hardware_wallet_support_for</source>
@@ -3256,6 +3272,10 @@ Don&apos;t worry about any new backups, your existing recovery phrase backup wil
         <translation>maanden</translation>
     </message>
     <message>
+        <source>id_more</source>
+        <translation>More</translation>
+    </message>
+    <message>
         <source>id_more_details</source>
         <translation>More Details</translation>
     </message>
@@ -3354,6 +3374,10 @@ Don&apos;t worry about any new backups, your existing recovery phrase backup wil
     <message>
         <source>id_new_fee</source>
         <translation>Nieuw tarief</translation>
+    </message>
+    <message>
+        <source>id_new_firmware_available</source>
+        <translation>New Firmware Available</translation>
     </message>
     <message>
         <source>id_new_incoming_transaction_in</source>

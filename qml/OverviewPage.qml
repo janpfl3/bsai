@@ -81,6 +81,11 @@ Page {
         drawer.open()
     }
 
+    function openBuyDrawer() {
+        const drawer = buy_drawer.createObject(self)
+        drawer.open()
+    }
+
     function transactionConfirmations(transaction) {
         return UtilJS.confirmations(transaction.account.session, transaction.data.block_height)
     }
@@ -120,6 +125,9 @@ Page {
 
     header: WalletViewHeader {
         onSendClicked: self.openSendDrawer()
+        onReceiveClicked: self.openReceiveDrawer()
+        onSwapClicked: self.openSwapDrawer()
+        onBuyClicked: self.openBuyDrawer()
         onJadeDetailsClicked: self.jadeDetailsClicked()
         onLogoutClicked: self.logout()
         onArchivedAccountsClicked: {
@@ -161,18 +169,6 @@ Page {
         }
     }
     Component {
-        id: receive_drawer
-        ReceiveDrawer {
-            context: self.context
-        }
-    }
-    Component {
-        id: swap_drawer
-        SwapDrawer {
-            context: self.context
-        }
-    }
-    Component {
         id: transaction_details_drawer
         TransactionDetailsDrawer {
         }
@@ -187,6 +183,24 @@ Page {
     Component {
         id: send_drawer
         SendDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: receive_drawer
+        ReceiveDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: swap_drawer
+        SwapDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: buy_drawer
+        BuyDrawer {
             context: self.context
         }
     }

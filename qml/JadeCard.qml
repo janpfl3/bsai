@@ -6,34 +6,23 @@ import QtQuick.Layouts
 
 WalletHeaderCard {
     signal detailsClicked
+
     readonly property JadeDevice device: self.context?.device instanceof JadeDevice ? self.context.device : null
-    readonly property var latestFirmware: {
-        for (const firmware of controller.firmwares) {
-            if (firmware.latest) {
-                return firmware
-            }
-        }
-        return null
-    }
-    readonly property bool runningLatest: {
-        return self.device?.version === self.latestFirmware?.version
-    }
-    readonly property bool debug: Qt.application.arguments.indexOf('--debugjade') > 0
 
     function isJadeLocked() {
-        return self.device?.connected && self.device?.state === JadeDevice.StateLocked
+        return !!self.device?.connected && self.device?.state === JadeDevice.StateLocked
     }
 
     function getJadeStatusOptions () {
         if (!self.device?.connected) {
-            return { text: 'Disconnected', color: '#FF6467' }
+            return { text: qsTrId('id_disconnected'), color: '#FF6467' }
         }
 
         if (self.isJadeLocked()) {
-            return { text: 'Locked', color: '#FDC700' }
+            return { text: qsTrId('id_locked'), color: '#FDC700' }
         }
 
-        return { text: 'Connected', color: '#00C60D' }
+        return { text: qsTrId('id_connected'), color: '#00C60D' }
     }
 
     Component.onCompleted: firmware_controller.check(self.device)
@@ -47,121 +36,69 @@ WalletHeaderCard {
     }
     id: self
     visible: self.context.wallet.login?.device?.type === 'jade'
-    TapHandler {
-        enabled: self.device?.connected ?? false
-        onTapped: {
-          if (self.debug) {
-            self.detailsClicked()
-          } else {
-            update_firmware_dialog.createObject(self).open()
-          }
-        }
+    headerItem: Label {
+        topPadding: 3
+        bottomPadding: 6
+        color: '#FFF'
+        font.pixelSize: 12
+        font.weight: 400
+        opacity: 0.6
+        text: qsTrId('id_hardware_wallet')
     }
-    background: Item {
-        Image {
-            id: image
-            x: details_column.width
-            anchors.verticalCenter: parent.verticalCenter
-            source: {
-                if (self.device) {
-                    const type = self.device.versionInfo?.BOARD_TYPE
-                    return type === 'JADE_V2' ? 'qrc:/png/jade2_card.png' : 'qrc:/png/jade_card.png'
-                }
-                return ''
-            }
-        }
-    }
-    headerItem: RowLayout {
-        Label {
-            Layout.alignment: Qt.AlignCenter
-            color: '#FFF'
-            font.capitalization: Font.AllUppercase
-            font.pixelSize: 12
-            font.weight: 400
-            opacity: 0.6
-            text: qsTrId('id_hardware_wallet')
-        }
-        HSpacer {
-            Layout.minimumHeight: 28
-        }
-        Label {
-            Layout.alignment: Qt.AlignCenter
-            Layout.minimumWidth: fw_column.width
-            font.capitalization: Font.AllUppercase
-            font.pixelSize: 12
-            font.weight: 400
-            opacity: 0.6
-            text: qsTrId('id_firmware')
-            visible: !self.runningLatest
-        }
-    }
-    contentItem: RowLayout {
-        ColumnLayout {
-            Layout.rightMargin: image.width
-            id: details_column
-            RowLayout {
-                Label {
-                    font.capitalization: Font.AllUppercase
-                    font.pixelSize: 20
-                    font.weight: 600
-                    text: self.context.wallet.login?.device?.name ?? ''
-                }
-                Image {
-                    id: seal_check
-                    width: 24
-                    height: 24
-                    source: 'qrc:/svg2/seal-check.svg'
-                    visible: {
-                        if (!self.device) return false
-                        const board_type = self.device.versionInfo?.BOARD_TYPE
-                        if (board_type !== 'JADE_V2') return false
-                        const efusemac = self.device.versionInfo?.EFUSEMAC
-                        if (!efusemac) return false
-                        return Settings.isEventRegistered({ efusemac, result: 'genuine', type: 'jade_genuine_check' })
-                    }
-                }
-            }
-            RowLayout {
-                Layout.fillHeight: false
-                spacing: 4
-                Rectangle {
-                    Layout.alignment: Qt.AlignCenter
-                    color: self.getJadeStatusOptions().color
-                    implicitWidth: 8
-                    implicitHeight: 8
-                    radius: 4
-                }
-                Label {
-                    font.pixelSize: 14
-                    font.weight: 400
-                    color: '#A0A0A0'
-                    text: self.getJadeStatusOptions().text
-                }
-                LinkButton {
-                    text: qsTrId('id_unlock')
-                    visible: self.isJadeLocked()
-                    enabled: unlock_controller.monitor?.idle ?? true
-                    onClicked: unlock_controller.unlock()
-                }
-            }
-            VSpacer {
-            }
-        }
-        ColumnLayout {
-            id: fw_column
-            visible: !self.runningLatest
+    contentItem: ColumnLayout {
+        spacing: 4
+        RowLayout {
+            spacing: 8
             Label {
-                font.capitalization: Font.AllUppercase
-                font.pixelSize: 20
+                Layout.alignment: Qt.AlignCenter
+                font.pixelSize: 22
                 font.weight: 600
-                text: self.device?.version ?? ''
+                text: self.context.wallet.login?.device?.name ?? ''
             }
-            PrimaryButton {
-                text: qsTrId('id_firmware_upgrade')
-                onClicked: update_firmware_dialog.createObject(self).open()
+            AbstractButton {
+                contentItem: Image {
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.maximumWidth: 18
+                    Layout.maximumHeight: 18
+                    source: 'qrc:/svg2/info_blue.svg'
+                }
+                onClicked: self.detailsClicked()
             }
-            VSpacer {
+        }
+        RowLayout {
+            Layout.fillHeight: false
+            spacing: 4
+            Rectangle {
+                Layout.alignment: Qt.AlignCenter
+                color: self.getJadeStatusOptions().color
+                implicitWidth: 8
+                implicitHeight: 8
+                radius: 4
             }
+            Label {
+                font.pixelSize: 14
+                font.weight: 400
+                color: '#A0A0A0'
+                text: self.getJadeStatusOptions().text
+            }
+            LinkButton {
+                text: qsTrId('id_unlock')
+                visible: self.isJadeLocked()
+                enabled: unlock_controller.monitor?.idle ?? true
+                onClicked: unlock_controller.unlock()
+            }
+        }
+        LinkButton {
+            visible: {
+                const latestFirmware = controller.firmwares.find(firmware => firmware.latest)
+                return !!latestFirmware && self.device?.version !== latestFirmware.version
+            }
+            textColor: '#FDC700'
+            font.pixelSize: 12
+            text: qsTrId('id_new_firmware_available')
+            onClicked: update_firmware_dialog.createObject(self).open()
+        }
+        VSpacer {
         }
     }
 

@@ -8,6 +8,8 @@ import "analytics.js" as AnalyticsJS
 import "util.js" as UtilJS
 
 WalletHeaderCard {
+    id: self
+    
     Convert {
         id: convert
         context: self.context
@@ -15,42 +17,43 @@ WalletHeaderCard {
         unit: UtilJS.unit(self.context)
     }
 
-    id: self
     headerItem: RowLayout {
         Label {
             Layout.alignment: Qt.AlignCenter
-            color: '#FFF'
-            font.capitalization: Font.AllUppercase
+            color: '#A0A0A0'
             font.pixelSize: 12
             font.weight: 400
-            opacity: 0.6
-            text: qsTrId('id_total_balance')
+            text: qsTrId('id_bitcoin_balance')
         }
-        Image {
-            Layout.alignment: Qt.AlignCenter
-            source: Settings.incognito ? 'qrc:/svg2/eye_closed.svg' : 'qrc:/svg2/eye.svg'
-            TapHandler {
-                onTapped: {
-                    Settings.toggleIncognito()
-                    if (Settings.incognito) {
-                        Analytics.recordEvent('hide_amount', AnalyticsJS.segmentationSession(Settings, self.context))
-                    }
+        AbstractButton {
+            contentItem: Image {
+                Layout.alignment: Qt.AlignCenter
+                sourceSize.width: 20
+                sourceSize.height: 20
+                source: Settings.incognito ? 'qrc:/svg2/eye_closed.svg' : 'qrc:/svg2/eye.svg'
+            }
+            onClicked: {
+                Settings.toggleIncognito()
+                if (Settings.incognito) {
+                    Analytics.recordEvent('hide_amount', AnalyticsJS.segmentationSession(Settings, self.context))
                 }
             }
         }
         HSpacer {
-            Layout.minimumHeight: 28
         }
     }
+
     contentItem: ColumnLayout {
-        spacing: 10
+        spacing: 4
         Label {
-            font.pixelSize: 20
+            topPadding: 4
+            font.pixelSize: 22
             font.weight: 600
             text: UtilJS.incognito(Settings.incognito, convert.output.label)
         }
         Label {
-            font.pixelSize: 16
+            color: '#FFFFFF'
+            font.pixelSize: 14
             font.weight: 400
             opacity: 0.6
             text: UtilJS.incognito(Settings.incognito, convert.fiat.label)

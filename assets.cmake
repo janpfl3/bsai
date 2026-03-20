@@ -169,6 +169,7 @@ qt_add_resources(${APP_TARGET} "images"
         assets/svg2/info_black.svg
         assets/svg2/info_red.svg
         assets/svg2/info_white.svg
+        assets/svg2/info_blue.svg
         assets/svg2/jade-logo.svg
         assets/svg2/lightning.svg
         assets/svg2/list_bullets.svg

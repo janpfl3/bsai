@@ -12,11 +12,13 @@ import "util.js" as UtilJS
 
 GPane {
     signal sendClicked()
+    signal receiveClicked()
+    signal swapClicked()
+    signal buyClicked()
     signal archivedAccountsClicked()
     signal statusClicked()
     signal notificationsClicked()
     signal logoutClicked()
-    signal promoClicked(Promo promo)
     signal reportBugClicked()
     signal jadeDetailsClicked()
 
@@ -288,8 +290,10 @@ GPane {
             contentItem: CardBar {
                 context: self.context
                 onSendClicked: self.sendClicked()
+                onReceiveClicked: self.receiveClicked()
+                onSwapClicked: self.swapClicked()
+                onBuyClicked: self.buyClicked()
                 onJadeDetailsClicked: self.jadeDetailsClicked()
-                onPromoClicked: (promo) => self.promoClicked(promo)
             }
         }
     }

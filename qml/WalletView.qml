@@ -24,10 +24,8 @@ MainPage {
     }
 
     function openJadeDetailsDrawer() {
-        if (Qt.application.arguments.indexOf('--debugjade') > 0) {
-            const drawer = jade_details_drawer.createObject(self, { device: self.device })
-            drawer.open()
-        }
+        const drawer = jade_details_drawer.createObject(self, { device: self.device })
+        drawer.open()
     }
 
     readonly property OverviewPage overviewPage

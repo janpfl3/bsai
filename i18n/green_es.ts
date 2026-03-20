@@ -704,6 +704,10 @@ You can choose your favourite 2FA method among an authenticator app, email, SMS 
         <translation>Bitcoin y Liquid</translation>
     </message>
     <message>
+        <source>id_bitcoin_balance</source>
+        <translation>Bitcoin Balance</translation>
+    </message>
+    <message>
         <source>id_bitcoin_denomination</source>
         <translation>Denominación de Bitcoin</translation>
     </message>
@@ -783,6 +787,10 @@ sencilla y segura</translation>
     <message>
         <source>id_btchip_is_not_set_up_please_set</source>
         <translation>BTChip no está configurado. Configúrelo con un cliente de escritorio para poder usarlo.</translation>
+    </message>
+    <message>
+        <source>id_buy</source>
+        <translation>Buy</translation>
     </message>
     <message>
         <source>id_by_continuing_you_agree_to</source>
@@ -1189,6 +1197,10 @@ sencilla y segura</translation>
         <translation>Conecte su Ledger para usarla en Green</translation>
     </message>
     <message>
+        <source>id_connected</source>
+        <translation>Connected</translation>
+    </message>
+    <message>
         <source>id_connected_to_jade</source>
         <translation>Conectado a Jade</translation>
     </message>
@@ -1593,6 +1605,10 @@ Recuerde que para restaurar esta cartera, necesitará su contraseña y su frase 
     <message>
         <source>id_disconnect</source>
         <translation>Desconectar</translation>
+    </message>
+    <message>
+        <source>id_disconnected</source>
+        <translation>Disconnected</translation>
     </message>
     <message>
         <source>id_display_values_in_s_and</source>
@@ -2343,7 +2359,7 @@ Standard messages and data rates may apply.</translation>
     </message>
     <message>
         <source>id_hardware_wallet</source>
-        <translation>Hardware wallet</translation>
+        <translation>Hardware Wallet</translation>
     </message>
     <message>
         <source>id_hardware_wallet_support_for</source>
@@ -3256,6 +3272,10 @@ Don&apos;t worry about any new backups, your existing recovery phrase backup wil
         <translation>meses</translation>
     </message>
     <message>
+        <source>id_more</source>
+        <translation>More</translation>
+    </message>
+    <message>
         <source>id_more_details</source>
         <translation>More Details</translation>
     </message>
@@ -3354,6 +3374,10 @@ Don&apos;t worry about any new backups, your existing recovery phrase backup wil
     <message>
         <source>id_new_fee</source>
         <translation>Nueva comisión</translation>
+    </message>
+    <message>
+        <source>id_new_firmware_available</source>
+        <translation>New Firmware Available</translation>
     </message>
     <message>
         <source>id_new_incoming_transaction_in</source>
