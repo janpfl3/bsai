@@ -17,7 +17,7 @@ StackViewPage {
     readonly property bool completed: self.confirmations >= (self.network.liquid ? 2 : 6)
     readonly property var amounts: {
         const amounts = []
-        if (self.transaction.type !== Transaction.Redeposit) {
+        if (self.transaction.type !== AccountTransaction.Redeposit) {
             for (let [id, satoshi] of Object.entries(self.transaction.data.satoshi)) {
                 if (self.network.policyAsset === id && satoshi < 0) {
                     satoshi += self.transaction.data.fee
@@ -31,7 +31,7 @@ StackViewPage {
     }
     readonly property var totals: {
         const totals = []
-        if (self.transaction.type !== Transaction.Redeposit) {
+        if (self.transaction.type !== AccountTransaction.Redeposit) {
             for (let [id, satoshi] of Object.entries(self.transaction.data.satoshi)) {
                 const asset = AssetManager.assetWithId(self.context.deployment, id)
                 totals.push({ asset, satoshi: String(satoshi) })
@@ -93,7 +93,7 @@ StackViewPage {
             RowLayout {
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                visible: self.transaction.type !== Transaction.Mixed
+                visible: self.transaction.type !== AccountTransaction.Mixed
                 Repeater {
                     model: self.amounts
                     delegate: AssetIcon {
@@ -115,7 +115,7 @@ StackViewPage {
             font.weight: 600
             text: {
                 const parts = []
-                if (self.transaction.type === Transaction.Mixed) {
+                if (self.transaction.type === AccountTransaction.Mixed) {
                     parts.push('Swap')
                 } else {
                     parts.push('Transaction')
@@ -150,7 +150,7 @@ StackViewPage {
             delegate: Pane {
                 required property var modelData
                 Layout.alignment: Qt.AlignCenter
-                Layout.fillWidth: self.transaction.type === Transaction.Mixed
+                Layout.fillWidth: self.transaction.type === AccountTransaction.Mixed
                 id: amount_pane
                 background: null
                 padding: 0
@@ -164,15 +164,15 @@ StackViewPage {
                 contentItem: RowLayout {
                     AssetIcon {
                         asset: amount_pane.modelData.asset
-                        visible: self.transaction.type === Transaction.Mixed
+                        visible: self.transaction.type === AccountTransaction.Mixed
                     }
                     HSpacer {
-                        visible: self.transaction.type === Transaction.Mixed
+                        visible: self.transaction.type === AccountTransaction.Mixed
                     }
                     ColumnLayout {
                         spacing: 4
                         TLabel {
-                            Layout.alignment: self.transaction.type === Transaction.Mixed ? Qt.AlignRight : Qt.AlignCenter
+                            Layout.alignment: self.transaction.type === AccountTransaction.Mixed ? Qt.AlignRight : Qt.AlignCenter
                             Layout.fillWidth: false
                             copyText: convert.output.label
                             font.family: 'Roboto Mono'
@@ -182,7 +182,7 @@ StackViewPage {
                             text: UtilJS.incognito(Settings.incognito, convert.output.label)
                         }
                         TLabel {
-                            Layout.alignment: self.transaction.type === Transaction.Mixed ? Qt.AlignRight : Qt.AlignCenter
+                            Layout.alignment: self.transaction.type === AccountTransaction.Mixed ? Qt.AlignRight : Qt.AlignCenter
                             font.family: 'Roboto Mono'
                             font.features: { 'calt': 0, 'zero': 1 }
                             font.pixelSize: 14
@@ -277,10 +277,10 @@ StackViewPage {
                 font.pixelSize: 14
                 font.weight: 400
                 text: {
-                    if (!self.network.liquid && self.transaction.type === Transaction.Outgoing) {
+                    if (!self.network.liquid && self.transaction.type === AccountTransaction.Outgoing) {
                         return qsTrId('id_sent_to')
                     }
-                    if (!self.network.liquid && self.transaction.type === Transaction.Incoming) {
+                    if (!self.network.liquid && self.transaction.type === AccountTransaction.Incoming) {
                         return qsTrId('id_received_on')
                     }
                     return ''
@@ -293,12 +293,12 @@ StackViewPage {
                     id: address_label_repeater
                     model: {
                         const account = self.transaction.account
-                        if (!self.network.liquid && self.transaction.type === Transaction.Outgoing) {
+                        if (!self.network.liquid && self.transaction.type === AccountTransaction.Outgoing) {
                             return self.transaction.data.outputs
                                 .filter(output => !output.is_relevant)
                                 .map(output => account.getOrCreateAddress(output))
                         }
-                        if (!self.network.liquid && self.transaction.type === Transaction.Incoming) {
+                        if (!self.network.liquid && self.transaction.type === AccountTransaction.Incoming) {
                             return self.transaction.data.outputs
                                 .filter(output => output.is_relevant)
                                 .map(output => account.getOrCreateAddress(output))
@@ -337,17 +337,37 @@ StackViewPage {
                 text: self.transaction.data.txhash
                 onCopyClicked: Analytics.recordEvent('share_transaction', AnalyticsJS.segmentationShareTransaction(Settings, self.transaction.account))
             }
+            Label {
+                Layout.alignment: Qt.AlignTop
+                color: '#929292'
+                font.pixelSize: 14
+                font.weight: 400
+                text: qsTrId('Swap ID')
+                visible: self.transaction.chainTransaction.swap
+            }
+            TLabel {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 0
+                color: '#FFF'
+                elide: Label.ElideMiddle
+                font.family: 'Roboto Mono'
+                font.features: { 'calt': 0, 'zero': 1 }
+                font.pixelSize: 14
+                font.weight: 400
+                text: self.transaction.chainTransaction.swap?.id ?? ''
+                visible: self.transaction.chainTransaction.swap
+            }
         }
         LineSeparator {
             Layout.bottomMargin: 10
             Layout.topMargin: 10
-            visible: self.transaction.type === Transaction.Outgoing
+            visible: self.transaction.type === AccountTransaction.Outgoing
         }
         GridLayout {
             rowSpacing: 10
             columnSpacing: 20
             columns: 2
-            visible: self.transaction.type === Transaction.Outgoing
+            visible: self.transaction.type === AccountTransaction.Outgoing
             Label {
                 Layout.alignment: Qt.AlignTop
                 Layout.minimumWidth: 100
@@ -625,7 +645,7 @@ StackViewPage {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             animationVelocity: 500
-            collapsed: !hover_handler.hovered
+            collapsed: !hover_handler.hovered && !timer.running
             horizontalCollapse: true
             verticalCollapse: false
             Image {

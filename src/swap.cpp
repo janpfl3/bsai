@@ -38,21 +38,47 @@ Swap::Swap(const QString& id, Context* context)
 
 void Swap::sync()
 {
+    try {
+        update();
+    } catch (...) {
+    }
+
     using Watcher = QFutureWatcher<Swap::Status>;
     const auto watcher = new Watcher(this);
     watcher->setFuture(QtConcurrent::run(&g_swap_thread_pool, [=, this] {
         try {
             auto state = advance();
             return statusFromState(state);
-        } catch(lwk::lwk_error::NoBoltzUpdate error) {
+        } catch (lwk::lwk_error::NoBoltzUpdate) {
             return Status::Pending;
-        } catch(...) {
-            return Status::Failed;
+        } catch (lwk::lwk_error::ObjectConsumed) {
+            return Status::Pending;
+        } catch (lwk::lwk_error::BoltzBackendHttpError error) {
+            qDebug() << Q_FUNC_INFO << "BoltzBackendHttpError" << id();
+            return Status::Pending;
+        } catch (lwk::lwk_error::SwapExpired error) {
+            qDebug() << Q_FUNC_INFO << "SwapExpired" << id();
+            return Status::Pending;
+        } catch (lwk::lwk_error::Generic error) {
+            qDebug() << Q_FUNC_INFO << "Generic error" << id() << error.msg;
+            return Status::Pending;
+        } catch (std::exception error) {
+            qDebug() << Q_FUNC_INFO << "exception" << id() << error.what();
+            return Status::Pending;
         }
     }));
     connect(watcher, &Watcher::finished, this, [=, this] {
         watcher->deleteLater();
-        setStatus(watcher->result());
+
+        try {
+            update();
+        } catch (...) {
+        }
+
+        const auto status = watcher->result();
+
+        setStatus(status);
+
         if (m_status == Status::Pending) {
             QTimer::singleShot(1000, this, &Swap::sync);
         }
@@ -64,6 +90,32 @@ void Swap::setStatus(Status status)
     if (m_status == status) return;
     m_status = status;
     emit statusChanged();
+}
+
+void Swap::setLockupTransaction(ChainTransaction* lockup_transaction)
+{
+    if (m_lockup_transaction == lockup_transaction) return;
+    if (m_lockup_transaction) {
+        m_lockup_transaction->setSwap(nullptr);
+    }
+    m_lockup_transaction = lockup_transaction;
+    if (m_lockup_transaction) {
+        m_lockup_transaction->setSwap(this);
+    }
+    emit lockupTransactionChanged();
+}
+
+void Swap::setClaimTransaction(ChainTransaction* claim_transaction)
+{
+    if (m_claim_transaction == claim_transaction) return;
+    if (m_claim_transaction) {
+        m_claim_transaction->setSwap(nullptr);
+    }
+    m_claim_transaction = claim_transaction;
+    if (m_claim_transaction) {
+        m_claim_transaction->setSwap(this);
+    }
+    emit claimTransactionChanged();
 }
 
 ReverseSwap::ReverseSwap(std::shared_ptr<lwk::InvoiceResponse> invoice_response, Context* context)
@@ -87,6 +139,20 @@ QVariantMap ReverseSwap::data() const
 lwk::PaymentState ReverseSwap::advance()
 {
     return m_invoice_response->advance();
+}
+
+void ReverseSwap::update()
+{
+    if (!m_lockup_transaction && m_invoice_response->lockup_txid()) {
+        const auto txid = QString::fromStdString(*m_invoice_response->lockup_txid());
+        auto lockup_transaction = m_context->getOrCreateChainTransaction(txid);
+        setLockupTransaction(lockup_transaction);
+    }
+    if (!m_claim_transaction && m_invoice_response->claim_txid()) {
+        const auto txid = QString::fromStdString(*m_invoice_response->claim_txid());
+        auto claim_transaction = m_context->getOrCreateChainTransaction(txid);
+        setClaimTransaction(claim_transaction);
+    }
 }
 
 SubmarineSwap::SubmarineSwap(const QString& invoice, std::shared_ptr<lwk::PreparePayResponse> prepare_pay_response, Context* context)
@@ -123,10 +189,28 @@ QVariantMap SubmarineSwap::data() const
     }
 }
 
+void SubmarineSwap::setLockupTransaction(ChainTransaction* lockup_transaction)
+{
+    if (m_prepare_pay_response && !m_prepare_pay_response->lockup_txid() && lockup_transaction) {
+        const auto txid = lockup_transaction->id().toStdString();
+        m_prepare_pay_response->set_lockup_txid(txid);
+    }
+    Swap::setLockupTransaction(lockup_transaction);
+}
+
 lwk::PaymentState SubmarineSwap::advance()
 {
     if (!m_prepare_pay_response) return lwk::PaymentState::kSuccess;
     return m_prepare_pay_response->advance();
+}
+
+void SubmarineSwap::update()
+{
+    if (!m_lockup_transaction && m_prepare_pay_response->lockup_txid()) {
+        const auto txid = QString::fromStdString(*m_prepare_pay_response->lockup_txid());
+        auto lockup_transaction = m_context->getOrCreateChainTransaction(txid);
+        setLockupTransaction(lockup_transaction);
+    }
 }
 
 ChainSwap::ChainSwap(std::shared_ptr<lwk::LockupResponse> lockup_response, Context* context)
@@ -157,15 +241,28 @@ QVariantMap ChainSwap::data() const
 
 void ChainSwap::setLockupTransaction(ChainTransaction* lockup_transaction)
 {
-    if (m_lockup_transaction == lockup_transaction) return;
-    if (lockup_transaction) {
-        m_lockup_response->set_lockup_txid(lockup_transaction->id().toStdString());
+    if (m_lockup_response && !m_lockup_response->lockup_txid() && lockup_transaction) {
+        const auto txid = lockup_transaction->id().toStdString();
+        m_lockup_response->set_lockup_txid(txid);
     }
-    m_lockup_transaction = lockup_transaction;
-    emit lockupTransactionChanged();
+    Swap::setLockupTransaction(lockup_transaction);
 }
 
 lwk::PaymentState ChainSwap::advance()
 {
     return m_lockup_response->advance();
+}
+
+void ChainSwap::update()
+{
+    if (!m_lockup_transaction && m_lockup_response->lockup_txid()) {
+        const auto txid = QString::fromStdString(*m_lockup_response->lockup_txid());
+        auto lockup_transaction = m_context->getOrCreateChainTransaction(txid);
+        setLockupTransaction(lockup_transaction);
+    }
+    if (!m_claim_transaction && m_lockup_response->claim_txid()) {
+        const auto txid = QString::fromStdString(*m_lockup_response->claim_txid());
+        auto claim_transaction = m_context->getOrCreateChainTransaction(txid);
+        setClaimTransaction(claim_transaction);
+    }
 }

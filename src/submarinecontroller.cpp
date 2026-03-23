@@ -74,6 +74,13 @@ SubmarineSwap *SubmarineController::swap() const
     return d->swap;
 }
 
+void SubmarineController::setLockupTransaction(ChainTransaction *transaction)
+{
+    if (d->swap) {
+        d->swap->setLockupTransaction(transaction);
+    }
+}
+
 void SubmarineController::setSwap(SubmarineSwap* swap)
 {
     if (d->swap == swap) return;
@@ -101,6 +108,8 @@ void SubmarineController::timerEvent(QTimerEvent* event)
 void SubmarineController::update()
 {
     if (!m_context->m_boltz_session) return;
+    if (d->payment.isEmpty()) return;
+    if (d->refund_address.isEmpty()) return;
 
     for (const auto swap : m_context->m_swaps) {
         auto submarine_swap = qobject_cast<SubmarineSwap*>(swap);
@@ -132,6 +141,9 @@ void SubmarineController::update()
                 << QString::fromStdString(error.address)
                 << error.amount;
             return std::make_pair(error.address, error.amount);
+        } catch (lwk::lwk_error::BoltzBackendHttpError error) {
+            qDebug() << Q_FUNC_INFO << "BoltzBackendHttpError" << error.status << QString::fromStdString(error.error.value_or("unknonw error"));
+            return error.error.value_or("unknonw error");
         } catch (...) {
             qDebug() << Q_FUNC_INFO << "unexpected error";
             return std::string();

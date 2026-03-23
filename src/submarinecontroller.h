@@ -27,6 +27,8 @@ public:
     bool isBusy() const;
     QVariant error() const;
     SubmarineSwap* swap() const;
+public slots:
+    void setLockupTransaction(ChainTransaction* transaction);
 signals:
     void paymentChanged();
     void refundAddressChanged();

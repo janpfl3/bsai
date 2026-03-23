@@ -234,7 +234,7 @@ Page {
             context: self.context
             onAssetClicked: (asset) => asset_drawer.createObject(self, { context: self.context, asset }).open()
             onTransactionClicked: (transaction) => {
-                if (transaction instanceof Transaction) {
+                if (transaction instanceof AccountTransaction) {
                     transaction_details_drawer.createObject(self, { context: self.context, transaction }).open()
                 } else if (transaction instanceof Swap) {
                     console.log('its a swap')

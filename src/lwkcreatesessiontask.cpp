@@ -176,13 +176,18 @@ void LwkCreateSessionTask::update()
             return;
         }
 
-        for (const auto swap_id : session->pending_swap_ids()) {
+        auto load = [&](const std::string& swap_id) {
             auto data = session->get_swap_data(swap_id);
-            if (!data) continue;
+            if (!data) return;
 
             try {
                 const auto swap_data = QJsonDocument::fromJson(QByteArray::fromStdString(*data)).object();
                 const auto type = swap_data.value("swap_type").toString();
+                const auto last_state = swap_data.value("last_state").toString();
+
+                if (last_state == "swap.expired") return;
+                if (last_state == "invoice.failedToPay") return;
+
                 Swap* swap = nullptr;
                 if (type == "submarine") {
                     auto invoice = swap_data.value("bolt11_invoice").toString();
@@ -201,6 +206,13 @@ void LwkCreateSessionTask::update()
                 qDebug() << Q_FUNC_INFO << "error: " << error.msg.c_str();
                 qDebug() << Q_FUNC_INFO << "swap: " << data->c_str();
             }
+        };
+
+        for (const auto swap_id : session->pending_swap_ids()) {
+            load(swap_id);
+        }
+        for (const auto swap_id : session->completed_swap_ids()) {
+            load(swap_id);
         }
 
         m_context->m_boltz_session = session;

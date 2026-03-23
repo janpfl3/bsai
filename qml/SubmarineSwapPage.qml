@@ -46,7 +46,8 @@ StackViewPage {
         memo: note_text_area.text
         transaction: controller.transaction
         onTransactionCompleted: transaction => {
-            Analytics.recordEvent('swap_send', AnalyticsJS.segmentationSwap(Settings, self.context, { 
+            submarine_controller.setLockupTransaction(transaction.chainTransaction)
+            Analytics.recordEvent('swap_send', AnalyticsJS.segmentationSwap(Settings, self.context, {
                 from: UtilJS.swapNetworkType(self.account.network),
                 to: 'lightning'
             }))

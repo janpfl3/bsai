@@ -25,7 +25,7 @@ StackViewPage {
             return { satoshi: String(controller.account.json.satoshi[controller.asset?.key ?? 'btc']) }
         }
     }
-    readonly property bool bumpRedeposit: controller.previousTransaction?.type === Transaction.Redeposit
+    readonly property bool bumpRedeposit: controller.previousTransaction?.type === AccountTransaction.Redeposit
     function pushSelectCoinsPage() {
         self.StackView.view.push(select_coins_page, {
             account: controller.account,
