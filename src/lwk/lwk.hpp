@@ -106,84 +106,70 @@ typedef std::string Hex;
 
 
 namespace uniffi {
-    struct FfiConverterNetwork;
+    struct FfiConverterAddress;
 } // namespace uniffi
 
 /**
- * The network of the elements blockchain.
+ * A Liquid address
  */
-struct Network
+struct Address
 
 
 
 {
-    friend uniffi::FfiConverterNetwork;
+    friend uniffi::FfiConverterAddress;
 
-    Network() = delete;
+    Address() = delete;
 
-    Network(Network &&) = delete;
+    Address(Address &&) = delete;
 
-    Network &operator=(const Network &) = delete;
-    Network &operator=(Network &&) = delete;
+    Address &operator=(const Address &) = delete;
+    Address &operator=(Address &&) = delete;
 
-    ~Network();
+    ~Address();
     /**
-     * Return the mainnet network
+     * Construct an Address object
      */
-    static std::shared_ptr<Network> mainnet();
+    static std::shared_ptr<Address> init(const std::string &s);
     /**
-     * Return the regtest network with the given policy asset
+     * Return true if the address is blinded.
      */
-    static std::shared_ptr<Network> regtest(const AssetId &policy_asset);
+    bool is_blinded();
     /**
-     * Return the default regtest network with the default policy asset
+     * Returns the network of the address
      */
-    static std::shared_ptr<Network> regtest_default();
+    std::shared_ptr<Network> network();
     /**
-     * Return the testnet network
+     * Returns a string of the QR code printable in a terminal environment
      */
-    static std::shared_ptr<Network> testnet();
+    std::string qr_code_text();
     /**
-     * Return the default electrum client for this network
+     * Returns a string encoding an image in a uri
+     *
+     * The string can be open in the browser or be used as `src` field in `img` in HTML
+     *
+     * For max efficiency we suggest to pass `None` to `pixel_per_module`, get a very small image
+     * and use styling to scale up the image in the browser. eg
+     * `style="image-rendering: pixelated; border: 20px solid white;"`
      */
-    std::shared_ptr<ElectrumClient> default_electrum_client();
+    std::string qr_code_uri(std::optional<uint8_t> pixel_per_module);
     /**
-     * Return the default esplora client for this network
+     * Return the script pubkey of the address.
      */
-    std::shared_ptr<EsploraClient> default_esplora_client();
+    std::shared_ptr<Script> script_pubkey();
     /**
-     * Return the genesis block hash for this network as hex string.
+     * Return the unconfidential address.
      */
-    std::string genesis_block_hash();
-    /**
-     * Return true if the network is the mainnet network
-     */
-    bool is_mainnet();
-    /**
-     * Return the policy asset (eg LBTC for mainnet) for this network
-     */
-    AssetId policy_asset();
-    /**
-     * Return a new `TxBuilder` for this network
-     */
-    std::shared_ptr<TxBuilder> tx_builder();
+    std::shared_ptr<Address> to_unconfidential();
     /**
      * Returns a string representation of the object, internally calls Rust's `Display` trait.
      */
     std::string to_string() const;
-    /**
-     * Equality check, internally calls Rust's `Eq` trait.
-     */
-    bool eq(const std::shared_ptr<Network> &other) const;
-    /**
-     * Inequality check, internally calls Rust's `Ne` trait.
-     */
-    bool ne(const std::shared_ptr<Network> &other) const;
 
     private:
-    Network(const Network &);
+    Address(const Address &);
 
-    Network(void *);
+    Address(void *);
 
     void *_uniffi_internal_clone_pointer() const;
 
@@ -316,70 +302,31 @@ struct LoggingImpl
 
 
 namespace uniffi {
-    struct FfiConverterAddress;
+    struct FfiConverterAnyClient;
 } // namespace uniffi
 
-/**
- * A Liquid address
- */
-struct Address
+struct AnyClient
 
 
 
 {
-    friend uniffi::FfiConverterAddress;
+    friend uniffi::FfiConverterAnyClient;
 
-    Address() = delete;
+    AnyClient() = delete;
 
-    Address(Address &&) = delete;
+    AnyClient(AnyClient &&) = delete;
 
-    Address &operator=(const Address &) = delete;
-    Address &operator=(Address &&) = delete;
+    AnyClient &operator=(const AnyClient &) = delete;
+    AnyClient &operator=(AnyClient &&) = delete;
 
-    ~Address();
-    /**
-     * Construct an Address object
-     */
-    static std::shared_ptr<Address> init(const std::string &s);
-    /**
-     * Return true if the address is blinded.
-     */
-    bool is_blinded();
-    /**
-     * Returns the network of the address
-     */
-    std::shared_ptr<Network> network();
-    /**
-     * Returns a string of the QR code printable in a terminal environment
-     */
-    std::string qr_code_text();
-    /**
-     * Returns a string encoding an image in a uri
-     *
-     * The string can be open in the browser or be used as `src` field in `img` in HTML
-     *
-     * For max efficiency we suggest to pass `None` to `pixel_per_module`, get a very small image
-     * and use styling to scale up the image in the browser. eg
-     * `style="image-rendering: pixelated; border: 20px solid white;"`
-     */
-    std::string qr_code_uri(std::optional<uint8_t> pixel_per_module);
-    /**
-     * Return the script pubkey of the address.
-     */
-    std::shared_ptr<Script> script_pubkey();
-    /**
-     * Return the unconfidential address.
-     */
-    std::shared_ptr<Address> to_unconfidential();
-    /**
-     * Returns a string representation of the object, internally calls Rust's `Display` trait.
-     */
-    std::string to_string() const;
+    ~AnyClient();
+    static std::shared_ptr<AnyClient> from_electrum(const std::shared_ptr<ElectrumClient> &client);
+    static std::shared_ptr<AnyClient> from_esplora(const std::shared_ptr<EsploraClient> &client);
 
     private:
-    Address(const Address &);
+    AnyClient(const AnyClient &);
 
-    Address(void *);
+    AnyClient(void *);
 
     void *_uniffi_internal_clone_pointer() const;
 
@@ -426,60 +373,88 @@ struct ForeignStoreLink
 
 
 namespace uniffi {
-    struct FfiConverterAnyClient;
+    struct FfiConverterNetwork;
 } // namespace uniffi
 
-struct AnyClient
+/**
+ * The network of the elements blockchain.
+ */
+struct Network
 
 
 
 {
-    friend uniffi::FfiConverterAnyClient;
+    friend uniffi::FfiConverterNetwork;
 
-    AnyClient() = delete;
+    Network() = delete;
 
-    AnyClient(AnyClient &&) = delete;
+    Network(Network &&) = delete;
 
-    AnyClient &operator=(const AnyClient &) = delete;
-    AnyClient &operator=(AnyClient &&) = delete;
+    Network &operator=(const Network &) = delete;
+    Network &operator=(Network &&) = delete;
 
-    ~AnyClient();
-    static std::shared_ptr<AnyClient> from_electrum(const std::shared_ptr<ElectrumClient> &client);
-    static std::shared_ptr<AnyClient> from_esplora(const std::shared_ptr<EsploraClient> &client);
+    ~Network();
+    /**
+     * Return the mainnet network
+     */
+    static std::shared_ptr<Network> mainnet();
+    /**
+     * Return the regtest network with the given policy asset
+     */
+    static std::shared_ptr<Network> regtest(const AssetId &policy_asset);
+    /**
+     * Return the default regtest network with the default policy asset
+     */
+    static std::shared_ptr<Network> regtest_default();
+    /**
+     * Return the testnet network
+     */
+    static std::shared_ptr<Network> testnet();
+    /**
+     * Return the default electrum client for this network
+     */
+    std::shared_ptr<ElectrumClient> default_electrum_client();
+    /**
+     * Return the default esplora client for this network
+     */
+    std::shared_ptr<EsploraClient> default_esplora_client();
+    /**
+     * Return the genesis block hash for this network as hex string.
+     */
+    std::string genesis_block_hash();
+    /**
+     * Return true if the network is the mainnet network
+     */
+    bool is_mainnet();
+    /**
+     * Return the policy asset (eg LBTC for mainnet) for this network
+     */
+    AssetId policy_asset();
+    /**
+     * Return a new `TxBuilder` for this network
+     */
+    std::shared_ptr<TxBuilder> tx_builder();
+    /**
+     * Returns a string representation of the object, internally calls Rust's `Display` trait.
+     */
+    std::string to_string() const;
+    /**
+     * Equality check, internally calls Rust's `Eq` trait.
+     */
+    bool eq(const std::shared_ptr<Network> &other) const;
+    /**
+     * Inequality check, internally calls Rust's `Ne` trait.
+     */
+    bool ne(const std::shared_ptr<Network> &other) const;
 
     private:
-    AnyClient(const AnyClient &);
+    Network(const Network &);
 
-    AnyClient(void *);
+    Network(void *);
 
     void *_uniffi_internal_clone_pointer() const;
 
     void *instance = nullptr;
-};
-
-
-/**
- * A builder for the `BoltzSession`
- */
-struct BoltzSessionBuilder {
-    std::shared_ptr<Network> network;
-    std::shared_ptr<AnyClient> client;
-    std::optional<uint64_t> timeout = std::nullopt;
-    std::shared_ptr<Mnemonic> mnemonic = nullptr;
-    std::shared_ptr<Logging> logging = nullptr;
-    bool polling = false;
-    std::optional<uint64_t> timeout_advance = std::nullopt;
-    std::optional<uint32_t> next_index_to_use = std::nullopt;
-    std::optional<std::string> referral_id = std::nullopt;
-    std::optional<std::string> bitcoin_electrum_client_url = std::nullopt;
-    bool random_preimages = false;
-    /**
-     * Optional store for persisting swap data
-     *
-     * When set, swap data will be automatically persisted to the store after creation
-     * and on each state change. This enables automatic restoration of pending swaps.
-     */
-    std::shared_ptr<ForeignStoreLink> store = nullptr;
 };
 
 
@@ -512,6 +487,31 @@ struct LiquidBip21 {
      * The amount in satoshis
      */
     std::optional<uint64_t> satoshi;
+};
+
+
+/**
+ * A builder for the `BoltzSession`
+ */
+struct BoltzSessionBuilder {
+    std::shared_ptr<Network> network;
+    std::shared_ptr<AnyClient> client;
+    std::optional<uint64_t> timeout = std::nullopt;
+    std::shared_ptr<Mnemonic> mnemonic = nullptr;
+    std::shared_ptr<Logging> logging = nullptr;
+    bool polling = false;
+    std::optional<uint64_t> timeout_advance = std::nullopt;
+    std::optional<uint32_t> next_index_to_use = std::nullopt;
+    std::optional<std::string> referral_id = std::nullopt;
+    std::optional<std::string> bitcoin_electrum_client_url = std::nullopt;
+    bool random_preimages = false;
+    /**
+     * Optional store for persisting swap data
+     *
+     * When set, swap data will be automatically persisted to the store after creation
+     * and on each state change. This enables automatic restoration of pending swaps.
+     */
+    std::shared_ptr<ForeignStoreLink> store = nullptr;
 };
 
 

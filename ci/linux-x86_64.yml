@@ -6,7 +6,7 @@ linux-x86_64:build-image:
     DOCKER_BUILD_ARGS: --build-arg QT_INSTALLER_JWT_TOKEN=${QT_INSTALLER_JWT_TOKEN}
 
 .linux-x86_64:
-  image: $CI_REGISTRY_IMAGE/linux-x86_64@sha256:b39e666f69c645418cd4d8cad5ca0155c4dd4e1950e6843dd6e98eb56eaef27f
+  image: $CI_REGISTRY_IMAGE/linux-x86_64@sha256:7fcc83e44a4e4c0560c340c1140c1d130ceebe0f938a2804d625b52f7aa7c7c2
   extends:
     - .build
   tags:
