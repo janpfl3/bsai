@@ -331,11 +331,17 @@ ColumnLayout {
                 Layout.preferredHeight: 24
                 source: 'qrc:/svg2/info_white.svg'
             }
-            
-            ColumnLayout {
+
+            VFlickable {
                 Layout.fillWidth: true
+                Layout.preferredHeight: flickable.contentHeight
+                Layout.maximumHeight: 200
+                ScrollIndicator.vertical: ScrollIndicator {
+                    contentItem.opacity: 0.75
+                    contentItem.states: []
+                }
+                id: flickable
                 spacing: 6
-                
                 Label {
                     Layout.preferredWidth: 0
                     Layout.fillWidth: true
@@ -349,56 +355,14 @@ ColumnLayout {
                     Layout.preferredWidth: 0
                     Layout.fillWidth: true
                     color: toast.textColor
+                    clip: true
                     font.pixelSize: 13
                     font.weight: 400
                     text: toast.notification.message
                     textFormat: Label.MarkdownText
                     wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                 }
-                /*
-                RowLayout {
-                    Layout.topMargin: 4
-                    spacing: 4
-                    CheckBox {
-                        id: confirm_checkbox
-                        Layout.alignment: Qt.AlignCenter
-                        Material.theme: Material.Dark
-                        visible: !toast.notification.accepted
-                    }
-                    Label {
-                        Layout.preferredWidth: 0
-                        Layout.fillWidth: true
-                        Layout.rightMargin: 4
-                        color: toast.textColor
-                        font.pixelSize: 12
-                        text: qsTrId('id_i_confirm_i_have_read_and')
-                        wrapMode: Label.WordWrap
-                        visible: !toast.notification.accepted
-                    }
-                    PrimaryButton {
-                        Layout.alignment: Qt.AlignRight
-                        borderColor: '#FFFFFF'
-                        fillColor: '#FFFFFF'
-                        textColor: '#000000'
-                        font.pixelSize: 12
-                        font.weight: 600
-                        enabled: confirm_checkbox.checked
-                        font.capitalization: Font.Capitalize
-                        text: qsTrId('id_accept').toLowerCase()
-                        padding: 6
-                        leftPadding: 10
-                        rightPadding: 10
-                        topPadding: 6
-                        bottomPadding: 6
-                        onClicked: {
-                            toast.notification.trigger()
-                        }
-                        visible: !toast.notification.accepted
-                    }
-                }
-                */
             }
-            
             CloseButton {
                 onClicked: toast.slideOutAndDismiss()
             }
