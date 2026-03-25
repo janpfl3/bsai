@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-04-03
+### Added
+- Fiat pricing support for Liquid assets
+- Jade Core integration with improved device connection checks
+- Build scripts and setup instructions for macOS, Linux, and Windows
+- Swap ID display for lockup transactions in Onchain and Submarine swaps
+- Countly analytics events for swaps
+- Added LWK dependency
+
+### Changed
+- Updated wallet header with improved actions layout
+- Improved Jade device status handling and unlock experience
+- Refactored swap, invoice, and context/limit models for better maintainability
+- Enabled Qt Wayland integration on Linux
+- Updated GDK to 0.77.2
+
+### Fixed
+- Coin list refresh after transaction creation
+- URL link handling on macOS
+- Testnet handling in payment parser
+- Cursor consistency on clickable UI elements
+- Notification section visibility when multisig notifications are unavailable
+- Notification toasts with long descriptions
+- Stability improvements in resolver/task error handling and swap sync concurrency
+
 ## [3.1.0] - 2026-03-04
 ### Added
 - Receive Liquid Bitcoin via Lightning
