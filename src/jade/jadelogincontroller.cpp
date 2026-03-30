@@ -327,7 +327,14 @@ void JadeUnlockTask::update()
         return;
     }
 
+    connect(m_controller, &JadeController::disconnected, this, [=, this] {
+        if (m_status != Status::Active) return;
+        device->setUnlocking(false);
+        setStatus(Status::Failed);
+    }, Qt::SingleShotConnection);
+
     device->api()->authUser(network->canonicalId(), [=, this](const QVariantMap& msg) {
+        if (m_status != Status::Active) return;
         device->setUnlocking(false);
         if (msg.contains("result") && msg["result"] == true) {
             setStatus(Status::Finished);
