@@ -107,6 +107,13 @@ void CreateAccountController::ensureSession()
     group->add(session_login);
     group->add(load_accounts);
 
+    const auto pricing = m_context->primarySession()->settings().value("pricing");
+    if (pricing.isObject() && session != m_context->primarySession()) {
+        auto sync_settings = new ChangeSettingsTask(QJsonObject{{ "pricing", pricing }}, session);
+        session_login->then(sync_settings);
+        group->add(sync_settings);
+    }
+
     monitor()->add(group);
     dispatcher()->add(group);
 

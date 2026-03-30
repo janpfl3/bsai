@@ -679,6 +679,13 @@ void Context::loginNetwork(TaskGroup *group, Network *network)
         }
     });
 
+    const auto pricing = primarySession()->settings().value("pricing");
+    if (pricing.isObject()) {
+        auto sync_settings = new ChangeSettingsTask(QJsonObject{{ "pricing", pricing }}, session);
+        login->then(sync_settings);
+        group->add(sync_settings);
+    }
+
     connect(login, &Task::finished, this, [=, this] {
         if (m_outage_notification) {
             m_outage_notification->remove(network);
