@@ -65,6 +65,7 @@ void Convert::setAccount(Account* account)
     if (m_account == account) return;
     m_account = account;
     emit accountChanged();
+    emit isLiquidAssetChanged();
     invalidate();
     if (m_account) {
         setContext(m_account->context());
@@ -112,6 +113,7 @@ void Convert::setAsset(Asset* asset)
     if (m_asset == asset) return;
     m_asset = asset;
     emit assetChanged();
+    emit isLiquidAssetChanged();
     invalidate();
     if (m_asset) connectToSessionSignals();
 }
@@ -148,22 +150,37 @@ void Convert::setResult(const QJsonObject& result)
 
 QVariantMap Convert::fiat() const
 {
-    if (m_result.contains("fiat") && !m_result.value("fiat").isNull() && m_result.contains("fiat_currency")) {
+    return formatFiat();
+}
+
+QVariantMap Convert::formatFiat(double additional_value) const
+{
+    const auto empty_result = QVariantMap{
+        { "label", "" },
+        { "amount", "" },
+        { "value", 0.0 },
+        { "available", false }
+    };
+
+    if (m_result.contains("fiat") && !m_result.value("fiat").isNull() && m_result.contains("fiat_currency")) {        
+        bool ok = false;
+        const auto base = QLocale::c().toDouble(m_result.value("fiat").toString(), &ok);
+        if (!ok) return empty_result;
+        
         const auto currency = mainnet() ? m_result.value("fiat_currency").toString() : "FIAT";
-        const auto amount = number_to_string(QLocale::system(), m_result.value("fiat").toString(), 2);
+        const auto value = base + additional_value;
+        const auto amount = number_to_string(QLocale::system(), QLocale::c().toString(value, 'f', 10), 2);
+
         return {
             { "label", amount + " " + currency },
             { "amount", amount },
             { "currency", currency },
+            { "value", value },
             { "available", true }
         };
-    } else {
-        return {
-            { "label", "" },
-            { "amount", "" },
-            { "available", false }
-        };
     }
+
+    return empty_result;
 }
 
 static QString mainnetUnit(const QString& unit)

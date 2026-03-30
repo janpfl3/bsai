@@ -19,6 +19,7 @@ class Convert : public QObject
     Q_PROPERTY(QVariantMap output READ output NOTIFY outputChanged)
     Q_PROPERTY(QString unit READ unit WRITE setUnit NOTIFY unitChanged)
     Q_PROPERTY(bool debug READ debug WRITE setDebug NOTIFY debugChanged)
+    Q_PROPERTY(bool isLiquidAsset READ isLiquidAsset NOTIFY isLiquidAssetChanged)
     QML_ELEMENT
 public:
     Convert(QObject* parent = nullptr);
@@ -42,11 +43,12 @@ public:
     void setDebug(bool debug);
 
     QString satoshi() const;
+    bool isLiquidAsset() const;
 
     Q_INVOKABLE QVariantMap format(const QString& unit) const;
+    Q_INVOKABLE QVariantMap formatFiat(double additional_value = 0.0) const;
 
 private:
-    bool isLiquidAsset() const;
     Session* assetSession() const;
 signals:
     void contextChanged();
@@ -59,6 +61,7 @@ signals:
     void inputCleared();
     void outputChanged();
     void debugChanged();
+    void isLiquidAssetChanged();
 private:
     void connectToSessionSignals();
     void invalidate();

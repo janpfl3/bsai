@@ -16,10 +16,16 @@ StackViewPage {
     required property string unit
     required property var transaction
     required property bool bumpRedeposit
+
     property var payment
     property bool note: controller.memo.length > 0
     property string address_input
+
+    readonly property bool isFiatOutputAvailable: self.recipient.convert.fiat.available && fee_convert.fiat.available
+    readonly property bool isTotalDisplayed: !self.recipient.convert.isLiquidAsset || self.isFiatOutputAvailable
+
     StackView.onActivated: controller.cancel()
+
     TaskPageFactory {
         title: self.title
         monitor: controller.monitor
@@ -165,23 +171,21 @@ StackViewPage {
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 font.pixelSize: 14
-                font.weight: 500
                 opacity: 0.5
                 text: qsTrId('id_previous_fee')
             }
             ColumnLayout {
+                spacing: 2
                 Label {
                     Layout.alignment: Qt.AlignRight
                     opacity: 0.5
                     font.pixelSize: 14
-                    font.weight: 500
                     text: previous_fee_convert.output.label
                 }
                 Label {
                     Layout.alignment: Qt.AlignRight
                     opacity: 0.5
                     font.pixelSize: 12
-                    font.weight: 400
                     text: '~ ' + previous_fee_convert.fiat.label
                 }
             }
@@ -192,23 +196,23 @@ StackViewPage {
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 font.pixelSize: 14
-                font.weight: 500
-                opacity: 0.5
+                font.weight: self.isTotalDisplayed ? 400 : 600
+                opacity: self.isTotalDisplayed ? 0.5 : 1.0
                 text: qsTrId('id_network_fee')
             }
             ColumnLayout {
+                spacing: 2
                 Label {
                     Layout.alignment: Qt.AlignRight
-                    opacity: 0.5
+                    opacity: self.isTotalDisplayed ? 0.5 : 1.0
                     font.pixelSize: 14
-                    font.weight: 500
+                    font.weight: self.isTotalDisplayed ? 400 : 600
                     text: fee_convert.output.label
                 }
                 Label {
                     Layout.alignment: Qt.AlignRight
                     opacity: 0.5
                     font.pixelSize: 12
-                    font.weight: 400
                     text: '~ ' + fee_convert.fiat.label
                 }
             }
@@ -217,32 +221,41 @@ StackViewPage {
             Layout.preferredHeight: 1
             Layout.fillWidth: true
             opacity: 0.4
-            color: '#FFF'
+            color: '#404040'
+            visible: self.isTotalDisplayed
         }
         RowLayout {
             Layout.fillWidth: true
+            visible: self.isTotalDisplayed
             Label {
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 font.pixelSize: 14
-                font.weight: 500
-                opacity: 0.5
-                text: qsTrId('id_total')
+                font.weight: 600
+                text: qsTrId('id_total_spent')
             }
             ColumnLayout {
+                spacing: 2
+                visible: !self.recipient.convert.isLiquidAsset
                 Label {
                     Layout.alignment: Qt.AlignRight
                     font.pixelSize: 14
-                    font.weight: 500
+                    font.weight: 600
                     text: total_convert.output.label
                 }
                 Label {
                     Layout.alignment: Qt.AlignRight
-                    font.pixelSize: 14
-                    font.weight: 500
+                    font.pixelSize: 12
                     opacity: 0.5
                     text: '~ ' + total_convert.fiat.label
                 }
+            }
+            Label {
+                Layout.alignment: Qt.AlignRight
+                font.pixelSize: 14
+                font.weight: 600
+                text: '~ ' + self.recipient.convert.formatFiat(fee_convert.fiat.value).label
+                visible: self.recipient.convert.isLiquidAsset
             }
         }
         PrimaryButton {
