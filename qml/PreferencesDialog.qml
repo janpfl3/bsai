@@ -5,6 +5,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 AbstractDialog {
+    required property Context context
 
     AnalyticsView {
         name: 'AppSettings'
@@ -434,7 +435,8 @@ AbstractDialog {
                     onClicked: {
                         page.StackView.view.push(request_support_page, {
                             type: 'feedback',
-                            subject: 'Feedback from green_qt'
+                            subject: 'Feedback from green_qt',
+                            context: self.context
                         })
                     }
                 }
@@ -443,7 +445,8 @@ AbstractDialog {
                     onClicked: {
                         page.StackView.view.push(request_support_page, {
                             type: 'incident',
-                            subject: 'Bug report from green_qt'
+                            subject: 'Bug report from green_qt',
+                            context: self.context
                         })
                     }
                 }

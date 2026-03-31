@@ -7,6 +7,22 @@ import QtQuick.Layouts
 import "util.js" as UtilJS
 
 MainPage {
+    readonly property Context context: {
+        let context = stack_layout.currentItem?.wallet?.context
+
+        if (!context) {
+            for (let i = 0; i < stack_layout.count; ++i) {
+                const child = stack_layout.itemAt(i)
+                if (child instanceof WalletView && child.wallet?.context) {
+                    context = child.wallet.context
+                    break
+                }
+            }
+        }
+
+        return context ?? null
+    }
+
     signal crashClicked
 
     function openPreferences() {
@@ -272,15 +288,7 @@ MainPage {
         onWalletsClicked: openWallets()
         onCrashClicked: self.crashClicked()
         onSimulateNotificationClicked: (type) => {
-            let context = stack_layout.currentItem?.wallet?.context
-
-            if (!context && WalletManager.wallets.length > 0) {
-                const wallet = WalletManager.wallets[0]
-                if (wallet && wallet.context) {
-                    context = wallet.context
-                }
-            }
-
+            const context = self.context
             if (!context) {
                 console.log('No context available for notification simulation')
                 return
@@ -351,6 +359,7 @@ MainPage {
     Component {
         id: preferences_dialog
         PreferencesDialog {
+            context: self.context
             onClosed: {
                 side_bar.currentView = side_bar.currentWalletView ? SideBar.View.Wallet : SideBar.View.Wallets
                 destroy()
