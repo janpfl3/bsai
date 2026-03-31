@@ -206,7 +206,7 @@ lwk::PaymentState SubmarineSwap::advance()
 
 void SubmarineSwap::update()
 {
-    if (!m_lockup_transaction && m_prepare_pay_response->lockup_txid()) {
+    if (!m_lockup_transaction && m_prepare_pay_response && m_prepare_pay_response->lockup_txid()) {
         const auto txid = QString::fromStdString(*m_prepare_pay_response->lockup_txid());
         auto lockup_transaction = m_context->getOrCreateChainTransaction(txid);
         setLockupTransaction(lockup_transaction);
