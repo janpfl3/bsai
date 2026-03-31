@@ -8,22 +8,30 @@
 #include <QLocale>
 #include <QtMath>
 
+namespace {
+
+QString GetNetworkKey(const QString& deployment, const QString& id)
+{
+    const bool liquid = (id != "btc");
+    for (const auto network : NetworkManager::instance()->networks()) {
+        if (network->deployment() == deployment && network->isLiquid() == liquid) {
+            return network->key();
+        }
+    }
+    Q_UNREACHABLE();
+}
+
+} // namespace
+
 Asset::Asset(const QString& deployment, const QString& id, QObject* parent)
     : QObject(parent)
     , m_deployment(deployment)
     , m_id(id)
+    , m_network_key(GetNetworkKey(deployment, id))
     , m_key(id)
     , m_item(new QStandardItem)
 {
     m_item->setData(QVariant::fromValue(this));
-}
-
-void Asset::setNetworkKey(const QString& network_key)
-{
-    if (m_network_key == network_key) return;
-    Q_ASSERT(m_network_key.isEmpty());
-    m_network_key = network_key;
-    emit networkKeyChanged();
 }
 
 void Asset::setIcon(const QString& icon)
@@ -131,23 +139,18 @@ AssetManager::AssetManager()
     connect(Analytics::instance(), &Analytics::remoteConfigChanged, this, [this] {
         auto liquid_assets = Analytics::instance()->getRemoteConfigValue("liquid_assets").toArray();
 
-        const QString network_key = "liquid";
-
         for (const auto& value: liquid_assets) {
             const auto data = value.toObject();
             auto asset = assetWithId("mainnet", data.value("id").toString());
-            asset->setNetworkKey(network_key);
             asset->setIsAmp(data.value("amp").toBool(false));
             asset->setWeight(data.value("weight").toInt(0));
         }
     });
 
     for (const auto network : NetworkManager::instance()->networks()) {
-        const auto network_key = network->key();
         const auto id = network->data().value("policy_asset").toString("btc");
         const auto key = network->data().value("policy_asset").toString("btc");
         auto asset = assetWithId(network->deployment(), id);
-        asset->setNetworkKey(network_key);
         asset->setPolicy(true);
         asset->setWeight(INT_MAX);
         asset->setKey(key);

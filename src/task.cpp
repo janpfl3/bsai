@@ -953,7 +953,6 @@ void LoadAssetsTask::update()
                 auto context = m_session->context();
                 if (!context) return;
                 auto asset = context->getOrCreateAsset(asset_id);
-                asset->setNetworkKey(m_session->network()->key());
                 asset->setData(data);
                 if (!icon.isNull() && !icon.toString().isEmpty()) {
                     asset->setIcon(QString("data:image/png;base64,") + icon.toString());

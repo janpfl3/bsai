@@ -15,7 +15,7 @@ class Asset : public QObject
     Q_OBJECT
     Q_PROPERTY(QString deployment READ deployment CONSTANT)
     Q_PROPERTY(QString id READ id CONSTANT)
-    Q_PROPERTY(QString networkKey READ networkKey NOTIFY networkKeyChanged)
+    Q_PROPERTY(QString networkKey READ networkKey CONSTANT)
     Q_PROPERTY(QString icon READ icon NOTIFY iconChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(bool policy READ policy NOTIFY policyChanged)
@@ -33,7 +33,6 @@ public:
     QString deployment() const { return m_deployment; }
 
     QString networkKey() const { return m_network_key; }
-    void setNetworkKey(const QString& network_key);
 
     QString id() const { return m_id; }
     QStandardItem* item() const { return m_item; }
@@ -68,7 +67,6 @@ public:
     Q_INVOKABLE QString formatAmount(qint64 amount, bool include_ticker, const QString& unit = {}) const;
 
 signals:
-    void networkKeyChanged();
     void nameChanged();
     void iconChanged();
     void policyChanged();
@@ -78,8 +76,8 @@ signals:
 
 private:
     QString const m_deployment;
-    QString m_network_key;
     QString const m_id;
+    QString const m_network_key;
     QStandardItem* const m_item;
     QString m_name;
     QString m_icon;
