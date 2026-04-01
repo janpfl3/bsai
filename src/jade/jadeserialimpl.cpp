@@ -49,6 +49,14 @@ void JadeSerialImpl::connectDeviceImpl()
         connect(m_serial, &QSerialPort::readyRead,
                 this, &JadeSerialImpl::onSerialDataReady);
 
+        // Connect error signal - critical for Windows disconnect detection during unlock
+        connect(m_serial, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
+            if (!m_serial->isOpen()) return;
+            if (error == QSerialPort::ResourceError || error == QSerialPort::DeviceNotFoundError || error == QSerialPort::PermissionError || error == QSerialPort::NotOpenError) {
+                disconnectDevice();
+            }
+        });
+
         // Emit 'onConnected' 1 second later
         QTimer::singleShot(200, this, [this] {
             emit onConnected();

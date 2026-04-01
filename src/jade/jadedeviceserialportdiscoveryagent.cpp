@@ -114,6 +114,10 @@ void JadeDeviceSerialPortDiscoveryAgent::scan()
                 });
                 connect(backend, &JadeAPI::onDisconnected, this, [=, this] {
                     // qDebug() << "DISCONNECT" << system_location;
+                    const auto device = deviceFromBackend(backend);
+                    if (device) {
+                        device->setConnected(false);
+                    }
                 });
                 probe(backend);
             } else if (!backend->isConnected()) {
