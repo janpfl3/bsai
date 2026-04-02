@@ -229,7 +229,7 @@ QVariantMap Convert::format(const QString& unit) const
     if (!m_context && !m_account) return result;
     if (isLiquidAsset()) {
         const auto precision = m_asset->precision();
-        const auto satoshi = m_result.value("satoshi").toString();
+        const auto satoshi = m_result.value("satoshi").toString(m_input.value("satoshi").toString());
         auto amount = QLocale::c().toString(satoshi.toDouble() / qPow(10, precision), 'f', precision);
         result["bip21_amount"] = amount;
         amount = number_to_string(QLocale::system(), amount, precision);
