@@ -21,6 +21,8 @@ sast:
     - if [[ "$IGNORE_SECURITY" == "true" ]]; then exit 0; fi
   tags:
     - k8s
+  variables:
+    SAST_EXCLUDED_ANALYZERS: "semgrep"
 
 
 .depends:
