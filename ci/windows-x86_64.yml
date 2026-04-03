@@ -5,7 +5,7 @@ windows-x86_64:build-gdk:
     DOCKER_FILE: ci/windows-x86_64/Dockerfile
 
 windows-x86_64:share-gdk:
-  image: $CI_REGISTRY_IMAGE/windows-x86_64@sha256:41f85db77ac56ab593528dca51b71f9827c7ca67cfacba69ada5c8742e9ff418
+  image: $CI_REGISTRY_IMAGE/windows-x86_64@sha256:679e6434d34c7607ae41f6a1be0eb964933cd97ef6347c719fea356b9b805891
   script:
     - cp -R /depends depends
   stage: depends
@@ -55,7 +55,7 @@ windows-x86_64:build:
     DOCKER_DRIVER: null
     DOCKER_HOST: null
     GIT_CLEAN_FLAGS: -ffdx
-    IMAGE: $CI_REGISTRY_IMAGE/x64-windows@sha256:2b5e85ec7490378a132aa3f3f261ed7c06f8b1134674fb7d5e22163b61990ea2
+    IMAGE: $CI_REGISTRY_IMAGE/x64-windows@sha256:d79dfd501f36cb80184cfd754927015d378ffedab559cc4d39d74e5071775b63
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker image inspect $IMAGE || docker pull $IMAGE
