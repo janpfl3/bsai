@@ -231,6 +231,7 @@ SET(QML_FILES
     qml/TorFooter.qml
     qml/OutagePage.qml
     qml/RedepositPage.qml
+    qml/RedepositConfirmPage.qml
     qml/RedepositLiquidPage.qml
     qml/RedepositLiquidConfirmPage.qml
     qml/Countries.qml
