@@ -204,3 +204,7 @@ Page {
         self.infoMessage = ''
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2a70e837 (initial with DLC)
