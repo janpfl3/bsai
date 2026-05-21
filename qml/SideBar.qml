@@ -130,6 +130,12 @@ Pane {
             text: qsTrId('id_settings')
             view: OverviewPage.Settings
         }
+	WalletSideButton {
+            icon.source: 'qrc:/svg/menu-settings.svg'  // TODO: use proper icon
+            shortcut: 'Ctrl+5'
+            text: qsTr('id_options')  // or just: text: 'Options'
+            view: OverviewPage.Options
+        }
         VSpacer {
         }
         SideButton {

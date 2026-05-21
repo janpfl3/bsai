@@ -1,0 +1,15 @@
+prefix=/home/jan/git/dlc/blockstream/depends/linux-x86_64
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+host=x86_64-pc-linux-gnu
+mtcflags=
+mtlibs=
+
+Name: gpg-error
+Description: GPG Runtime
+Version: 1.51
+Cflags: -I${includedir}
+Libs: -L${libdir} -lgpg-error
+Libs.private: 
+URL: https://www.gnupg.org/software/libgpg-error/index.html

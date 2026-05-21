@@ -14,7 +14,8 @@ Page {
         Home,
         Transactions,
         Security,
-        Settings
+	Settings,
+	Options
     }
 
     signal jadeDetailsClicked()
@@ -257,6 +258,10 @@ Page {
         }
         SettingsPage {
             id: settings_page
+            context: self.context
+        }
+	OptionsDashboard {
+            id: options_page
             context: self.context
         }
     }

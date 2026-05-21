@@ -1,0 +1,12 @@
+QT.KDSingleApplication.VERSION = 1.2.0
+QT.KDSingleApplication.MAJOR_VERSION = 1
+QT.KDSingleApplication.MINOR_VERSION = 2
+QT.KDSingleApplication.PATCH_VERSION = 0
+QT.KDSingleApplication.name = kdsingleapplication-qt6
+QT.KDSingleApplication.module = kdsingleapplication-qt6
+QT.KDSingleApplication.defines = 
+QT.KDSingleApplication.includes =  $$PWD/../../include/kdsingleapplication-qt6
+QT.KDSingleApplication.private_includes =
+QT.KDSingleApplication.libs = $$PWD/../../lib
+QT.KDSingleApplication.depends = 
+QT.KDSingleApplication.module_config = 

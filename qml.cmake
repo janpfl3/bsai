@@ -279,6 +279,22 @@ SET(QML_FILES
     qml/SwapDrawer.qml
     qml/ChainSwapCreatePage.qml
     qml/ChainSwapReviewPage.qml
+    # DLC Options Feature
+    qml/pages/OptionsDashboard.qml
+    #qml/pages/DiscoverInstrumentsPanel.qml
+    #qml/pages/OpenOrdersPanel.qml
+    #qml/pages/MyPositionsPanel.qml
+    #qml/pages/ActivityPanel.qml
+    #qml/dialogs/InstrumentDetailDialog.qml
+    #qml/dialogs/OrderDetailDialog.qml
+    #qml/dialogs/PositionDetailDialog.qml
+    #qml/dialogs/OptionsSettingsDialog.qml
+    #qml/dialogs/DLCErrorDialog.qml
+    #qml/components/OrderBookView.qml
+    #qml/components/PositionCard.qml
+    #qml/components/StatusTimelineItem.qml
+    #qml/components/DLCNotificationToast.qml
+    # end DLC
 )
 
 if (GREEN_NO_RESOURCES)

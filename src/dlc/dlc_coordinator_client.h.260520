@@ -1,0 +1,82 @@
+#pragma once
+
+#include <string>
+#include <vector>
+#include <nlohmann/json.hpp>
+#include <optional>
+
+namespace dlc {
+
+struct DLCCoordinatorConfig {
+    std::string base_url;           // e.g., "http://localhost:3000"
+    std::string api_key;            // optional auth token
+    int timeout_ms = 10000;
+    bool verify_ssl = true;
+};
+
+// Market data structures
+struct OptionInstrument {
+    std::string id;
+    std::string symbol;              // e.g., "BTC/USD_2026-06-20_50000"
+    std::string underlying;          // "BTC"
+    std::string quote_currency;      // "USD"
+    std::string expiry_date;         // ISO 8601
+    long long strike_price_sats;     // in satoshis
+    std::string option_type;         // "call" or "put"
+    long long notional_sats;
+    bool is_expired;
+    std::string coordinator_pubkey;  // for DLC message construction
+};
+
+struct OrderBook {
+    std::vector<nlohmann::json> bids;
+    std::vector<nlohmann::json> asks;
+    std::string symbol;
+    int64_t timestamp_ms;
+};
+
+struct MatchedOrder {
+    std::string order_id;
+    std::string counterparty_id;
+    std::string offer_id;
+    long long collateral_sats;
+    long long premium_sats;
+    std::string role;               // "taker" or "maker"
+    nlohmann::json dlc_offer;       // Coordinator-built DLC Offer message
+    std::string status;             // "awaiting_taker_signature", etc.
+};
+
+class DLCCoordinatorClient {
+public:
+    explicit DLCCoordinatorClient(const DLCCoordinatorConfig& config);
+
+    // Registration
+    bool register_wallet(const std::string& wallet_id, 
+                        const std::vector<std::string>& pubkeys);
+
+    // Market data
+    std::vector<OptionInstrument> get_available_instruments();
+    OrderBook get_order_book(const std::string& symbol);
+
+    // Order lifecycle
+    std::string place_order(const nlohmann::json& order_request);
+    std::string cancel_order(const std::string& order_id);
+    std::vector<MatchedOrder> get_matched_orders(const std::string& wallet_id);
+
+    // DLC signing
+    bool submit_signatures(const std::string& order_id,
+                          const nlohmann::json& signed_messages);
+
+    // Status tracking
+    nlohmann::json get_order_status(const std::string& order_id);
+    nlohmann::json get_dlc_status(const std::string& dlc_id);
+    nlohmann::json get_settlement_status(const std::string& dlc_id);
+
+private:
+    DLCCoordinatorConfig config_;
+    std::string make_http_request(const std::string& method,
+                                   const std::string& endpoint,
+                                   const nlohmann::json& body);
+};
+
+}  // namespace dlc

@@ -1,0 +1,99 @@
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Page {
+    required property Context context
+    
+    id: optionsDashboard
+    title: qsTr("Options")
+    padding: 0
+
+    background: Rectangle {
+        color: '#121416'
+    }
+
+    contentItem: ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 24
+        spacing: 24
+
+        // Header
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Label {
+                text: qsTr("Bitcoin Options")
+                font.pixelSize: 32
+                font.weight: 600
+                color: '#FFFFFF'
+            }
+
+            Label {
+                text: qsTr("Trade derivatives contracts on Bitcoin")
+                font.pixelSize: 14
+                color: '#929292'
+                wrapMode: Label.WordWrap
+            }
+        }
+
+        // Placeholder content
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: '#1a1a1a'
+            radius: 8
+            border.color: '#262626'
+            border.width: 1
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 16
+                width: parent.width * 0.6
+
+                Image {
+                    Layout.alignment: Qt.AlignHCenter
+                    width: 64
+                    height: 64
+                    source: 'qrc:/svg/home.svg'
+                    opacity: 0.5
+                }
+
+                Label {
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    text: qsTr("Options Feature")
+                    font.pixelSize: 18
+                    font.weight: 600
+                    color: '#FFFFFF'
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                Label {
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    text: qsTr("This feature is under development.\n\nPlanned Features:\n• Discover option instruments\n• View market data\n• Place buy/sell orders\n• Track positions\n• Manage settlements")
+                    font.pixelSize: 12
+                    color: '#929292'
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Label.WordWrap
+                    lineHeight: 1.6
+                }
+
+                PrimaryButton {
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: 16
+                    text: qsTr("Coming Soon")
+                    enabled: false
+                }
+            }
+        }
+
+        Item {
+            Layout.fillHeight: true
+        }
+    }
+}

@@ -201,4 +201,31 @@ public:
     explicit BackupNotification(Context* context);
 };
 
+class DLCNotification : public ContextNotification
+{
+    Q_OBJECT
+    Q_PROPERTY(QString dlcId READ dlcId CONSTANT)
+    Q_PROPERTY(QString status READ status NOTIFY statusChanged)
+    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
+    QML_ELEMENT
+    QML_UNCREATABLE("")
+
+public:
+    explicit DLCNotification(const QString& dlc_id, Context* context);
+    QString dlcId() const { return m_dlc_id; }
+    QString status() const { return m_status; }
+    void setStatus(const QString& status);
+    QString errorMessage() const { return m_error_message; }
+    void setErrorMessage(const QString& error);
+
+signals:
+    void statusChanged();
+    void errorMessageChanged();
+
+private:
+    QString const m_dlc_id;
+    QString m_status;
+    QString m_error_message;
+};
+
 #endif // GREEN_NOTIFICATION_H

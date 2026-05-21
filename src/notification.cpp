@@ -269,3 +269,25 @@ BackupNotification::BackupNotification(Context *context)
     : ContextNotification(context)
 {
 }
+
+DLCNotification::DLCNotification(const QString& dlc_id, Context* context)
+    : ContextNotification(context)
+    , m_dlc_id(dlc_id)
+{
+    setDismissable(true);
+}
+
+void DLCNotification::setStatus(const QString& status)
+{
+    if (m_status == status) return;
+    m_status = status;
+    emit statusChanged();
+}
+
+void DLCNotification::setErrorMessage(const QString& error)
+{
+    if (m_error_message == error) return;
+    m_error_message = error;
+    emit errorMessageChanged();
+    setLevel(Notification::Alert);
+}

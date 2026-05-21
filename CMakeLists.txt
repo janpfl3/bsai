@@ -194,6 +194,12 @@ install(TARGETS ${APP_TARGET}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 target_include_directories(${APP_TARGET} PRIVATE
+  src src/jade src/resolvers src/controllers src/ledger src/handlers src/dlc
+  ${GDK_INCLUDE}/libwally-core/
+  "${CMAKE_CURRENT_BINARY_DIR}"
+)
+
+target_include_directories(${APP_TARGET} PRIVATE
   src src/jade src/resolvers src/controllers src/ledger src/handlers
   "${CMAKE_CURRENT_BINARY_DIR}"
 )

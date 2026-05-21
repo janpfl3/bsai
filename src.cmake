@@ -102,6 +102,14 @@ SET(TARGET_SOURCES
 	src/chainswapcontroller.h src/chainswapcontroller.cpp
 	src/paymentparser.h src/paymentparser.cpp
         src/swap.h src/swap.cpp
+	# DLC
+	src/dlc/dlc_coordinator_client.h src/dlc/dlc_coordinator_client.h
+	src/dlc/dlc_coordinator_http_activity.h src/dlc/dlc_coordinator_http_activity.h
+	src/dlc/dlc_account_service.h src/dlc/dlc_account_service.h
+	src/dlc/dlc_signing_service.h src/dlc/dlc_signing_service.h
+	src/dlc/dlc_order_store.h src/dlc/dlc_order_store.h
+	src/dlc/dlc_state_machine.h src/dlc/dlc_state_machine.h
+	# end DLC
 )
 
 if (WIN32)
