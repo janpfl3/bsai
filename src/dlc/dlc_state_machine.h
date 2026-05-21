@@ -147,7 +147,6 @@ private:
     // Internal state machine logic
     void advance_taker_operation(OrderOperation& op);
     void advance_maker_operation(OrderOperation& op);
-    void handle_cet_signing_jobs(const QString& order_id, std::vector<CETPSigningJob>& jobs);
     
     void set_operation_state(const QString& order_id, OperationState state, const QString& status);
     void log_operation_event(const QString& order_id, const QString& event);
