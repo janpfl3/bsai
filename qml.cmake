@@ -231,7 +231,6 @@ SET(QML_FILES
     qml/TorFooter.qml
     qml/OutagePage.qml
     qml/RedepositPage.qml
-    qml/RedepositConfirmPage.qml
     qml/RedepositLiquidPage.qml
     qml/RedepositLiquidConfirmPage.qml
     qml/Countries.qml
@@ -281,6 +280,11 @@ SET(QML_FILES
     qml/ChainSwapReviewPage.qml
     # DLC Options Feature
     qml/pages/OptionsDashboard.qml
+    qml/DlcOptionsPage.qml
+    qml/DlcSimulateTab.qml
+    qml/DlcOverviewTab.qml
+    qml/DlcMyOrdersTab.qml
+    qml/DlcTradeTab.qml
     #qml/pages/DiscoverInstrumentsPanel.qml
     #qml/pages/OpenOrdersPanel.qml
     #qml/pages/MyPositionsPanel.qml
