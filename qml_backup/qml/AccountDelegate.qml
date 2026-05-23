@@ -1,0 +1,249 @@
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import "analytics.js" as AnalyticsJS
+import "util.js" as UtilJS
+
+ItemDelegate {
+    signal accountClicked(Account account)
+    signal accountArchived(Account account)
+    required property Account account
+    required property int index
+    Controller {
+        id: controller
+        context: account.context
+    }
+    onClicked: delegate.accountClicked(delegate.account)
+    id: delegate
+    focusPolicy: Qt.ClickFocus
+    background: Rectangle {
+        color: UtilJS.networkColor(delegate.account.network)
+        clip: true
+        radius: 5
+    }
+    leftPadding: constants.p2
+    rightPadding: constants.p2
+    topPadding: constants.p1
+    bottomPadding: constants.p1
+    hoverEnabled: true
+    layer.enabled: true
+    opacity: delegate.highlighted ? 1 : delegate.hovered ? 0.9 : 0.5
+    Behavior on opacity {
+        SmoothedAnimation {
+            velocity: 1
+        }
+    }
+    width: ListView.view?.width ?? 0
+    contentItem: ColumnLayout {
+        spacing: 0
+        RowLayout {
+            Layout.Layout.bottomMargin: 6
+            Label {
+                font.pixelSize: 10
+                font.weight: 400
+                font.styleName: 'Regular'
+                font.capitalization: Font.AllUppercase
+                color: 'white'
+                text: UtilJS.networkLabel(delegate.account.network) + ' / ' + UtilJS.accountLabel(delegate.account)
+                elide: Label.ElideLeft
+                Layout.fillWidth: true
+                Layout.preferredWidth: 0
+            }
+            RowLayout {
+                id: assets
+                Layout.fillWidth: false
+                Layout.alignment: Qt.AlignBottom
+                spacing: -8
+                Repeater {
+                    id: asset_icon_repeater
+                    model: {
+                        const assets = []
+                        if (!delegate.account.json.satoshi) return assets
+                        const context = delegate.account.context
+                        let without_icon = false
+                        for (const [asset_id, satoshi] of Object.entries(delegate.account.json.satoshi)) {
+                            if (satoshi === 0) continue;
+                            const asset = context.getOrCreateAsset(asset_id)
+                            if (asset.icon || asset.weight > 0) {
+                                assets.push(asset)
+                            } else if (!without_icon) {
+                                assets.unshift(asset)
+                                without_icon = true
+                            }
+                        }
+                        return assets
+                    }
+                    AssetIcon {
+                        asset: modelData
+                        border: 1
+                        size: 24
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: width / 2
+                            color: 'transparent'
+                            border.width: 1
+                            border.color: 'white'
+                        }
+                    }
+                }
+            }
+        }
+        EditableLabel {
+            id: name_field
+            Layout.fillWidth: true
+            font.styleName: 'Medium'
+            font.pixelSize: 16
+            topPadding: 0
+            leftInset: -8
+            topInset: -4
+            rightInset: -8
+            bottomInset: -4
+            leftPadding: 0
+            rightPadding: 0
+            text: UtilJS.accountName(account)
+            enabled: {
+                if (!delegate.highlighted) return false
+                if (delegate.account.hidden) return false
+                if (delegate.account.context.watchonly) return false
+                if (delegate.account.session.config.twofactor_reset?.is_active ?? false) return false
+                return true
+            }
+            onEditingFinished: {
+                if (name_field.enabled) {
+                    if (controller.setAccountName(delegate.account, name_field.text)) {
+                        Analytics.recordEvent('account_rename', AnalyticsJS.segmentationSubAccount(Settings, delegate.account))
+                    }
+                }
+            }
+        }
+        Collapsible {
+            Layout.fillWidth: true
+            Layout.minimumHeight: 1
+            id: collapsible
+            collapsed: !delegate.highlighted
+            contentWidth: collapsible.width
+            contentHeight: details.height
+            ColumnLayout {
+                id: details
+                width: collapsible.width
+                Label {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 0
+                    Layout.Layout.topMargin: 4
+                    elide: Label.ElideMiddle
+                    font.pixelSize: 14
+                    font.weight: 400
+                    opacity: 0.4
+                    text: delegate.account.json?.receiving_id ?? ''
+                    visible: delegate.account.type === '2of2_no_recovery'
+                }
+                Item {
+                    Layout.fillWidth: true
+                    Layout.Layout.topMargin: 32
+                    implicitHeight: card_footer.height
+                    RowLayout {
+                        id: card_footer
+                        width: parent.width
+                        Convert {
+                            id: convert
+                            account: delegate.account
+                            unit: UtilJS.unit(delegate.account.context)
+                            input: {
+                                const account = delegate.account
+                                const satoshi = account.json.satoshi
+                                return { satoshi: satoshi ? String(satoshi[account.network.policyAsset]) : '0' }
+                            }
+                        }
+                        ColumnLayout {
+                            Label {
+                                text: UtilJS.incognito(Settings.incognito, convert.fiat.label)
+                                font.pixelSize: 10
+                                font.weight: 400
+                                font.styleName: 'Regular'
+                            }
+                            Label {
+                                text: UtilJS.incognito(Settings.incognito, convert.output.label)
+                                font.pixelSize: 14
+                                font.weight: 600
+                                font.styleName: 'Medium'
+                            }
+                        }
+                        HSpacer {
+                        }
+                        ProgressIndicator {
+                            Layout.alignment: Qt.AlignBottom
+                            Layout.Layout.bottomMargin: 2
+                            indeterminate: !delegate.account.type || !delegate.account.synced
+                            width: 20
+                            height: 20
+                        }
+                        RegularButton {
+                            topPadding: 4
+                            bottomPadding: 4
+                            font.pixelSize: 14
+                            font.weight: 400
+                            text: qsTrId('id_unarchive')
+                            visible: delegate.highlighted && delegate.account.hidden
+                            onClicked: {
+                                controller.setAccountHidden(delegate.account, false)
+                                // If the account doesn't have a name, set it to the default visible name,
+                                // so the account is not archived again automatically after logging out and back in.
+                                if (delegate.account.name === '') {
+                                    const newAccountName = UtilJS.accountName(delegate.account)
+                                    controller.setAccountName(delegate.account, newAccountName)
+                                }
+                            }
+                        }
+                        CircleButton {
+                            id: tool_button
+                            Layout.alignment: Qt.AlignBottom
+                            visible: delegate.highlighted && !delegate.account.hidden
+                            icon.source: 'qrc:/svg/3-dots.svg'
+                            onClicked: account_delegate_menu.open()
+                            GMenu {
+                                id: account_delegate_menu
+                                x: tool_button.width + 8
+                                y: (tool_button.height - account_delegate_menu.height) * 0.5
+                                pointerX: 0
+                                pointerY: 0.5
+                                enabled: !delegate.account.context.watchonly
+                                spacing: 0
+                                GMenu.Item {
+                                    text: qsTrId('id_rename')
+                                    icon.source: 'qrc:/svg/wallet-rename.svg'
+                                    onClicked: {
+                                        account_delegate_menu.close()
+                                        // delegate.ListView.view.currentIndex = index
+                                        name_field.forceActiveFocus()
+                                    }
+                                }
+                                GMenu.Item {
+                                    text: qsTrId('id_copy') + ' ' + qsTrId('id_amp_id')
+                                    icon.source: 'qrc:/svg2/copy.svg'
+                                    visible: delegate.account.type === '2of2_no_recovery'
+                                    onClicked: {
+                                        account_delegate_menu.close()
+                                        Clipboard.copy(delegate.account.json.receiving_id)
+                                    }
+                                }
+                                GMenu.Item {
+                                    text: qsTrId('id_archive')
+                                    icon.source: 'qrc:/svg/archived.svg'
+                                    enabled: UtilJS.accounts(delegate.account.context).length > 1
+                                    onClicked: {
+                                        account_delegate_menu.close()
+                                        controller.setAccountHidden(delegate.account, true)
+                                        delegate.accountArchived(delegate.account)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

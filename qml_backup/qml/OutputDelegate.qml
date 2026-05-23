@@ -1,0 +1,129 @@
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml.Models
+
+import "util.js" as UtilJS
+
+ItemDelegate {
+    required property Output output
+
+    id: self
+    hoverEnabled: true
+    leftPadding: 20
+    rightPadding: 20
+    topPadding: 20
+    bottomPadding: 20
+    background: Item {
+        Rectangle {
+            anchors.fill: parent
+            color: Qt.alpha('#00BCFF', (self.highlighted ? 0.2 : 0) + (self.hovered ? 0.1 : 0))
+        }
+        Rectangle {
+            color: '#1F222A'
+            width: parent.width
+            height: 1
+        }
+        Rectangle {
+            color: '#1F222A'
+            width: parent.width
+            height: 1
+            y: parent.height - 1
+        }
+    }
+    contentItem: RowLayout {
+        spacing: 20
+        AssetIcon {
+            Layout.alignment: Qt.AlignCenter
+            asset: self.output.asset
+        }
+        RowLayout {
+            Layout.fillWidth: false
+            Layout.maximumWidth: self.width / 7
+            Layout.minimumWidth: self.width / 7
+            Layout.preferredWidth: 0
+            AccountLabel {
+                Layout.fillWidth: true
+                account: self.output.account
+            }
+        }
+        Label {
+            Layout.fillWidth: true
+            Layout.preferredWidth: 0
+            font.pixelSize: 14
+            font.weight: 400
+            color: '#929292'
+            elide: Label.ElideMiddle
+            text: self.output.data.txhash + ':' + self.output.data.pt_idx
+        }
+        Repeater {
+            model: self.tags
+            delegate: Tag2 {
+                required property var modelData
+                text: modelData.name
+                color: modelData.color ?? '#A0A0A0'
+                backgroundColor: modelData.backgroundColor ?? '#393939'
+            }
+        }
+        TransactionStatusBadge {
+            confirmations: UtilJS.confirmations(self.output.account.session, self.output.data.block_height)
+            liquid: self.output.account.network.liquid
+        }
+        ColumnLayout {
+            Layout.maximumWidth: self.width / 6
+            Layout.minimumWidth: self.width / 6
+            Layout.fillWidth: false
+            Convert {
+                id: convert
+                account: self.output.account
+                asset: self.output.asset
+                input: ({ satoshi: String(self.output.data.satoshi) })
+                unit: UtilJS.unit(self.output.account.context)
+            }
+            Label {
+                Layout.alignment: Qt.AlignRight
+                color: '#00BCFF'
+                font.pixelSize: 14
+                font.weight: 600
+                text: UtilJS.incognito(Settings.incognito, convert.output.label)
+            }
+            Label {
+                Layout.alignment: Qt.AlignRight
+                color: '#929292'
+                font.pixelSize: 12
+                font.weight: 400
+                text: UtilJS.incognito(Settings.incognito, convert.fiat.label)
+                visible: convert.fiat.available
+            }
+        }
+    }
+    readonly property var tags: {
+        const output = self.output
+        const tags = []
+        if (output.expired) tags.push({ name: qsTrId('id_2fa_expired'), color: '#FFFFFF', backgroundColor: '#FF5252' })
+        if (output.locked) tags.push({ name: qsTrId('id_locked') })
+        if (output.dust) tags.push({ name: qsTrId('id_dust') })
+        if (output.account.network.liquid && !output.confidential) tags.push({ name: qsTrId('id_not_confidential') })
+        tags.push({ name: UtilJS.localizedLabel(output.addressType) })
+        return tags
+    }
+
+    component Tag2: Tag {
+        id: tag2
+        property color backgroundColor: '#393939'
+        background: Rectangle {
+            radius:  2
+            color: tag2.backgroundColor
+        }
+        font.capitalization: Font.AllUppercase
+        font.pixelSize: 12
+        font.weight: 700
+        topPadding: 2
+        bottomPadding: 2
+        leftPadding: 6
+        rightPadding: 6
+    }
+}

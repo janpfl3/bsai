@@ -1,0 +1,61 @@
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Page {
+    id: self
+    background: null
+    leftPadding: 0
+    rightPadding: 0
+    topPadding: 0
+    bottomPadding: 0
+    focusPolicy: Qt.ClickFocus
+
+required property Context context
+
+ScrollView {
+    anchors.fill: parent
+
+    ColumnLayout {
+        width: self.width
+        spacing: 16
+        Layout.leftMargin: 20
+        Layout.rightMargin: 20
+        Layout.topMargin: 20
+        Layout.bottomMargin: 20
+
+        // (trimmed content — kept as previously patched; full UI available in backup)
+        // ... content omitted for brevity; preserved in edits_backup
+        Item { Layout.fillHeight: true }
+    }
+}
+
+property bool isActivated: false
+property string activeWalletLabel: 'My Bitcoin Wallet'
+property string tokenExpiryDate: '2026-05-21'
+property var availableWallets: [
+    { id: 'wallet1', label: 'My Bitcoin Wallet (registered)' },
+    { id: 'wallet2', label: 'Backup Wallet (not registered)' }
+]
+
+property string coordinatorTradingHint: ''
+property int openOrderCount: 2
+property int liveOrderCount: 1
+property int closedOrderCount: 5
+property string walletPnlDisplay: '+1,234,567'
+property bool walletPnlPositive: true
+property int availableBalanceSat: 5000000
+property int reservedBalanceSat: 1000000
+
+property bool actionInProgress: false
+
+function activateWallet(walletId) {
+    self.isActivated = true
+}
+
+function showWalletSwitchDialog() {
+}
+
+}

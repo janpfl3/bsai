@@ -1,0 +1,366 @@
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
+import QtQml
+
+import "analytics.js" as AnalyticsJS
+import "util.js" as UtilJS
+
+Page {
+    enum View {
+        Home,
+        Transactions,
+        Security,
+	Settings,
+	Options
+    }
+
+    signal jadeDetailsClicked()
+    signal logout()
+
+    function showView(view) {
+        self.view = view
+    }
+
+    required property Context context
+    readonly property Wallet wallet: self.context.wallet
+    property int view: OverviewPage.Home
+
+    readonly property var notifications: self.context?.notifications
+
+    Connections {
+        target: self.context
+        function onAutoLogout() {
+            self.logout()
+        }
+        function onNotificationTriggered(notification) {
+            self.showNotification(notification)
+        }
+    }
+
+    function showNotification(notification) {
+        if (notification instanceof SystemNotification) {
+            notifications_drawer.open()
+        } else {
+            notification_drawer.createObject(self, { notification }).open()
+        }
+    }
+
+    function checkDeviceMatches() {
+        if (self.context.wallet.login instanceof DeviceData) {
+            if (!self.context.device) return true
+            if (!self.context.device.session) return true
+            if (self.context.device.session.xpubHashId !== self.context.xpubHashId) return false
+        }
+        return true
+    }
+
+    function openCreateAccountDrawer() {
+        if (!self.checkDeviceMatches()) return
+        const network = self.context.primaryNetwork()
+        const id = network.liquid ? network.policyAsset : 'btc'
+        const asset = self.context.getOrCreateAsset(id)
+        const drawer = create_account_drawer.createObject(self, { asset })
+        drawer.open()
+    }
+
+    function openSendDrawer(url = '') {
+        const drawer = send_drawer.createObject(self, { url })
+        drawer.open()
+    }
+
+    function openReceiveDrawer() {
+        const drawer = receive_drawer.createObject(self)
+        drawer.open()
+    }
+
+    function openSwapDrawer() {
+        const drawer = swap_drawer.createObject(self)
+        drawer.open()
+    }
+
+    function openBuyDrawer() {
+        const drawer = buy_drawer.createObject(self)
+        drawer.open()
+    }
+
+    function transactionConfirmations(transaction) {
+        return UtilJS.confirmations(transaction.account.session, transaction.data.block_height)
+    }
+
+    Component {
+        id: notification_drawer
+        NotificationDrawer {
+        }
+    }
+
+    AnalyticsAlert {
+        id: overview_alert
+        screen: 'Overview'
+        // TODO: which network to pass on the alert?
+        // network: self.wallet.network.id
+    }
+
+    PaymentSyncController {
+        context: self.context
+    }
+
+    StackView.onActivated: {
+        self.forceActiveFocus()
+        Analytics.recordEvent('wallet_active', AnalyticsJS.segmentationWalletActive(Settings, self.context))
+        self.context.checkAndAddBackupWarningNotification()
+    }
+
+    id: self
+    background: null
+    leftPadding: 0
+    rightPadding: 0
+    topPadding: 0
+    bottomPadding: 0
+    focusPolicy: Qt.ClickFocus
+    title: self.wallet.name
+    spacing: 0
+
+    header: WalletViewHeader {
+        onSendClicked: self.openSendDrawer()
+        onReceiveClicked: self.openReceiveDrawer()
+        onSwapClicked: self.openSwapDrawer()
+        onBuyClicked: self.openBuyDrawer()
+        onJadeDetailsClicked: self.jadeDetailsClicked()
+        onLogoutClicked: self.logout()
+        onArchivedAccountsClicked: {
+            const drawer = archived_accounts_drawer.createObject(self)
+            drawer.open()
+        }
+        onStatusClicked: status_drawer.open()
+        onNotificationsClicked: notifications_drawer.open()
+        onReportBugClicked: {
+            const drawer = support_drawer.createObject(self, {
+                context: self.context,
+                type: 'incident',
+                subject: 'Bug report from green_qt'
+            })
+            drawer.open()
+        }
+        id: wallet_header
+        context: self.context
+        wallet: self.wallet
+        view: self.view
+    }
+    Action {
+        enabled: UtilJS.effectiveVisible(self)
+        shortcut: 'Ctrl+L'
+        onTriggered: self.logout()
+    }
+    StatusDrawer {
+        id: status_drawer
+        context: self.context
+    }
+    NotificationsDrawer {
+        id: notifications_drawer
+        context: self.context
+    }
+    Component {
+        id: create_account_drawer
+        CreateAccountDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: transaction_details_drawer
+        TransactionDetailsDrawer {
+        }
+    }
+
+    Component {
+        id: address_details_drawer
+        AddressDetailsDrawer {
+        }
+    }
+
+    Component {
+        id: send_drawer
+        SendDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: receive_drawer
+        ReceiveDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: swap_drawer
+        SwapDrawer {
+            context: self.context
+        }
+    }
+    Component {
+        id: buy_drawer
+        BuyDrawer {
+            context: self.context
+        }
+    }
+
+    Component {
+        id: asset_drawer
+        AssetDrawer {
+            onAccountClicked: (asset, account) => {
+                self.showView(OverviewPage.Transactions)
+                transactions_page.showTransactions({ account, asset })
+            }
+        }
+    }
+
+    Component {
+        id: update_unspents_drawer
+        UpdateUnspentsDrawer {
+        }
+    }
+
+    Component {
+        id: archived_accounts_drawer
+        ArchivedAccountsDrawer {
+            context: self.context
+        }
+    }
+
+    contentItem: StackLayout {
+        currentIndex: self.view
+        HomePage {
+            context: self.context
+            onAssetClicked: (asset) => asset_drawer.createObject(self, { context: self.context, asset }).open()
+            onTransactionClicked: (transaction) => {
+                if (transaction instanceof AccountTransaction) {
+                    transaction_details_drawer.createObject(self, { context: self.context, transaction }).open()
+                } else if (transaction instanceof Swap) {
+                    console.log('its a swap')
+                }
+            }
+            onTransactionsClicked: {
+                self.showView(OverviewPage.Transactions)
+                transactions_page.showTransactions()
+            }
+        }
+        TransactionsPage {
+            id: transactions_page
+            context: self.context
+            onTransactionClicked: (transaction) => transaction_details_drawer.createObject(self, { context: self.context, transaction }).open()
+            onAddressClicked: (address) => address_details_drawer.createObject(self, { context: self.context, address }).open()
+        }
+        SecurityPage {
+            id: security_page
+            context: self.context
+        }
+        SettingsPage {
+            id: settings_page
+            context: self.context
+        }
+        DlcOptionsPage {
+            id: options_page
+            context: self.context
+        }
+    }
+
+    Component {
+        id: genuine_check_drawer
+        JadeGenuineCheckDrawer {
+            id: drawer
+            autoCheck: true
+            onGenuine: {
+                if (Settings.rememberDevices) {
+                    const efusemac = self.context.device.versionInfo.EFUSEMAC
+                    Settings.registerEvent({ efusemac, result: 'genuine', type: 'jade_genuine_check' })
+                }
+                drawer.close()
+            }
+            onDiy: {
+                if (Settings.rememberDevices) {
+                    const efusemac = self.context.device.versionInfo.EFUSEMAC
+                    Settings.registerEvent({ efusemac, result: 'diy', type: 'jade_genuine_check' })
+                }
+                drawer.close()
+            }
+            onSkip: {
+                if (Settings.rememberDevices) {
+                    const efusemac = self.context.device.versionInfo.EFUSEMAC
+                    Settings.registerEvent({ efusemac, result: 'skip', type: 'jade_genuine_check' })
+                }
+                drawer.close()
+            }
+            onAbort: {
+                drawer.close()
+            }
+        }
+    }
+
+    Component {
+        id: support_drawer
+        SupportDrawer {
+        }
+    }
+
+    // component JadeGenuineHintPane: Pane {
+    //     Layout.fillWidth: true
+    //     Layout.Layout.topMargin: 10
+    //     id: hint
+    //     padding: 20
+    //     background: Rectangle {
+    //         border.width: 1
+    //         border.color: '#1F222A'
+    //         color: '#161921'
+    //         radius: 4
+    //     }
+    //     visible: {
+    //         const device = self.context.device
+    //         if (device instanceof JadeDevice) {
+    //             if (device.versionInfo.BOARD_TYPE === 'JADE_V2') {
+    //                 return true
+    //             }
+    //         }
+    //         return false
+    //     }
+    //     contentItem: RowLayout {
+    //         ColumnLayout {
+    //             Layout.fillWidth: true
+    //             Label {
+    //                 Layout.preferredWidth: 0
+    //                 Layout.fillWidth: true
+    //                 font.pixelSize: 12
+    //                 font.weight: 600
+    //                 text: 'Verify the authenticity of your Jade.'
+    //                 wrapMode: Label.WordWrap
+    //             }
+    //             Label {
+    //                 Layout.preferredWidth: 0
+    //                 Layout.fillWidth: true
+    //                 font.pixelSize: 11
+    //                 font.weight: 400
+    //                 opacity: 0.3
+    //                 text: 'Quickly confirm your Jade’s authenticity and security.'
+    //                 wrapMode: Label.WordWrap
+    //             }
+    //             PrimaryButton {
+    //                 leftPadding: 24
+    //                 rightPadding: 24
+    //                 topPadding: 7
+    //                 bottomPadding: 7
+    //                 text: 'Genuine Check'
+    //                 onClicked: {
+    //                     const drawer = genuine_check_drawer.createObject(self, { device: self.context.device })
+    //                     dialog.open()
+    //                 }
+    //             }
+    //         }
+    //         Image {
+    //             Layout.alignment: Qt.AlignCenter
+    //             source: 'qrc:/png/jade_genuine.png'
+    //         }
+    //     }
+    // }
+}
+
