@@ -369,7 +369,7 @@ Page {
             width: 60
             height: 60
             anchors.centerIn: parent
-            anchors.leftMargin: chartArea.axisWidth + (chartArea.plotWidth - width) / 2
+            Layout.leftMargin: chartArea.axisWidth + (chartArea.plotWidth - width) / 2
         }
 
         Repeater {

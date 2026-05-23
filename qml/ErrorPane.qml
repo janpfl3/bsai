@@ -33,7 +33,7 @@ Collapsible {
         leftPadding: 10
         rightPadding: 10
         bottomPadding: 15
-        topPadding: self.Layout.topMargin !== 0 ? 25 : 15
+        topPadding: Layout.topMargin !== 0 ? 25 : 15
         width: self.width
         background: Rectangle {
             color: '#3B080F'

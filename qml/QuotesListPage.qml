@@ -54,7 +54,7 @@ StackViewPage {
             border.color: delegate.isBestPrice || delegate.highlighted ? '#00BCFF' : '#262626'
             Label {
                 anchors.right: background.right
-                anchors.rightMargin: 20
+                Layout.rightMargin: 20
                 anchors.verticalCenter: background.top
                 color: '#000000'
                 font.pixelSize: 10

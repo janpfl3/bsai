@@ -260,7 +260,7 @@ Page {
             id: settings_page
             context: self.context
         }
-	OptionsDashboard {
+        DlcOptionsPage {
             id: options_page
             context: self.context
         }
@@ -363,3 +363,4 @@ Page {
     //     }
     // }
 }
+

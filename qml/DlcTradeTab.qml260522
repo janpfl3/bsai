@@ -9,7 +9,7 @@ Page {
     background: null
     required property Context context
 
-ColumnLayout {
+    ColumnLayout {
     anchors.fill: parent
     anchors.margins: 20
     spacing: 12
@@ -31,4 +31,3 @@ ColumnLayout {
     Item { Layout.fillHeight: true }
 }
 
-}

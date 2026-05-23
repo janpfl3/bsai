@@ -21,10 +21,10 @@ Page {
         ColumnLayout {
             width: self.width
             spacing: 16
-            leftMargin: 20
-            rightMargin: 20
-            topMargin: 20
-            bottomMargin: 20
+            Layout.leftMargin: 20
+            Layout.rightMargin: 20
+            Layout.topMargin: 20
+            Layout.bottomMargin: 20
 
             // Input card
             Rectangle {

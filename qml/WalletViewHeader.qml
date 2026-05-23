@@ -269,7 +269,7 @@ GPane {
                 border.color: '#262626'
                 Image {
                     anchors.left: parent.left
-                    anchors.leftMargin: 16
+                    Layout.leftMargin: 16
                     anchors.verticalCenter: parent.verticalCenter
                     source: 'qrc:/svg2/passphrase.svg'
                 }

@@ -45,7 +45,7 @@ TextField {
         id: options_layout
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 15
+        Layout.rightMargin: 15
         spacing: 0
         CircleButton {
             activeFocusOnTab: false

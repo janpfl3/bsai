@@ -48,10 +48,10 @@ Popup {
                     mipmap: false
                     cache: false
                     anchors.fill: parent
-                    anchors.topMargin: 10
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    anchors.bottomMargin: 18
+                    Layout.topMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.rightMargin: 10
+                    Layout.bottomMargin: 18
                     source: `image://zxing/${encodeURI(self.text || '')}`
                 }
                 layer.enabled: true

@@ -36,7 +36,7 @@ TextField {
     font.weight: 500
     CircleButton {
         anchors.right: parent.right
-        anchors.rightMargin: 15
+        Layout.rightMargin: 15
         anchors.verticalCenter: parent.verticalCenter
         icon.source: self.echoMode === TextField.Password ? 'qrc:/svg2/eye_closed.svg' : 'qrc:/svg2/eye.svg'
         onClicked: self.echoMode = self.echoMode === TextField.Password ? TextInput.Normal : TextInput.Password

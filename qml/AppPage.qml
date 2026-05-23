@@ -215,8 +215,8 @@ MainPage {
             parent: Overlay.overlay
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.rightMargin: 20
-            anchors.bottomMargin: 20
+            Layout.rightMargin: 20
+            Layout.bottomMargin: 20
             width: Math.min(400, parent.width * 0.4)
             notifications: UtilJS.flatten(stack_layout.currentItem?.notifications, update_controller.notification).filter(notification => !notification.dismissed)
         }
@@ -345,7 +345,7 @@ MainPage {
 
     WalletsDrawer {
         id: wallets_drawer
-        leftMargin: side_bar.width
+        Layout.leftMargin: side_bar.width
         onWalletClicked: (wallet) => {
             wallets_drawer.close()
             self.openWallet(wallet)

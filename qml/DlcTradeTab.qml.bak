@@ -1,0 +1,73 @@
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Page {
+    id: self
+    background: null
+    required property Context context
+
+ColumnLayout {
+    anchors.fill: parent
+    Layout.leftMargin: 20
+    Layout.rightMargin: 20
+    Layout.topMargin: 20
+    Layout.bottomMargin: 20
+    spacing: 12
+
+    Text {
+        text: qsTr("DLC Trade (placeholder)")
+        font.pixelSize: 16
+        color: "#FFFFFF"
+    }
+
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 200
+        color: "#1a1a1a"
+        radius: 8
+        border.color: "#262626"
+    }
+
+    Item { Layout.fillHeight: true }
+}
+
+cat > qml/DlcTradeTab.qml <<'QML'
+import Blockstream.Green
+import Blockstream.Green.Core
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+Page {
+    id: self
+    background: null
+    required property Context context
+
+ColumnLayout {
+    anchors.fill: parent
+    Layout.leftMargin: 20
+    Layout.rightMargin: 20
+    Layout.topMargin: 20
+    Layout.bottomMargin: 20
+    spacing: 12
+
+    Text {
+        text: qsTr("DLC Trade (placeholder)")
+        font.pixelSize: 16
+        color: "#FFFFFF"
+    }
+
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 200
+        color: "#1a1a1a"
+        radius: 8
+        border.color: "#262626"
+    }
+
+    Item { Layout.fillHeight: true }
+}
+

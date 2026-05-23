@@ -126,12 +126,12 @@ TTextField {
         return self.spacing + Math.max(second_label.height, third_label.height) + (self.embed ? 0 : 16)
     }
     leftPadding: {
-        const l = (self.embed ? 0 : 16) + left_loader.anchors.leftMargin + left_loader.width + 7
+        const l = (self.embed ? 0 : 16) + Layout.leftMargin + left_loader.width + 7
         const r = (self.embed ? 0 : 16) + 7 + unit_label.width
         return self.horizontalAlignment === TextInput.AlignHCenter ? Math.max(l, r) : l
     }
     rightPadding: {
-        const l = (self.embed ? 0 : 16) + left_loader.anchors.leftMargin + left_loader.width + 7
+        const l = (self.embed ? 0 : 16) + Layout.leftMargin + left_loader.width + 7
         const r = (self.embed ? 0 : 16) + 7 + unit_label.width
         return self.horizontalAlignment === TextInput.AlignHCenter ? Math.max(l, r) : r
     }
@@ -144,9 +144,9 @@ TTextField {
         id: left_loader
         // anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: self.embed ? 0 : 18
+        Layout.leftMargin: self.embed ? 0 : 18
         anchors.bottom: self.baseline
-        anchors.bottomMargin: -4.5
+        Layout.bottomMargin: -4.5
         // visible: !self.embed &&
         sourceComponent: CircleButton {
             focusPolicy: Qt.NoFocus
@@ -162,11 +162,11 @@ TTextField {
         bottomPadding: 0
         topPadding: 0
         anchors.right: parent.right
-        anchors.rightMargin: self.embed ? 0 : 16
+        Layout.rightMargin: self.embed ? 0 : 16
         //anchors.verticalCenter: parent.verticalCenter
         //anchors.verticalCenterOffset: self.convert.fiat.available ? -2 : 3
         anchors.bottom: self.baseline
-        anchors.bottomMargin: -4.5
+        Layout.bottomMargin: -4.5
         enabled: self.dynamic && (self.convert.fiat.available ?? false)
         contentItem: RowLayout {
             opacity: unit_label.enabled && unit_label.hovered ? 1 : 0.9
@@ -238,9 +238,9 @@ TTextField {
         id: second_label
         anchors.horizontalCenter: self.horizontalAlignment === TextInput.AlignHCenter ? parent.horizontalCenter : undefined
         anchors.right: self.horizontalAlignment === TextInput.AlignRight ? parent.right : undefined
-        anchors.rightMargin: self.embed ? 0 : 16
+        Layout.rightMargin: self.embed ? 0 : 16
         anchors.bottom: self.bottom
-        anchors.bottomMargin: self.embed ? 0 : 16
+        Layout.bottomMargin: self.embed ? 0 : 16
         color: second_hover_handler.hovered ? '#FAFAFA' : '#525252'
         font.features: { 'calt': 0, 'zero': 1 }
         font.pixelSize: 12
@@ -261,9 +261,9 @@ TTextField {
         id: third_label
         anchors.horizontalCenter: self.horizontalAlignment === TextInput.AlignHCenter ? parent.horizontalCenter : undefined
         anchors.left: parent.left
-        anchors.leftMargin: self.embed ? 0 : 16
+        Layout.leftMargin: self.embed ? 0 : 16
         anchors.bottom: self.bottom
-        anchors.bottomMargin: self.embed ? 0 : 16
+        Layout.bottomMargin: self.embed ? 0 : 16
         color: '#A0A0A0'
         font.features: { 'calt': 0, 'zero': 1 }
         font.pixelSize: 12

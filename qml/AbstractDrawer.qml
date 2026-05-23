@@ -12,7 +12,7 @@ Drawer {
     interactive: self.visible
     topPadding: 30
     bottomPadding: 30
-    leftPadding: 32 + self.leftMargin
+    leftPadding: 32 + Layout.leftMargin
     rightPadding: 32
     z: 2
 

@@ -222,7 +222,7 @@ Pane {
                 Image {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
-                    anchors.leftMargin: 16
+                    Layout.leftMargin: 16
                     source: 'qrc:/svg/blockstream.svg'
                 }
             }

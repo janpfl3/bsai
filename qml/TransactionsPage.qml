@@ -376,7 +376,7 @@ Page {
             rightPadding: 15 + right_layout.width + 15
             RowLayout {
                 id: left_layout
-                anchors.leftMargin: 15
+                Layout.leftMargin: 15
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 spacing: 12
@@ -386,7 +386,7 @@ Page {
             }
             RowLayout {
                 id: right_layout
-                anchors.rightMargin: 15
+                Layout.rightMargin: 15
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 spacing: 12
@@ -468,7 +468,7 @@ Page {
                 opacity: 0.6
                 visible: search_field.text === ''
                 anchors.left: parent.left
-                anchors.leftMargin: search_field.leftPadding
+                Layout.leftMargin: search_field.leftPadding
                 anchors.baseline: parent.baseline
             }
             onTextEdited: list_page.model.filterText = search_field.text

@@ -27,7 +27,7 @@ TTextField {
         bottomPadding: 4
         topPadding: 4
         anchors.left: parent.left
-        anchors.leftMargin: 15
+        Layout.leftMargin: 15
         anchors.verticalCenter: parent.verticalCenter
         contentItem: RowLayout {
             spacing: 4

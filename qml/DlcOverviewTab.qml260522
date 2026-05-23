@@ -13,7 +13,7 @@ Page {
     bottomPadding: 0
     focusPolicy: Qt.ClickFocus
 
-required property Context context
+    required property Context context
 
 ScrollView {
     anchors.fill: parent
@@ -58,4 +58,3 @@ function activateWallet(walletId) {
 function showWalletSwitchDialog() {
 }
 
-}

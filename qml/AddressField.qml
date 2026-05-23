@@ -16,7 +16,7 @@ TTextField {
         focusPolicy: Qt.NoFocus
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 18
+        Layout.leftMargin: 18
         visible: !self.readOnly && self.text.length > 0
         icon.source: 'qrc:/svg2/x-circle.svg'
         onClicked: {
@@ -28,7 +28,7 @@ TTextField {
         id: options_layout
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 18
+        Layout.rightMargin: 18
         spacing: 10
         visible: !self.readOnly
         CircleButton {

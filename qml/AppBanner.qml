@@ -51,7 +51,7 @@ Collapsible {
         spacing: 8
         orientation: Qt.Vertical
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        Layout.bottomMargin: 0
         x: 20
         width: self.width - 40
         implicitHeight: 108

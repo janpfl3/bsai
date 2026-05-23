@@ -129,8 +129,8 @@ Page {
         background: Item {
             Rectangle {
                 anchors.fill: parent
-                anchors.leftMargin: 8
-                anchors.rightMargin: 8
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 radius: 8
                 color: 'white'
                 opacity: button.hovered && !button.isCurrent ? 0.1 : 0
@@ -142,8 +142,8 @@ Page {
             }
             Rectangle {
                 anchors.fill: parent
-                anchors.leftMargin: 8
-                anchors.rightMargin: 8
+                Layout.leftMargin: 8
+                Layout.rightMargin: 8
                 color: 'transparent'
                 radius: 8
                 border.width: 2

@@ -24,9 +24,9 @@ StackViewPage {
         WebEngineView {
             id: web_engine_view
             anchors.fill: parent
-            anchors.leftMargin: -30
-            anchors.rightMargin: -30
-            anchors.bottomMargin: -30
+            Layout.leftMargin: -30
+            Layout.rightMargin: -30
+            Layout.bottomMargin: -30
             url: self.widgetUrl
             visible: !web_engine_view.loading
             onPermissionRequested: (permission) => {

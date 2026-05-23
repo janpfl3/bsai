@@ -176,9 +176,9 @@ StackViewPage {
         }
         GStackView {
             anchors.fill: parent
-            anchors.leftMargin: self.padding
-            anchors.rightMargin: self.padding
-            anchors.bottomMargin: self.padding
+            Layout.leftMargin: self.padding
+            Layout.rightMargin: self.padding
+            Layout.bottomMargin: self.padding
             id: stack_view
         }
     }

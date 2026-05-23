@@ -106,7 +106,7 @@ StackViewPage {
                 height: 22
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                Layout.leftMargin: 24
                 visible: amount_input.text.length > 0
                 icon.source: 'qrc:/svg2/x-circle.svg'
                 onClicked: {
@@ -118,7 +118,7 @@ StackViewPage {
             Label {
                 id: currency_label
                 anchors.right: parent.right
-                anchors.rightMargin: 24
+                Layout.rightMargin: 24
                 anchors.verticalCenter: parent.verticalCenter
                 color: '#FFFFFF'
                 font.pixelSize: 14
@@ -130,7 +130,7 @@ StackViewPage {
                 id: btc_amount_label
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
+                Layout.bottomMargin: 8
                 color: '#FFFFFF'
                 font.pixelSize: 12
                 font.weight: 500

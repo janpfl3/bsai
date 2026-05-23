@@ -21,9 +21,9 @@ GTextArea {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottomMargin: 13
-        anchors.leftMargin: 15
-        anchors.rightMargin: 15
+        Layout.bottomMargin: 13
+        Layout.leftMargin: 15
+        Layout.rightMargin: 15
         spacing: 10
         CircleButton {
             activeFocusOnTab: false

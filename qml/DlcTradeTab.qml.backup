@@ -6,7 +6,7 @@ import QtQuick.Layouts
 
 Page {
     id: self
-    background: null
+   background: null
     required property Context context
 
 ColumnLayout {
@@ -31,4 +31,3 @@ ColumnLayout {
     Item { Layout.fillHeight: true }
 }
 
-}
